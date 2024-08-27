@@ -15,11 +15,13 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     WebDriverException,
 )
+from upload_image_in_bubble import upload_images_in_bubble
 from webdriver_manager.chrome import ChromeDriverManager
+from sephora_urls import *
 
 
 # Function to handle the scraping process
-def scrape_data(retry_count=0):
+def scrape_sephora_website_offers(retry_count=0):
     start_time = time.time()
     try:
         # Set up the Chrome WebDriver
@@ -32,8 +34,7 @@ def scrape_data(retry_count=0):
         driver.maximize_window()
 
         # Navigate to the desired webpage
-        url = "https://www.sephora.com/beauty/beauty-offers"
-        driver.get(url)
+        driver.get(SEPHORA_WEBSITE_URL)
         time.sleep(7)
 
         data = []
@@ -72,7 +73,7 @@ def scrape_data(retry_count=0):
                 if len(all_feeds) == 0:
                     print("No members found. Retrying...")
                     driver.quit()
-                    scrape_data()
+                    scrape_sephora_website_offers()
                     return
 
                 if count < 15:
@@ -104,11 +105,6 @@ def scrape_data(retry_count=0):
                         print("Data:", heading)
                         text_lines = card.text.split("\n")
                         event_name = card.text.split('\n')[0]
-
-                        # event_name = text_lines[0] if len(text_lines) > 0 else "N/A"
-                        # event_description = (
-                        #     text_lines[1] if len(text_lines) > 1 else "N/A"
-                        # )
                         event_description = card.text.split('\n')[1]
                         if event_description in scraped_items:
                             continue
@@ -163,7 +159,7 @@ def scrape_data(retry_count=0):
 
                 except StaleElementReferenceException:
                     print("Stale element reference encountered. Re-fetching the list.")
-                    driver.get(url)
+                    driver.get(SEPHORA_WEBSITE_URL)
                     time.sleep(3)
                     driver.execute_script(
                         "window.scrollBy(0, window.innerHeight * 0.9);"
@@ -173,7 +169,7 @@ def scrape_data(retry_count=0):
             except (WebDriverException, Exception) as e:
                 print(f"An unexpected error occurred: {e}")
                 driver.quit()
-                scrape_data(retry_count)
+                scrape_sephora_website_offers(retry_count)
                 return
 
         df = pd.DataFrame(data)
@@ -181,7 +177,7 @@ def scrape_data(retry_count=0):
         if df.empty:
             print("No data to save. Retrying...")
             driver.quit()
-            scrape_data(retry_count)
+            scrape_sephora_website_offers(retry_count)
             return
 
         # Add placeholder for End Date if missing
@@ -210,18 +206,19 @@ def scrape_data(retry_count=0):
         def concatenate_paragraphs(row):
             paragraphs = []
             if pd.notna(row["Paragraph 2"]):
-                paragraphs.append(row["Paragraph 2"])
+                paragraphs.append("\n" + row["Paragraph 2"])
             if pd.notna(row["Paragraph 3"]):
-                paragraphs.append(row["Paragraph 3"])
+                paragraphs.append("\n" + row["Paragraph 3"])
             if pd.notna(row["Paragraph 5"]):
                 paragraphs.append("\n" + row["Paragraph 5"])
+            
             return row["Event Description"] + "\n" + "\n".join(paragraphs)
+
 
         df["Event Description"] = df.apply(concatenate_paragraphs, axis=1)
         df = df.drop(columns=["Paragraph 2", "Paragraph 3", "Paragraph 5"])
 
-        # Remove special characters from all columns except 'Image URL'
-        special_characters = r"[¶•§§\^\*†‡‡â€¡â€¡]"
+        special_characters = r"[¶•§§\^\*†‡‡â€¡â€¡稚熔容痴熔]"
         for col in df.columns:
             if col != "Image URL":
                 df[col] = df[col].apply(
@@ -230,22 +227,25 @@ def scrape_data(retry_count=0):
                     )
                 )
 
-        # Save the DataFrame to a CSV file
         csv_file = "sephora_beauty_offers.csv"
         df.to_csv(csv_file, index=False)
 
         print(f"CSV file created: {csv_file}")
         end_time = time.time()
         total_time = end_time - start_time
+        print(f"Scraping completed. Data saved to 'sephora_beauty_offers.csv'.")
         print(f"Total execution time: {total_time:.2f} seconds")
+        driver.quit()
+        upload_images_in_bubble(csv_file)
+        
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
     finally:
         driver.quit()
+        
+        
 
 
-# Start the scraping process
 
-print(f"Scraping completed. Data saved to 'sephora_beauty_offers.csv'.")

@@ -10,8 +10,6 @@ from io import BytesIO
 
 from download_image import *
 from upload_data_in_bubble import *
-
-Image_upload_URL = "https://evenigo.com/version-test/api/1.1/obj/Event-image"
 import os
 
 # Define the download folder path
@@ -50,7 +48,7 @@ def image_to_base64(image_path):
         # Return the full Base64 string with the MIME type prefix
         return mime_type + img_base64
     
-def Event_insert_downloads_images(csv_file_path):
+def upload_images_in_bubble(csv_file_path):
 
     # Call `read_and_process_csv` once to get the list of event IDs
     event_ids = read_and_process_csv(csv_file_path)
@@ -64,7 +62,6 @@ def Event_insert_downloads_images(csv_file_path):
 
         if isinstance(json_data, list):
             for i, filedata in enumerate(json_data):
-                print(f"Processing event {i + 1} of {len(json_data)}")
                 eventname = filedata.get('Event Name')
                 imageurl = filedata.get('Image URL')
 
@@ -87,17 +84,16 @@ def Event_insert_downloads_images(csv_file_path):
                 })
             
             # Upload the event images
-            Event_Image_upload1(event_results)
+            Event_Image_upload(event_results)
         else:
             print("Error or unexpected format returned:", json_data)
     else:
         print("No valid event IDs retrieved or empty list.")
 
 
-def Event_Image_upload1(dataarray):
+def Event_Image_upload(dataarray):
     HEADERS1 = {
     "Authorization": "Bearer 076e0757baab9bbb07df672e8bc751eb",
-    # "Content-Type": "application/json"
 }
     for multiple in dataarray:
         eventid = multiple['eventid']
@@ -106,9 +102,8 @@ def Event_Image_upload1(dataarray):
         base64_image = image_to_base64(imgurl)
         payload = {'Image':base64_image,'Original Event': eventid}
         files=[
-
         ]
-        response = requests.request("POST", Image_upload_URL, headers=HEADERS1, data=payload, files=files)
+        response = requests.request("POST", BUBBLE_IMAGE_URL, headers=HEADERS1, data=payload, files=files)
         print('response', response.text)
     print("Image Uploaded Succesfully In Bubble.io")
-     
+

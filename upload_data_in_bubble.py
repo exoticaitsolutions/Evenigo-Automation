@@ -1,14 +1,12 @@
+import os
 import pandas as pd
 import json
 import requests
 import csv
-import os
 from datetime import datetime
+from sephora_urls import *
 
 # Bubble Data API endpoint and headers
-URL = "https://evenigo.com/version-test/api/1.1/obj/event"
-CALENDAR_url = "https://evenigo.com/version-test/api/1.1/obj/calendar"
-CALENDAR_ID = '1724394041122x749331675895726800'
 HEADERS = {
     "Authorization": "Bearer 076e0757baab9bbb07df672e8bc751eb",
     "Content-Type": "application/json"
@@ -16,7 +14,7 @@ HEADERS = {
 
 # Function to send data to the API and return the ID
 def send_data_to_api(data):
-    response = requests.post(URL, headers=HEADERS, json=data)
+    response = requests.post(BUBBLE_EVENT_URL, headers=HEADERS, json=data)
     
     try:
         response_data = response.json()
@@ -52,25 +50,20 @@ def validate_and_format_date(date_str, default_date=None):
     return None
 
 calendar_name_to_id = {
-    "sephora Calendar": "1724394041122x749331675895726800",
+    "sephora Calendar": CALENDAR_ID,
 }
 
-def send_data_to_api1(data):
-    print(f"Sending data to CALENDAR_url: {data}")
+def send_data_to_calander_api1(data):
     try:
-        # Construct the URL with the specified ID
-        url = f'{CALENDAR_url}/1724394041122x749331675895726800'
+        url = f'{BUBBLE_CALENDAR_URL}/{CALENDAR_ID}'
         
-        # Send the PATCH request
         response = requests.patch(url, headers=HEADERS, data=json.dumps(data))
     
         response.raise_for_status()
         
-        # Check if the response has content
         if response.status_code == 204:
             print("Response status: 204 No Content. No data returned from server.")
         else:
-            # Attempt to parse JSON response if status code is not 204
             try:
                 response_data = response.json()
                 print(f"Response: {response_data}")
@@ -85,10 +78,45 @@ def send_data_to_api1(data):
 def get_calendar_id(name):
     return calendar_name_to_id.get(name, None)
 
+def fetch_existing_events():
+    try:
+        response = requests.get(BUBBLE_EVENT_URL, headers=HEADERS)
+        response.raise_for_status()
+        
+        try:
+            response_data = response.json()
+            
+            # Extract the actual event data from the nested response
+            events = response_data.get('response', {}).get('results', [])
+            if not isinstance(events, list):
+                print("The 'results' field is not a list. Exiting.")
+                return []
+            return events
+        except ValueError:
+            print("Response is not in JSON format.")
+            return []
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+        return []
+    except Exception as err:
+        print(f"Other error occurred: {err}")
+        return []
+
+
 def read_and_process_csv(file_path):
     if not os.path.isfile(file_path):
         print(f"Error: The file '{file_path}' does not exist.")
         return
+
+    existing_events = fetch_existing_events()
+    
+    # Ensure existing_events is a list of dictionaries
+    if not isinstance(existing_events, list):
+        print("Fetched events are not in the expected format. Exiting.")
+        return
+    
+    # Extract event names from the existing events
+    existing_event_names = {event.get('Event Name') for event in existing_events if isinstance(event, dict)}
 
     ids = []
 
@@ -116,39 +144,47 @@ def read_and_process_csv(file_path):
             if start_date is None or end_date is None:
                 print(f"Skipping row due to invalid date format: {row}")
                 continue
-            print("event_type : ", event_type)
+            
+            event_name = row.get("Event Name")
+            if event_name in existing_event_names:
+                print(f"Skipping row due to existing event: {event_name}")
+                continue
+
             data = {
                 "All Day": "yes",
                 "End Date/Time (Event)": end_date,
                 "Calendar": calendar_id,
                 "Event Type": event_type,
-                "Event Name": row.get("Event Name"),
+                "Event Name": event_name,
                 "Public/Private": row.get("Public/Private"),
                 "Short Description": row.get("Event Description"),
                 "Start Date/Time (Event)": start_date,
                 "URL": row.get("Image URL")
             }
 
-            event_id = send_data_to_api(data)  # Send data and get the event ID
+            event_id = send_data_to_api(data)
             if event_id:
-                ids.append(event_id)  # Add the ID to the list
+                ids.append(event_id)
 
-    print("Events Uploaded Succesfully In Bubble.io")
+    print()
+    print("Events Uploaded Successfully in Bubble.io")
+    print()
     data = {
         'Name': 'sephora Calendar',
         'Events': ids  
     }
     
-    send_data_to_api1(data)
-    print("Data Uploaded Succesfully In Calander Bubble.io")
+    send_data_to_calander_api1(data)
+    print()
+    print("Data Uploaded Successfully in Calendar Bubble.io")
+    print()
     return ids
+
 
 def csv_to_json(csv_file_path):
     try:
-        # Read the CSV file into a pandas DataFrame
         df = pd.read_csv(csv_file_path)
         
-        # Convert the DataFrame to a list of dictionaries
         json_data = df.to_dict(orient='records')
         return json_data
     except FileNotFoundError:
@@ -173,6 +209,5 @@ def check_file_downloaded(download_dir: str, filename: str) -> bool:
     """
     files = os.listdir(download_dir)
     if filename in files:
-        print(f"File '{filename}' successfully downloaded.")
         return True
     return False

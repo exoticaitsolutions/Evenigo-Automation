@@ -2,7 +2,9 @@
 ## Sephora Beauty Offers Scraper
 
 ### Overview
-* This script is designed to scrape promotional offers from Sephora's beauty offers webpage. It collects details such as event names, descriptions, images, and dates, then saves this data into a CSV file for further analysis or reference.
+* This script is designed to automate the process of scraping promotional offers from Sephora's beauty offers webpage. It efficiently gathers key details such as event names, descriptions, images, and dates. The collected data is then saved into a CSV file, providing a structured format for further analysis, reporting, or reference.
+
+Once the scraping process is completed, the script takes an additional step to upload the gathered data into Bubble.io, a no-code platform for building web applications. This integration ensures that the latest promotional offers from Sephora are readily available in your Bubble.io application, allowing for seamless updates and management.
 
 
 # Setup Instructions

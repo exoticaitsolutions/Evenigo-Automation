@@ -1,18 +1,36 @@
 import os
-from sephora_offers_scraper import scrape_data
+import time
+from sephora_offers_scraper import *
 from upload_data_in_bubble import *
-from upload_image_in_bubble import Event_insert_downloads_images
+from upload_image_in_bubble import *
+from config import *
 
 file_name = 'sephora_beauty_offers.csv'
 file_path = get_file_path(file_name)
 
-# Check if the file already exists
-if not os.path.exists(file_path):
-    print(f"File {file_name} not found. Scraping data...")
-    scrape_data()
+# Time in seconds (10 minutes)
+time_threshold = 10 * 60
+
+def is_file_older_than(file_path, time_threshold):
+    if os.path.exists(file_path):
+        file_mod_time = os.path.getmtime(file_path)
+        current_time = time.time()
+        file_age = current_time - file_mod_time
+        return file_age > time_threshold
+    return False
+
+if website.get('SCRAPE_SEPHORA_WEBSITE_OFFERS'):
+    if os.path.exists(file_path):
+        if is_file_older_than(file_path, time_threshold):
+            os.remove(file_path)
+            print(f"File '{file_name}' removed as it was older than 10 minutes.")
+            scrape_sephora_website_offers()
+        else:
+            print(f"File '{file_name}' is less than 10 minutes old and will not be removed.")
+            upload_images_in_bubble(file_path)
+    else:
+        scrape_sephora_website_offers()
 else:
-    print(f"File {file_name} already exists. Skipping data scrape.")
+    print("No scraping performed. SCRAPE_SEPHORA_WEBSITE_OFFERS is set to False.")
 
-print(f"Checking file path: {file_path}")
 
-Event_insert_downloads_images(file_path)
