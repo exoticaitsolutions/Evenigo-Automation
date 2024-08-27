@@ -23,10 +23,8 @@ if website.get('SCRAPE_SEPHORA_WEBSITE_OFFERS'):
     if os.path.exists(file_path):
         if is_file_older_than(file_path, time_threshold):
             os.remove(file_path)
-            print(f"File '{file_name}' removed as it was older than 10 minutes.")
             scrape_sephora_website_offers()
         else:
-            print(f"File '{file_name}' is less than 10 minutes old and will not be removed.")
             upload_images_in_bubble(file_path)
     else:
         scrape_sephora_website_offers()
