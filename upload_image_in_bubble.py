@@ -1,16 +1,11 @@
 
-import json
-import requests
-import csv
 import os
-from datetime import datetime
+import requests
 import base64
 from PIL import Image
 from io import BytesIO
-
 from download_image import *
 from upload_data_in_bubble import *
-import os
 
 # Define the download folder path
 DOWNLOAD_FOLDER = os.path.join(os.getcwd(), "downloads")
