@@ -1,4 +1,5 @@
 import base64
+import time
 from PIL import Image
 from io import BytesIO
 import urllib.parse
@@ -13,6 +14,10 @@ from config import *
 
 # Define the download folder path
 DOWNLOAD_FOLDER = os.path.join(os.getcwd(), "downloads")
+# Time in seconds (10 minutes)
+time_threshold = 10 * 60
+file_name = "sephora_beauty_offers.csv"
+
 
 # Check if the folder exists, and if not, create it
 if not os.path.exists(DOWNLOAD_FOLDER):
@@ -202,3 +207,15 @@ def image_to_base64(image_path):
 
         # Return the full Base64 string with the MIME type prefix
         return mime_type + img_base64
+
+
+file_path = get_file_path(file_name)
+
+
+def is_file_older_than(file_path, time_threshold):
+    if os.path.exists(file_path):
+        file_mod_time = os.path.getmtime(file_path)
+        current_time = time.time()
+        file_age = current_time - file_mod_time
+        return file_age > time_threshold
+    return False
