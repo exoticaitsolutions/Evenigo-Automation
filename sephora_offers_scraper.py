@@ -14,13 +14,29 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     WebDriverException,
 )
-from upload_image_in_bubble import upload_images_in_bubble
+from upload_image_in_bubble import send_images_to_bubble_images_api
 from webdriver_manager.chrome import ChromeDriverManager
 from sephora_urls import *
 
 
-# Function to handle the scraping process
 def scrape_sephora_website_offers(retry_count=0):
+    """
+    Scrapes promotional offers from the Sephora website and saves the data to a CSV file.
+
+    Parameters:
+    retry_count (int): The number of times to retry the scraping process in case of failure. Defaults to 0.
+
+    This function performs the following tasks:
+    1. Initializes a Selenium WebDriver instance with specified options.
+    2. Navigates to the Sephora website and handles potential popups.
+    3. Scrolls through the page to collect information about promotional offers.
+    4. Extracts data including event names, descriptions, images, and dates.
+    5. Cleans and processes the extracted data.
+    6. Saves the processed data to a CSV file.
+    7. Uploads images related to the offers to Bubble.
+
+    It handles various exceptions including timeouts and stale element references, and retries the scraping process if necessary.
+    """
     start_time = time.time()
     try:
         # Set up the Chrome WebDriver
@@ -103,8 +119,8 @@ def scrape_sephora_website_offers(retry_count=0):
                         print()
                         print("Data:", heading)
                         text_lines = card.text.split("\n")
-                        event_name = card.text.split('\n')[0]
-                        event_description = card.text.split('\n')[1]
+                        event_name = card.text.split("\n")[0]
+                        event_description = card.text.split("\n")[1]
                         if event_description in scraped_items:
                             continue
 
@@ -121,7 +137,6 @@ def scrape_sephora_website_offers(retry_count=0):
                         image_element = card.find_element(By.XPATH, ".//img")
                         image_url = image_element.get_attribute("src")
                         print("Image URL:", image_url)
-
 
                         end_date = ""
                         for line in text_lines:
@@ -210,9 +225,8 @@ def scrape_sephora_website_offers(retry_count=0):
                 paragraphs.append("\n" + row["Paragraph 3"])
             if pd.notna(row["Paragraph 5"]):
                 paragraphs.append("\n" + row["Paragraph 5"])
-            
-            return row["Event Description"] + "\n" + "\n".join(paragraphs)
 
+            return row["Event Description"] + "\n" + "\n".join(paragraphs)
 
         df["Event Description"] = df.apply(concatenate_paragraphs, axis=1)
         df = df.drop(columns=["Paragraph 2", "Paragraph 3", "Paragraph 5"])
@@ -235,16 +249,10 @@ def scrape_sephora_website_offers(retry_count=0):
         print(f"Scraping completed. Data saved to 'sephora_beauty_offers.csv'.")
         print(f"Total execution time: {total_time:.2f} seconds")
         driver.quit()
-        upload_images_in_bubble(csv_file)
-        
+        send_images_to_bubble_images_api(csv_file)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
     finally:
         driver.quit()
-        
-        
-
-
-

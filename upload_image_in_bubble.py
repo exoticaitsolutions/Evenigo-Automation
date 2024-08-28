@@ -1,52 +1,24 @@
-
 import os
-import requests
-import base64
-from PIL import Image
-from io import BytesIO
-from download_image import *
-from upload_data_in_bubble import *
+from bubble_api_integration import upload_images_to_bubble_events_images
+from upload_data_in_bubble import (
+    send_offers_from_csv_to_api,
+    csv_to_json,
+    check_file_downloaded,
+)
+import urllib.parse
+from utils import *
 
-# Define the download folder path
-DOWNLOAD_FOLDER = os.path.join(os.getcwd(), "downloads")
 
-# Check if the folder exists, and if not, create it
-if not os.path.exists(DOWNLOAD_FOLDER):
-    os.makedirs(DOWNLOAD_FOLDER)
-    print(f"Created directory: {DOWNLOAD_FOLDER}")
-    
-DOWNLOAD_FOLDER = os.path.join(os.getcwd(), "downloads")
+def send_images_to_bubble_images_api(csv_file_path):
+    """Read image URLs from a CSV file, download the images, and upload them to Bubble.io.
 
-def image_to_base64(image_path):
-    # Determine the image format
-    ext = os.path.splitext(image_path)[-1].lower()
-    # Open the image file
-    with Image.open(image_path) as img:
-        buffered = BytesIO()
-        img_format = img.format
-        
-        # Save the image in its original format to the buffer
-        img.save(buffered, format=img_format)
-        img_byte_array = buffered.getvalue()
-        # Encode the byte array to Base64
-        img_base64 = base64.b64encode(img_byte_array).decode('utf-8')
+    Args:
+        csv_file_path (str): The path to the CSV file containing image URLs and event details.
 
-        # Determine the MIME type based on the file extension
-        mime_type = ""
-        if ext in ['.jpeg', '.jpg']:
-            mime_type = "data:image/jpeg;base64,"
-        elif ext == '.png':
-            mime_type = "data:image/png;base64,"
-        else:
-            raise ValueError("Unsupported file type: " + ext)
-        
-        # Return the full Base64 string with the MIME type prefix
-        return mime_type + img_base64
-    
-def upload_images_in_bubble(csv_file_path):
-
-    # Call `read_and_process_csv` once to get the list of event IDs
-    event_ids = read_and_process_csv(csv_file_path)
+    Raises:
+        Exception: For errors during processing or image upload.
+    """
+    event_ids = send_offers_from_csv_to_api(csv_file_path)
 
     # Check if the result is a list and proceed if it's not empty
     if isinstance(event_ids, list) and event_ids:
@@ -57,8 +29,8 @@ def upload_images_in_bubble(csv_file_path):
 
         if isinstance(json_data, list):
             for i, filedata in enumerate(json_data):
-                eventname = filedata.get('Event Name')
-                imageurl = filedata.get('Image URL')
+                eventname = filedata.get("Event Name")
+                imageurl = filedata.get("Image URL")
 
                 # Get the corresponding event ID from the list
                 event_id = event_ids[i] if i < len(event_ids) else None
@@ -67,38 +39,22 @@ def upload_images_in_bubble(csv_file_path):
                     continue
 
                 filename = os.path.basename(urllib.parse.urlparse(imageurl).path)
-                
+
                 if not check_file_downloaded(DOWNLOAD_FOLDER, filename):
                     save_path = os.path.join(DOWNLOAD_FOLDER, filename)
-                    download_image(imageurl, save_path)
+                    save_images_from_csv_to_local_folder(imageurl, save_path)
 
-                event_results.append({
-                    "EventName": eventname,
-                    "eventid": event_id,
-                    "save_path": os.path.join(DOWNLOAD_FOLDER, filename),
-                })
-            
+                event_results.append(
+                    {
+                        "EventName": eventname,
+                        "eventid": event_id,
+                        "save_path": os.path.join(DOWNLOAD_FOLDER, filename),
+                    }
+                )
+
             # Upload the event images
-            Event_Image_upload(event_results)
+            upload_images_to_bubble_events_images(event_results)
         else:
             print("Error or unexpected format returned:", json_data)
     else:
         print("No valid event IDs retrieved or empty list.")
-
-
-def Event_Image_upload(dataarray):
-    HEADERS1 = {
-    "Authorization": "Bearer 076e0757baab9bbb07df672e8bc751eb",
-}
-    for multiple in dataarray:
-        eventid = multiple['eventid']
-        imgurl = multiple['save_path']
-        print('image : ', imgurl)
-        base64_image = image_to_base64(imgurl)
-        payload = {'Image':base64_image,'Original Event': eventid}
-        files=[
-        ]
-        response = requests.request("POST", BUBBLE_IMAGE_URL, headers=HEADERS1, data=payload, files=files)
-        print('response', response.text)
-    print("Image Uploaded Succesfully In Bubble.io")
-
