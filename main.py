@@ -9,7 +9,7 @@ from utils import *
 if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
     if os.path.exists(file_path):
         if is_file_older_than(file_path, time_threshold):
-            os.remove(file_path)
+            # os.remove(file_path)
             scrape_sephora_website_offers()
         else:
             send_images_to_bubble_images_api(file_path)

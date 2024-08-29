@@ -1,4 +1,5 @@
 import base64
+import re
 import time
 from PIL import Image
 from io import BytesIO
@@ -39,6 +40,9 @@ def get_file_path(file_name):
     return os.path.join(current_directory, file_name)
 
 
+from datetime import datetime
+
+
 def validate_and_format_date(date_str, default_date=None):
     """
     Validates and formats a date string to the required format.
@@ -48,21 +52,43 @@ def validate_and_format_date(date_str, default_date=None):
         default_date (datetime, optional): The default date to use if date_str is empty.
 
     Returns:
-        str: The formatted date string, or None if the format is invalid.
+        str: The formatted date string in mm/dd/yyyy, or None if the format is invalid.
     """
-    date_formats = ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y", "%d-%m-%Y"]
+    # Define date formats
+    date_formats = [
+        "%Y-%m-%d %H:%M:%S",  # e.g., 2024-08-29 14:30:00
+        "%Y-%m-%d",  # e.g., 2024-08-29
+        "%d/%m/%Y",  # e.g., 29/08/2024
+        "%m/%d/%Y",  # e.g., 08/29/2024
+        "%d-%m-%Y",  # e.g., 29-08-2024
+        "%d %b %Y",  # e.g., 29 Aug 2024
+        "%b %d %Y",  # e.g., Aug 29 2024
+        "%d %B %Y",  # e.g., 29 August 2024
+        "%B %d %Y",  # e.g., August 29 2024
+        "%m/%d/%Y",  # e.g., 08/29/2024 (added to match mm/dd/yyyy format)
+    ]
 
+    # Handle empty string and use default_date if provided
     if date_str.strip() == "" and default_date:
-        return default_date.strftime("%Y-%m-%dT%H:%M:%S")
+        return default_date.strftime("%m/%d/%Y")
 
+    # Attempt to parse and format the date string
     for date_format in date_formats:
         try:
             date_obj = datetime.strptime(date_str, date_format)
-            return date_obj.strftime("%Y-%m-%dT%H:%M:%S")
+            return date_obj.strftime("%m/%d/%Y")
         except ValueError:
             continue
 
+    # Return None if no valid date format is found
     return None
+
+
+special_characters = r"[¶•§§\^\*†‡‡â€¡â€¡稚熔容痴熔®â€™â€™]"
+
+
+def clean_description(description):
+    return re.sub(special_characters, "", description)
 
 
 def get_calendar_id(name):

@@ -114,10 +114,16 @@ def scrape_sephora_website_offers(retry_count=0):
                         "window.scrollBy(0, -document.body.scrollHeight * 0.5);"
                     )
                     time.sleep(5)
+
                     for card in card_elements:
+                        see_details = mem.find_element(By.CLASS_NAME, "css-1fcyqxo")
+                        print("-------------" * 8)
+                        print("see_details : ", see_details.text)
+                        print("-------------" * 8)
                         heading = card.text
                         print()
                         print("Data:", heading)
+
                         text_lines = card.text.split("\n")
                         event_name = card.text.split("\n")[0]
                         event_description = card.text.split("\n")[1]
@@ -165,6 +171,7 @@ def scrape_sephora_website_offers(retry_count=0):
                                 "Start Date": start_date,
                                 "End Date": end_date,
                                 "Paragraph 5": paragraph_5,
+                                "Url": "https://www.sephora.com/beauty/beauty-offers",
                             }
                         )
 
@@ -231,7 +238,7 @@ def scrape_sephora_website_offers(retry_count=0):
         df["Event Description"] = df.apply(concatenate_paragraphs, axis=1)
         df = df.drop(columns=["Paragraph 2", "Paragraph 3", "Paragraph 5"])
 
-        special_characters = r"[¶•§§\^\*†‡‡â€¡â€¡稚熔容痴熔]"
+        special_characters = r"[¶•§§\^\*†‡‡â€¡â€¡稚熔容痴熔®â€™â€™]"
         for col in df.columns:
             if col != "Image URL":
                 df[col] = df[col].apply(

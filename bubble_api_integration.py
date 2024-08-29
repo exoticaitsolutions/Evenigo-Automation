@@ -6,7 +6,6 @@ import requests
 from utils import image_to_base64
 
 
-# Function to send data to the API and return the ID
 def upload_events_to_bubble_events(data):
     """
     Sends the provided data to the Bubble.io API and returns the ID of the inserted event.

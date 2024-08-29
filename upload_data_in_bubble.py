@@ -1,6 +1,7 @@
 import os
 import csv
 from datetime import datetime
+import re
 from utils import *
 from bubble_api_integration import *
 from sephora_urls import *
@@ -76,7 +77,6 @@ def send_offers_from_csv_to_api(file_path):
             if event_name in existing_event_names:
                 print(f"Skipping row due to existing event: {event_name}")
                 continue
-
             data = {
                 "All Day": "yes",
                 "End Date/Time (Event)": end_date,
@@ -84,9 +84,10 @@ def send_offers_from_csv_to_api(file_path):
                 "Event Type": event_type,
                 "Event Name": event_name,
                 "Public/Private": row.get("Public/Private"),
-                "Short Description": row.get("Event Description"),
+                # "Short Description": row.get("Event Description"),
+                "Short Description": clean_description(row.get("Event Description")),
                 "Start Date/Time (Event)": start_date,
-                "URL": row.get("Image URL"),
+                "URL": row.get("Url"),
             }
 
             event_id = upload_events_to_bubble_events(data)
