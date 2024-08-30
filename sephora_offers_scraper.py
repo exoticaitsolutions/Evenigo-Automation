@@ -17,7 +17,9 @@ from selenium.common.exceptions import (
 from upload_image_in_bubble import send_images_to_bubble_images_api
 from webdriver_manager.chrome import ChromeDriverManager
 from sephora_urls import *
+from seleniumbase import Driver
 
+from selenium.webdriver.support import expected_conditions as EC
 
 def scrape_sephora_website_offers(retry_count=0):
     """
@@ -43,9 +45,8 @@ def scrape_sephora_website_offers(retry_count=0):
         chrome_options = Options()
         chrome_options.add_argument("--disable-notifications")
         chrome_options.add_argument("--start-maximized")
-        driver = webdriver.Chrome(
-            service=Service(ChromeDriverManager().install()), options=chrome_options
-        )
+        driver = Driver(uc=True, headless=False)
+
         driver.maximize_window()
 
         # Navigate to the desired webpage
@@ -106,6 +107,52 @@ def scrape_sephora_website_offers(retry_count=0):
 
                 try:
                     mem = all_feeds[0]
+                    card_elements_today_offers = mem.find_elements(By.XPATH, '//li[@class="css-1jz9muy eanm77i0"]')
+                    print("cards :", len(card_elements_today_offers))
+                    if card_elements_today_offers:
+                        for j in card_elements_today_offers:
+                            link_element = j.find_element(By.TAG_NAME, 'a')
+                            href_link = link_element.get_attribute('href')
+                            print("---------------------------------------"*8)
+                            print('card_elements_today_offers : ', j.text)
+                            print('href link: ', href_link)
+                            img_element = j.find_element(By.TAG_NAME, 'img')
+                            img_src = img_element.get_attribute('src')
+                            print('image src: ', img_src)
+                            text_lines = j.text.split("\n")
+                            event_name = j.text.split("\n")[0]
+                            event_description = j.text.split("\n")[1]
+                            # if event_description in scraped_items:
+                            #     continue
+
+                            paragraph_2 = text_lines[2] if len(text_lines) > 2 else ""
+                            paragraph_3 = text_lines[3] if len(text_lines) > 3 else ""
+                            paragraph_5 = text_lines[5] if len(text_lines) > 5 else ""
+
+                            print(f"Event Name: {event_name}")
+                            print(f"Event Description: {event_description}")
+                            print(f"Paragraph 2: {paragraph_2}")
+                            print(f"Paragraph 3: {paragraph_3}")
+                            print(f"Paragraph 5: {paragraph_5}")
+                            print("---------------------------------------"*8)
+                            data.append(
+                            {
+                                "Image URL": img_src,
+                                "Event Name": event_name,
+                                "Event Type": "Sale",
+                                "Event Description": event_description,
+                                "Calendar": "sephora Calendar",
+                                "All Day": "No",
+                                "Public/Private": "Public",
+                                "Reported Count": 0,
+                                "Paragraph 2": paragraph_2,
+                                "Paragraph 3": paragraph_3,
+                                "Start Date": start_date,
+                                "End Date": '',
+                                "Paragraph 5": paragraph_5,
+                                "Url": href_link,
+                            }
+                        )
                     card_elements = mem.find_elements(
                         By.XPATH, '//li[@class="css-6bi8ut eanm77i0"]'
                     )
@@ -116,10 +163,6 @@ def scrape_sephora_website_offers(retry_count=0):
                     time.sleep(5)
 
                     for card in card_elements:
-                        see_details = mem.find_element(By.CLASS_NAME, "css-1fcyqxo")
-                        print("-------------" * 8)
-                        print("see_details : ", see_details.text)
-                        print("-------------" * 8)
                         heading = card.text
                         print()
                         print("Data:", heading)

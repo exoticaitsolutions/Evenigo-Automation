@@ -44,6 +44,10 @@ pip install -r requirements.txt
 ```
 pip install selenium
 ```
+***Seleniumbase***
+```
+pip install seleniumbase
+```
 
 ***Webdriver Manager***
 ```
