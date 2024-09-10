@@ -1,0 +1,7 @@
+XBOX_GAMES_WEBSITE_URL = 'https://www.xbox.com/en-us/games/all-games?cat=upcoming#'
+PRIME_WEBSITE_URL = 'https://www.tvguide.com/news/new-on-amazon-prime-video/'
+NETFLIX_WEBSITE_URL = 'https://www.tvguide.com/news/new-on-netflix/'
+NEW_ON_MAX_HBO_WEBSITE_URL = 'https://www.tvguide.com/news/new-on-max-hbo/'
+NEW_ON_HULU_WEBSITE_URL = 'https://www.tvguide.com/news/new-on-hulu/'
+NINTENDO_WEBSITE_URL = 'https://www.nintendo.com/us/store/games/coming-soon/#sort=df&p=0'
+GAMERANT_WEBSITE_URL = 'https://gamerant.com/ps5-game-release-dates/'
