@@ -104,7 +104,7 @@ def scrape_netflix_content():
             except Exception as e:
                 print(f"An error occurred for XPath '{xpath}': {e}")
 
-        csv_file_path = 'extracted_events.csv'
+        csv_file_path = 'netflix_data.csv'
 
         # Define CSV headers
         headers = [

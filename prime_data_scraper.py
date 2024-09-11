@@ -54,7 +54,6 @@ def scrape_prime_content():
         
 
         first_imgs = img_elements[10:14]
-        print("length of images is",len(first_imgs))
         j = 1
         for i in range(6, 10): 
             description_element = driver.find_element(By.XPATH,f'//*[@id="c-pageArticleSingle-new-on-amazon-prime-video"]/div[1]/div[1]/div[2]/div/div/p[{i}]')
@@ -64,7 +63,6 @@ def scrape_prime_content():
                 event_name = main_heading_element.text
                 description_without_date = heading + description
                 img = first_imgs[j].get_attribute('src')
-                print("image link ", img)
                 data.append([
                     img,
                     event_name,
@@ -81,7 +79,6 @@ def scrape_prime_content():
 
         sec_imgs = img_elements[4:21]
         j = 1
-        print("length of images is",len(sec_imgs))
         for i in range(11, 27):
             second_ele = driver.find_element(By.XPATH, f"//*[@id='c-pageArticleSingle-new-on-amazon-prime-video']/div[1]/div[1]/div[2]/div/div/p[{i}]")
             text_content = second_ele.text
@@ -96,7 +93,6 @@ def scrape_prime_content():
             else:
                 end_date = "N/A"
             img = sec_imgs[j].get_attribute('src')
-            print("image link ", img)
             data.append([
                     img,
                     heading,

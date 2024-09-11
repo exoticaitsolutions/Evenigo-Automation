@@ -1,137 +1,113 @@
-import requests
-from bs4 import BeautifulSoup
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from seleniumbase import Driver
+from time import sleep
 import csv
 from website_urls import NEW_ON_MAX_HBO_WEBSITE_URL
 
+data = []
+events_name = []
+description_data = []
+start_date_data = []
 
-# Function to fetch and parse HTML content from the URL
-def get_soup(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        return BeautifulSoup(response.text, 'html.parser')
-    else:
-        print('Failed to retrieve the page')
-        return None
-
-
-# Function to extract content from the parsed HTML
-def extract_content(soup):
-    all_content = []
-    shortcode_content_div = soup.find('div', class_='c-ShortcodeContent')
-
-    if shortcode_content_div:
-        # Extract the first heading and image
-        current_heading = extract_first_heading(shortcode_content_div)
-        if current_heading:
-            all_content.append([current_heading, "", "", ""])
-
-        first_image = extract_first_image(shortcode_content_div)
-        if first_image:
-            all_content.append(["", "", "", first_image])
-
-        # Extract content until the third H2 tag
-        third_h2 = get_third_h2(shortcode_content_div)
-        siblings = get_siblings_before_third_h2(shortcode_content_div, third_h2)
-
-        for sibling in siblings:
-            heading, description, link, image = parse_sibling(sibling)
-            all_content.append([heading, description, link, image])
-
-    return all_content
-
-
-# Function to extract the first heading
-def extract_first_heading(container):
-    first_h2_strong = container.find('h2').strong if container.find('h2') else None
-    return first_h2_strong.get_text(strip=True) if first_h2_strong else None
-
-
-# Function to extract the first image
-def extract_first_image(container):
-    first_figure = container.find('figure')
-    if first_figure:
-        img_tag = first_figure.find('img')
-        if img_tag:
-            return img_tag['src']
-    return None
-
-
-# Function to retrieve the third H2 element
-def get_third_h2(container):
-    h2_elements = container.find_all('h2')
-    return h2_elements[2] if len(h2_elements) >= 3 else None
-
-
-# Function to collect all siblings before the third H2
-def get_siblings_before_third_h2(container, third_h2):
-    first_figure = container.find('figure')
-    siblings = []
-    skip_first_p = False
-    skip_first_ul = False
-
-    for sibling in first_figure.find_next_siblings():
-        if sibling.name == 'div' and 'c-commercePromo' in sibling.get('class', []):
-            skip_first_p = True
-            skip_first_ul = True
-            continue
-        if skip_first_p and sibling.name == 'p':
-            skip_first_p = False
-            continue
-        if skip_first_ul and sibling.name == 'ul':
-            skip_first_ul = False
-            continue
-        if sibling == third_h2:
-            break
-        siblings.append(sibling)
-
-    return siblings
-
-
-# Function to parse content from each sibling
-def parse_sibling(sibling):
-    heading = ""
-    description = ""
-    link = ""
-    image = ""
-    sibling_text = ""
-
-    if sibling.name in ['h2', 'h3', 'strong']:
-        heading = sibling.get_text(strip=True)
-    else:
-        for part in sibling.descendants:
-            if part.name == 'a' and part.get('href'):
-                link_text = part.get_text(strip=True)
-                link_href = part['href']
-                link += f"{link_text}({link_href})\n"
-            elif part.name == 'img' and part.get('src'):
-                image = part['src']
-            elif part.name in ['p', 'li', 'br']:
-                sibling_text += "\n"
-            elif part.name is None:
-                sibling_text += part.strip() + " "
-
-        description = sibling_text.strip()
-
-    return heading, description, link.strip(), image
-
-
-# Function to save the content to a CSV file
-def save_to_csv(content, filename):
-    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(['Heading', 'Description', 'Link', 'Image'])
-        for row in content:
-            writer.writerow([row[0], row[1], row[2], row[3]])
-    print(f"Content saved to {filename}")
-
-
-# Main function to run the scraper
 def scrape_max_hbo_content():
-    soup = get_soup(NEW_ON_MAX_HBO_WEBSITE_URL)
-    if soup:
-        content = extract_content(soup)
-        save_to_csv(content, 'max_hbo_website_data.csv')
+    options = Options()
+    options.add_argument("--disable-notifications")
+    options.add_argument("--start-maximized")
+    driver = Driver(uc=True, headless=False)
+    driver.get(NEW_ON_MAX_HBO_WEBSITE_URL)
+    sleep(5)
 
+    # Scroll down the page
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight * 0.6);")
+    sleep(3)  # Adjust the sleep time if necessary for your page to load content
+
+    # Scrape the main event name
+    event_name = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-max-hbo"]/div[1]/div[1]/div[2]/div/div/h2[1]/strong')
+    event_name_text = event_name.text
+    events_name.append(event_name_text)
+
+    # Scrape the main description
+    description = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-max-hbo"]/div[1]/div[1]/div[2]/div/div/p[5]/em')
+    description_text = description.text
+    description_data.append(description_text)
+
+    # Scrape the image URL
+    image_element = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-max-hbo"]/div[1]/div[1]/div[2]/div/div/figure/div/div/picture/img')
+    image_url = image_element.get_attribute('src')
+
+    # Scrape other event names and descriptions
+    event_names = driver.find_elements(By.TAG_NAME, 'h3')
+
+    for event in event_names[:3]:  # Limit to the first 3 events
+        full_event_name  = event.text
+        parts = full_event_name.split('(')
+        event_name_text = parts[0].strip()
+        date_info_text = parts[1].split(')')[0].strip() if len(parts) > 1 else ''
+        print(f"Full Event Name: {full_event_name}")
+        print(f"Event Name (before '('): {event_name_text}")
+        start_date = date_info_text
+        print("start_date : ", start_date)
+
+        # Find the next <p> tag after each event name to get the description
+        description_element = event.find_element(By.XPATH, 'following-sibling::p[1]')
+        description_text = description_element.text
+        print(f"Description: {description_text}")
+
+        # Append event name and description to respective lists
+        events_name.append(event_name_text)
+        description_data.append(description_text)
+        start_date_data.append(start_date)
+
+    for start_day in start_date_data:
+        print(start_day)
+
+    # Ensure we have an equal number of event names and descriptions
+    for i in range(len(events_name)):
+        data.append({
+            "Image URL": image_url,
+            "Event Name": events_name[i],
+            "Event Type": "Sale",
+            "Event Description": description_data[i],
+            "Calendar": "sephora Calendar",
+            "All Day": "No",
+            "Public/Private": "Public",
+            "Reported Count": 0,
+            "Start Date": start_day,
+            "End Date": 'end_date',
+        })
+
+
+    for i in range(11, 35): 
+        description_element = driver.find_element(By.XPATH,f'//*[@id="c-pageArticleSingle-new-on-max-hbo"]/div[1]/div[1]/div[2]/div/div/p[{i}]')
+        description = description_element.text
+        start_date = description.split("\n")[0]
+        desc = "\n".join(description.split("\n")[1:])
+        data.append({
+        "Image URL": '',
+        "Event Name": '',
+        "Event Type": "Sale",
+        "Event Description": desc,
+        "Calendar": "sephora Calendar",
+        "All Day": "No",
+        "Public/Private": "Public",
+        "Reported Count": 0,
+        "Start Date": start_date,
+        "End Date": 'end_date',
+    })
+    # Close the WebDriver
+    driver.quit()
+
+    # Write to CSV file
+    with open('max_hbo_data.csv', mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=[
+            "Image URL", "Event Name", "Event Type", "Event Description",
+            "Calendar", "All Day", "Public/Private", "Reported Count",
+            "Start Date", "End Date"
+        ])
+        writer.writeheader()
+        for row in data:
+            writer.writerow(row)
 
 # Run the scraper
 if __name__ == "__main__":
