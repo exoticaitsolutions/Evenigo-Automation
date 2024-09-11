@@ -1,9 +1,9 @@
-from sephora_urls import *
 from config import *
 import requests
 import json
 import requests
 from utils import image_to_base64
+from website_urls import BUBBLE_EVENT_URL
 
 
 def upload_events_to_bubble_events(data):
@@ -87,7 +87,7 @@ def upload_images_to_bubble_events_images(dataarray):
 
         # Prepare the request
         response = requests.post(
-            BUBBLE_IMAGE_URL, headers=UPLOAD_IMAGES_HEADERS, data=payload
+            BUBBLE_EVENT_URL, headers=UPLOAD_IMAGES_HEADERS, data=payload
         )
 
         # Check the response status code

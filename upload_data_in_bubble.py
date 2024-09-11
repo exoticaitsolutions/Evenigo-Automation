@@ -4,7 +4,7 @@ from datetime import datetime
 import re
 from utils import *
 from bubble_api_integration import *
-from sephora_urls import *
+from website_urls import *
 from config import *
 
 

@@ -9,7 +9,7 @@ import pandas as pd
 from datetime import datetime
 import requests
 from bubble_api_integration import *
-from sephora_urls import *
+from website_urls import *
 from config import *
 
 

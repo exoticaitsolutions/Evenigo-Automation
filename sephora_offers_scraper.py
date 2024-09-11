@@ -16,10 +16,11 @@ from selenium.common.exceptions import (
 )
 from upload_image_in_bubble import send_images_to_bubble_images_api
 from webdriver_manager.chrome import ChromeDriverManager
-from sephora_urls import *
+from website_urls import *
 from seleniumbase import Driver
 
 from selenium.webdriver.support import expected_conditions as EC
+from website_urls import SEPHORA_WEBSITE_URL
 
 def scrape_sephora_website_offers(retry_count=0):
     """

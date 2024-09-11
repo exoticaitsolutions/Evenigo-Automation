@@ -1,10 +1,17 @@
 # Project Name
-## Sephora Beauty Offers Scraper
+## Multi-Site Scraper
 
 ### Overview
-* This script is designed to automate the process of scraping promotional offers from Sephora's beauty offers webpage. It efficiently gathers key details such as event names, descriptions, images, and dates. The collected data is then saved into a CSV file, providing a structured format for further analysis, reporting, or reference.
+* This project is a multi-website scraper that automates the process of extracting data from various popular websites, such as Netflix, Hulu, Prime, Gamerant, and more. The scraper collects relevant content like game descriptions, streaming service details, and entertainment-related information, and stores the data into CSV files for further processing or analysis.
 
-Once the scraping process is completed, the script takes an additional step to upload the gathered data into Bubble.io, a no-code platform for building web applications. This integration ensures that the latest promotional offers from Sephora are readily available in your Bubble.io application, allowing for seamless updates and management.
+### Supported Websites
+* Netflix
+* Hulu
+* Prime
+* Gamerant
+* Nintendo
+* Xbox Games
+* HBO Max
 
 
 # Setup Instructions
