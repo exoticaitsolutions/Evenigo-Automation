@@ -46,3 +46,7 @@ def xbox_website_data_scraping():
 
         # Close the WebDriver
         driver.quit()
+
+# Run the scraper
+if __name__ == "__main__":
+    xbox_website_data_scraping()

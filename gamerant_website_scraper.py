@@ -1,21 +1,52 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+import time
+import logging
 from website_urls import GAMERANT_WEBSITE_URL
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
+# Create a requests session with retry mechanism
+def requests_retry_session(
+    retries=5,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    return session
 
 # Function to send a request and return a BeautifulSoup object
 def get_soup(url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
     try:
-        response = requests.get(url)
+        logging.info(f"Fetching URL: {url}")
+        response = requests_retry_session().get(url, headers=headers)
         response.raise_for_status()  # Check if the request was successful
         return BeautifulSoup(response.content, 'html.parser')
-    except Exception as e:
-        print(f"Error fetching {url}: {e}")
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error fetching {url}: {e}")
         return None
 
 # Function to extract data from individual event pages
 def scrape_event_page(event_url):
+    time.sleep(2)  # Add delay between requests to avoid rate-limiting
     soup = get_soup(event_url)
     if soup is None:
         return 'Error', 'Error', 'No Image URL Found'
@@ -37,7 +68,7 @@ def scrape_event_page(event_url):
         return event_title, event_content, event_image_url
     
     except Exception as e:
-        print(f"Error scraping event page {event_url}: {e}")
+        logging.error(f"Error scraping event page {event_url}: {e}")
         return 'Error', 'Error', 'No Image URL Found'
 
 # Function to extract events from the main page
@@ -87,7 +118,7 @@ def scrape_main_page(soup):
 def save_to_csv(data, filename='gamerant_website_data.csv'):
     df = pd.DataFrame(data)
     df.to_csv(filename, index=False)
-    print(f"The scraped data has been saved to '{filename}'.")
+    logging.info(f"The scraped data has been saved to '{filename}'.")
 
 # Main function to orchestrate the scraping
 def scrape_gamerant_events():
@@ -96,3 +127,6 @@ def scrape_gamerant_events():
         events_data = scrape_main_page(soup)
         save_to_csv(events_data)
 
+# Run the scraper
+if __name__ == "__main__":
+    scrape_gamerant_events()

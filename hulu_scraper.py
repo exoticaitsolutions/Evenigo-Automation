@@ -1,94 +1,96 @@
-import requests
-from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from datetime import datetime, timedelta
 import csv
+import re
+import time
+
 from website_urls import NEW_ON_HULU_WEBSITE_URL
 
+def parse_date(date_str):
+    day = re.search(r'\d{1,2}', date_str)
+    if day:
+        day = int(day.group())
+        date_str = f'2024-09-{day:02d}' 
+        return datetime.strptime(date_str, '%Y-%m-%d')
+    return None
 
-# Function to fetch and parse the HTML content from the URL
-def get_soup(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        return BeautifulSoup(response.text, 'html.parser')
-    else:
-        print('Failed to retrieve the page')
-        return None
+def format_description(desc):
+    date_pattern = r'(Sept\.\s\d{1,2})'
+    match = re.search(date_pattern, desc)
+    if match:
+        date_str = match.group(0)
+        return desc.replace(date_str, '').strip()
+    return desc
 
-
-# Function to extract the content from the webpage
-def extract_content(soup):
-    all_content = []
-    shortcode_content_div = soup.find('div', class_='c-ShortcodeContent')
-
-    if shortcode_content_div:
-        current_heading = ""
-
-        # Extract first heading and first image
-        first_h2_strong = shortcode_content_div.find('h2').strong if shortcode_content_div.find('h2') else None
-        if first_h2_strong:
-            current_heading = first_h2_strong.get_text(strip=True)
-            all_content.append([current_heading, "", "", ""])
-
-        first_figure = shortcode_content_div.find('figure')
-        if first_figure:
-            img_tag = first_figure.find('img')
-            if img_tag:
-                all_content.append(["", "", "", img_tag['src']])
-
-        last_h2 = shortcode_content_div.find_all('h2')[-1] if shortcode_content_div.find_all('h2') else None
-
-        # Loop through the siblings to extract headings, descriptions, links, and images
-        for sibling in first_figure.find_next_siblings():
-            if sibling == last_h2:
-                break
-
-            heading = ""
-            description = ""
-            link = ""
-            image = ""
-            sibling_text = ""
-
-            if sibling.name in ['h2', 'h3', 'strong']:
-                heading = sibling.get_text(strip=True)
-                all_content.append([heading, "", "", ""])
-                continue
-
-            # Extract text, links, and images from the sibling
-            for part in sibling.descendants:
-                if part.name == 'a' and part.get('href'):
-                    link_text = part.get_text(strip=True)
-                    link_href = part['href']
-                    link += f"{link_text}({link_href})\n"
-                elif part.name == 'img' and part.get('src'):
-                    image = part['src']
-                elif part.name in ['p', 'li', 'br']:
-                    sibling_text += "\n"
-                elif part.name is None:
-                    sibling_text += part.strip() + " "
-
-            description = sibling_text.strip()
-            all_content.append([heading, description.strip(), link.strip(), image])
-
-    return all_content
-
-
-# Function to save the extracted content to a CSV file
-def save_to_csv(content, filename):
-    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(['Heading', 'Description', 'Link', 'Image'])
-        for row in content:
-            writer.writerow([row[0], row[1], row[2], row[3]])
-    print(f"Content saved to {filename}")
-
-
-# Main function to run the scraper
 def scrape_hulu_content():
-    soup = get_soup(NEW_ON_HULU_WEBSITE_URL)
-    if soup:
-        content = extract_content(soup)
-        save_to_csv(content, 'hulu_website_data.csv')
+    options = Options()
+    options.add_argument("--disable-notifications")
+    options.add_argument("--start-maximized")
+    driver = webdriver.Chrome(service=Service(), options=options)
+    driver.get(NEW_ON_HULU_WEBSITE_URL)
 
+    data = []
+    heading = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/h2[1]/strong').text
 
-# Run the scraper
-if __name__ == "__main__":
-    scrape_hulu_content()
+    try:
+        time.sleep(3)
+
+        firsts = driver.find_elements(By.XPATH, '//h3//strong')
+        titles1 = driver.find_elements(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/p')
+        image_element = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/figure/div/div/picture/img')
+        image_src = image_element.get_attribute('src')
+        if len(firsts) >= 5 and len(titles1) >= 10:
+            titles = titles1[5:10]
+            for first, title in zip(firsts, titles):
+                data.append([heading, first.text + ": " + title.text])
+        
+        if len(titles1) >= 38:
+            seconds1 = driver.find_elements(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/p')
+            seconds = seconds1[13:38]
+            titles = titles1[12:38]
+            i = 13
+            for second in seconds:
+                d = []
+                if i < len(titles):
+                    title = titles[i - 13].text 
+                    d.append(title)
+                data.append([heading, second.text + ": " + " ".join(d)])
+                i += 1
+
+        processed_data = []
+        for heading, description in data:
+            dates = re.findall(r'Sept\.\s\d{1,2}', description)
+            if dates:
+                for date_str in dates:
+                    start_date = parse_date(date_str)
+                    if start_date:
+                        end_date = start_date + timedelta(days=1)
+                        description_without_date = format_description(description)
+                        processed_data.append([
+                            image_src,
+                            heading,
+                            description_without_date,
+                            'Calendar',
+                            'All Day',
+                            'Public',
+                            '0',
+                            start_date.strftime('%Y-%m-%d'),
+                            end_date.strftime('%Y-%m-%d')
+                        ])
+                        print(f"Processed: {heading} | {start_date} | {end_date} | {description_without_date[:100]}...") 
+                    else:
+                        print(f"Failed to parse date: {date_str}")
+
+        with open('hulu_data.csv', 'w', newline='', encoding='utf-8') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(['Image URL','Event Name', 'Event Description','Calendar','All Day','Public/Private','Reported Count', 'Start_Date', 'End_Date'])
+            csvwriter.writerows(processed_data)
+
+    except Exception as e:
+        print("--------- EXCEPTION ----------------------", str(e))
+
+    finally:
+        driver.quit()

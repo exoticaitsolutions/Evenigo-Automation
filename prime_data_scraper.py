@@ -1,107 +1,123 @@
-import requests
-from bs4 import BeautifulSoup
-import csv
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from seleniumbase import Driver
+from time import sleep
+from datetime import datetime, timedelta
+import re, csv
 from website_urls import PRIME_WEBSITE_URL
 
 
-# Function to fetch and parse the webpage
-def get_soup(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        return BeautifulSoup(response.text, 'html.parser')
-    else:
-        print('Failed to retrieve the page')
-        return None
+options = Options()
+options.add_argument("--disable-notifications")
+options.add_argument("--start-maximized")
+driver = Driver(uc=True, headless=False)
+driver.get(PRIME_WEBSITE_URL)
+sleep(5)
+data = []
+img_elements = []
 
+def parse_date(date_str):
+    day = re.search(r'\d{1,2}', date_str)
+    if day:
+        day = int(day.group())
+        date_str = f'2024-09-{day:02d}' 
+        return datetime.strptime(date_str, '%Y-%m-%d')
+    return None
 
-# Function to extract content from the shortcode content div
-def extract_content_from_div(soup):
-    all_content = []
-    shortcode_content_div = soup.find('div', class_='c-ShortcodeContent')
-
-    if shortcode_content_div:
-        siblings = list(shortcode_content_div.children)
-        all_content = process_siblings(siblings)
-
-    return all_content
-
-
-# Function to process sibling elements and extract relevant content
-def process_siblings(siblings):
-    all_content = []
-    first_h2_found = False
-    skip_count = 0
-    skip_after_last_h2 = False
-
-    for sibling in siblings:
-        if not first_h2_found:
-            if sibling.name == 'h2':
-                first_h2_found = True
-                first_h2_text = sibling.get_text(strip=True)
-                all_content.append([first_h2_text, "", "", ""])
-                continue
-
-        if first_h2_found:
-            if sibling.name == 'h2':
-                all_content.append([sibling.get_text(strip=True), "", "", ""])
-                skip_after_last_h2 = True
-                continue
-
-            if skip_after_last_h2:
-                if skip_count < 3:
-                    skip_count += 1
-                    continue
-
-            heading, description, link, image = parse_sibling(sibling)
-            all_content.append([heading, description, link, image])
-
-    return all_content
-
-
-# Function to parse content from each sibling element
-def parse_sibling(sibling):
-    heading = ""
-    description = ""
-    link = ""
-    image = ""
-    sibling_text = ""
-
-    if sibling.name in ['h2', 'h3', 'strong']:
-        heading = sibling.get_text(strip=True)
-    else:
-        for part in sibling.descendants:
-            if part.name == 'a' and part.get('href'):
-                link_text = part.get_text(strip=True)
-                link_href = part['href']
-                link += f"{link_text}({link_href})\n"
-            elif part.name == 'img' and part.get('src'):
-                image = part['src']
-            elif part.name in ['p', 'li', 'br']:
-                sibling_text += "\n"
-            elif part.name is None:
-                sibling_text += part.strip() + " "
-
-        description = sibling_text.strip()
-
-    return heading, description.strip(), link.strip(), image
-
-
-# Function to save the content to a CSV file
-def save_to_csv(content, filename):
-    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(['Heading', 'Description', 'Link', 'Image'])
-        for row in content:
-            writer.writerow([row[0], row[1], row[2], row[3]])
-    print(f"Content saved to {filename}")
-
-
-# Main function to scrape Prime website content
 def scrape_prime_content():
-    soup = get_soup(PRIME_WEBSITE_URL)
-    if soup:
-        content = extract_content_from_div(soup)
-        save_to_csv(content, 'prime_data.csv')
+    try:
+        main_heading_xpath = f'//*[@id="c-pageArticleSingle-new-on-amazon-prime-video"]/div[1]/div[1]/div[1]/h1'
+        main_heading_element = driver.find_element(By.XPATH, main_heading_xpath)
+        headings = []
+        driver.execute_script(f"window.scrollBy(0, document.body.scrollHeight * 0.6);")
+        sleep(2)
+        img_elements = driver.find_elements(By.XPATH, '//*[@class = "c-cmsImage"]//img')
+        for img_ele in img_elements[10:21]:
+            img = img_ele.get_attribute('src')
+            print("image link ", img)
+        for i in range(1, 4):
+            heading_xpath = f'//*[@id="c-pageArticleSingle-new-on-amazon-prime-video"]/div[1]/div[1]/div[2]/div/div/h3[{i}]/strong'
+            heading_element = driver.find_element(By.XPATH, heading_xpath)
+            
+            full_text = heading_element.text
+            if "(" in full_text and ")" in full_text:
+                heading, start_date = full_text.split("(")
+                
+                date_str = start_date.replace(")", "").strip() 
+                start_date = parse_date(date_str)
+                end_date = start_date + timedelta(days=1)
+            else:
+                heading = full_text
+                start_date = "N/A"
+                end_date = "N/AA"
+            headings.append((heading.strip(), start_date, end_date))
+        
+
+        first_imgs = img_elements[10:14]
+        print("length of images is",len(first_imgs))
+        j = 1
+        for i in range(6, 10): 
+            description_element = driver.find_element(By.XPATH,f'//*[@id="c-pageArticleSingle-new-on-amazon-prime-video"]/div[1]/div[1]/div[2]/div/div/p[{i}]')
+            description = description_element.text
+            if i - 6 < len(headings):
+                heading, start_date, end_date = headings[i - 6]
+                event_name = main_heading_element.text
+                description_without_date = heading + description
+                img = first_imgs[j].get_attribute('src')
+                print("image link ", img)
+                data.append([
+                    img,
+                    event_name,
+                    description_without_date,
+                    'Calendar',
+                    'All Day',
+                    'Public',
+                    '0',
+                    start_date,
+                    end_date
+                ])
+                j+=1
+                
+
+        sec_imgs = img_elements[4:21]
+        j = 1
+        print("length of images is",len(sec_imgs))
+        for i in range(11, 27):
+            second_ele = driver.find_element(By.XPATH, f"//*[@id='c-pageArticleSingle-new-on-amazon-prime-video']/div[1]/div[1]/div[2]/div/div/p[{i}]")
+            text_content = second_ele.text
+            split_text = text_content.split('\n', 1)
+
+            start_date_str = split_text[0].strip()
+            description = split_text[1].strip() if len(split_text) > 1 else "No description available"
+
+            start_date = parse_date(start_date_str)
+            if start_date:
+                end_date = start_date + timedelta(days=1)
+            else:
+                end_date = "N/A"
+            img = sec_imgs[j].get_attribute('src')
+            print("image link ", img)
+            data.append([
+                    img,
+                    heading,
+                    description,
+                    'Calendar',
+                    'All Day',
+                    'Public',
+                    '0',
+                    start_date,
+                    end_date
+                ])
+            j+=1
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    with open('Amazon_prime_site.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        csvwriter = csv.writer(csvfile)
+        csvwriter.writerow(['Image URL','Event Name', 'Event Description','Calendar','All Day','Public/Private','Reported Count', 'Start_Date', 'End_Date'])
+        csvwriter.writerows(data)
+    driver.quit()
 
 
 # Run the scraper

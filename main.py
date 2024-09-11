@@ -11,8 +11,8 @@ from xbox_games_scraper import xbox_website_data_scraping
 if WEBSITES.get("SCRAP_HULU_WEBSITE"):
     scrape_hulu_content()
 
-if WEBSITES.get("MAX_HBO_WEBSITE"):
-    scrape_max_hbo_content()
+# if WEBSITES.get("MAX_HBO_WEBSITE"):
+#     scrape_max_hbo_content()
 
 if WEBSITES.get("NETFLIX_WEBSITE"):
     scrape_netflix_content()
