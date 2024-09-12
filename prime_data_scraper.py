@@ -1,3 +1,4 @@
+import os
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from seleniumbase import Driver
@@ -42,15 +43,14 @@ def scrape_prime_content():
             full_text = heading_element.text
             if "(" in full_text and ")" in full_text:
                 heading, start_date = full_text.split("(")
-                
                 date_str = start_date.replace(")", "").strip() 
                 start_date = parse_date(date_str)
-                end_date = start_date + timedelta(days=1)
+                end_date = start_date + timedelta(days=1) if start_date else "N/A"
             else:
                 heading = full_text
                 start_date = "N/A"
-                end_date = "N/AA"
-            headings.append((heading.strip(), start_date, end_date))
+                end_date = "N/A"
+            headings.append((heading, start_date, end_date))
         
 
         first_imgs = img_elements[10:14]
@@ -63,19 +63,23 @@ def scrape_prime_content():
                 event_name = main_heading_element.text
                 description_without_date = heading + description
                 img = first_imgs[j].get_attribute('src')
+                start_date = start_date.strftime('%Y-%m-%d') if start_date != "N/A" else "N/A"
+                end_date = end_date.strftime('%Y-%m-%d') if end_date != "N/A" else "N/A"
                 data.append([
-                    img,
-                    event_name,
-                    description_without_date,
-                    'Calendar',
-                    'All Day',
+                    heading,
+                    'Sale',
+                    description,
+                    'sephora Calendar',
+                    'No',
                     'Public',
                     '0',
                     start_date,
-                    end_date
+                    end_date,
+                    '',
+                    PRIME_WEBSITE_URL,
+                    img
                 ])
-                j+=1
-                
+                j += 1
 
         sec_imgs = img_elements[4:21]
         j = 1
@@ -90,32 +94,40 @@ def scrape_prime_content():
             start_date = parse_date(start_date_str)
             if start_date:
                 end_date = start_date + timedelta(days=1)
+                start_date = start_date.strftime('%Y-%m-%d')
+                end_date = end_date.strftime('%Y-%m-%d')
             else:
+                start_date = "N/A"
                 end_date = "N/A"
+
             img = sec_imgs[j].get_attribute('src')
-            data.append([
-                    img,
-                    heading,
-                    description,
-                    'Calendar',
-                    'All Day',
-                    'Public',
-                    '0',
-                    start_date,
-                    end_date
-                ])
-            j+=1
+            data.append( [
+                '',
+                'Sale',
+                description,
+                'sephora Calendar',
+                'No',
+                'Public',
+                '0',
+                start_date,
+                end_date,
+                '',
+                PRIME_WEBSITE_URL,
+                img
+            ])
+            j += 1
 
     except Exception as e:
         print(f"An error occurred: {e}")
+    folder_path = 'csv_output'
+    os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
+    csv_file_path = os.path.join(folder_path, 'Amazon_prime_site.csv')
 
-    with open('Amazon_prime_site.csv', 'w', newline='', encoding='utf-8') as csvfile:
+    with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
         csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(['Image URL','Event Name', 'Event Description','Calendar','All Day','Public/Private','Reported Count', 'Start_Date', 'End_Date'])
+        csvwriter.writerow(['Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day','Public/private', "Reported Count", 'Start Date', 'End Date', 'Created By', 'URL', 'Image URL'])
         csvwriter.writerows(data)
     driver.quit()
 
-
-# Run the scraper
 if __name__ == "__main__":
     scrape_prime_content()

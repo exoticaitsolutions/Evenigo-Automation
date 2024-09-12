@@ -13,6 +13,15 @@ from nintendo_website_scraper import *
 from prime_data_scraper import *
 from xbox_games_scraper import xbox_website_data_scraping
 
+if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
+    if os.path.exists(file_path):
+        if is_file_older_than(file_path, time_threshold):
+            # os.remove(file_path)
+            scrape_sephora_website_offers()
+        else:
+            send_images_to_bubble_images_api(file_path)
+    else:
+        scrape_sephora_website_offers()
 
 if WEBSITES.get("SCRAP_HULU_WEBSITE"):
     scrape_hulu_content()
@@ -35,15 +44,6 @@ if WEBSITES.get("XBOX_GAMES_WEBSITE"):
 if WEBSITES.get("SCRAPE_GAMERANT_WEBSITE"):
     scrape_gamerant_events()
 
-if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
-    if os.path.exists(file_path):
-        if is_file_older_than(file_path, time_threshold):
-            # os.remove(file_path)
-            scrape_sephora_website_offers()
-        else:
-            send_images_to_bubble_images_api(file_path)
-    else:
-        scrape_sephora_website_offers()
 else:
     print("No scraping performed. SCRAPE_SEPHORA_WEBSITE_OFFERS is set to False.")
 

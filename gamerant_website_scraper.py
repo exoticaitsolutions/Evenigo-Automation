@@ -1,3 +1,5 @@
+import os
+from datetime import datetime, timedelta
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -88,7 +90,29 @@ def scrape_main_page(soup):
                 li_elements = sibling.find_all('li')
                 for li in li_elements:
                     # Extract event date
-                    event_date = li.find('strong').get_text(strip=True) if li.find('strong') else 'No date found'
+                    start_date = li.find('strong').get_text(strip=True) if li.find('strong') else 'No date found'
+
+                    if start_date != 'No date found':
+                        try:
+                            # Try to parse date in the format 'Month Day' (e.g., 'September 3')
+                            start_date_obj = datetime.strptime(start_date, '%B %d')
+                            
+                            # Add the current year if the year is missing in the date string
+                            start_date_obj = start_date_obj.replace(year=datetime.now().year)
+                            
+                            # Add 7 days to start_date
+                            end_date_obj = start_date_obj + timedelta(days=7)
+                            
+                            # Convert end_date back to string in the desired format
+                            end_date_str = end_date_obj.strftime('%d-%m-%Y')
+                        except ValueError:
+                            print(f"Failed to parse date: {start_date}")
+                            start_date_obj = None
+                            end_date_str = ''
+                    else:
+                        print("No start date found")
+                        start_date = ''
+                        end_date_str = ''
 
                     # Extract event description
                     event_description = li.find('em').get_text(strip=True) if li.find('em') else 'No description found'
@@ -104,21 +128,36 @@ def scrape_main_page(soup):
 
                     # Append the data
                     events_data.append({
-                        'Event Date': event_date,
-                        'Event Title': event_description,
-                        'Event URL': event_url,
-                        'Event Page Title': event_title,
-                        'Event Page Image URL': event_image_url,
-                        'Event Page Content': event_content,
-                        'Created By': 'test@gmail.com'
+                        'Event Name': event_description,
+                        "Event Type": "Sale",
+                        'Event Description': event_content,
+                        "Calendar": "sephora Calendar",
+                        "All Day": "No",
+                        "Public/Private": "Public",
+                        "Reported Count": 0,
+                        'Start Date': start_date,
+                        "End Date": end_date_str,
+                        'Image URL': event_image_url,
+                        'Created By': '',
+                        'URL': event_url,
                     })
     return events_data
 
-# Function to save events data to CSV
+# Function to save events data to CSV in the 'csv_output' folder
 def save_to_csv(data, filename='gamerant_website_data.csv'):
+    # Define the output folder
+    output_folder = 'csv_output'
+
+    # Create the folder if it doesn't exist
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    # Save the CSV file inside the 'csv_output' folder
+    file_path = os.path.join(output_folder, filename)
+    
     df = pd.DataFrame(data)
-    df.to_csv(filename, index=False)
-    logging.info(f"The scraped data has been saved to '{filename}'.")
+    df.to_csv(file_path, index=False)
+    logging.info(f"The scraped data has been saved to '{file_path}'.")
 
 # Main function to orchestrate the scraping
 def scrape_gamerant_events():

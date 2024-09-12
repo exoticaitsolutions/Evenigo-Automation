@@ -1,3 +1,4 @@
+import os
 import re
 import time
 import pandas as pd
@@ -114,17 +115,12 @@ def scrape_sephora_website_offers(retry_count=0):
                         for j in card_elements_today_offers:
                             link_element = j.find_element(By.TAG_NAME, 'a')
                             href_link = link_element.get_attribute('href')
-                            print("---------------------------------------"*8)
-                            print('card_elements_today_offers : ', j.text)
-                            print('href link: ', href_link)
                             img_element = j.find_element(By.TAG_NAME, 'img')
                             img_src = img_element.get_attribute('src')
                             print('image src: ', img_src)
                             text_lines = j.text.split("\n")
                             event_name = j.text.split("\n")[0]
                             event_description = j.text.split("\n")[1]
-                            # if event_description in scraped_items:
-                            #     continue
 
                             paragraph_2 = text_lines[2] if len(text_lines) > 2 else ""
                             paragraph_3 = text_lines[3] if len(text_lines) > 3 else ""
@@ -135,7 +131,6 @@ def scrape_sephora_website_offers(retry_count=0):
                             print(f"Paragraph 2: {paragraph_2}")
                             print(f"Paragraph 3: {paragraph_3}")
                             print(f"Paragraph 5: {paragraph_5}")
-                            print("---------------------------------------"*8)
                             data.append(
                             {
                                 "Image URL": img_src,
@@ -152,6 +147,7 @@ def scrape_sephora_website_offers(retry_count=0):
                                 "End Date": '',
                                 "Paragraph 5": paragraph_5,
                                 "Url": href_link,
+                                "Created By":''
                             }
                         )
                     card_elements = mem.find_elements(
@@ -290,8 +286,9 @@ def scrape_sephora_website_offers(retry_count=0):
                         re.sub(special_characters, "", str(x)) if pd.notna(x) else x
                     )
                 )
-
-        csv_file = "sephora_beauty_offers.csv"
+        output_folder = 'csv_output'
+        os.makedirs(output_folder, exist_ok=True)
+        csv_file = os.path.join(output_folder, "sephora_offers.csv")
         df.to_csv(csv_file, index=False)
 
         print(f"CSV file created: {csv_file}")
@@ -307,3 +304,7 @@ def scrape_sephora_website_offers(retry_count=0):
 
     finally:
         driver.quit()
+
+
+if __name__ == "__main__":
+    scrape_sephora_website_offers()

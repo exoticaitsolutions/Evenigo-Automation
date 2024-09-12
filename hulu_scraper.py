@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import csv
 import re
 import time
+import os
 
 from website_urls import NEW_ON_HULU_WEBSITE_URL
 
@@ -73,19 +74,29 @@ def scrape_hulu_content():
                             image_src,
                             heading,
                             description_without_date,
-                            'Calendar',
-                            'All Day',
+                            'sephora Calendar',
+                            'No',
                             'Public',
                             '0',
                             start_date.strftime('%Y-%m-%d'),
-                            end_date.strftime('%Y-%m-%d')
+                            end_date.strftime('%Y-%m-%d'),
+                            NEW_ON_HULU_WEBSITE_URL,
+                            '',
+                            'Sale'
                         ])
                     else:
                         print(f"Failed to parse date: {date_str}")
 
-        with open('hulu_data.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        # Create folder if it doesn't exist
+        folder_path = 'csv_output'
+        os.makedirs(folder_path, exist_ok=True)
+        
+        # Define the path for the CSV file
+        csv_file_path = os.path.join(folder_path, 'hulu_data.csv')
+
+        with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
             csvwriter = csv.writer(csvfile)
-            csvwriter.writerow(['Image URL','Event Name', 'Event Description','Calendar','All Day','Public/Private','Reported Count', 'Start_Date', 'End_Date'])
+            csvwriter.writerow(['Image URL', 'Event Name', 'Event Description', 'Calendar', 'All Day', 'Public/Private', 'Reported Count', 'Start_Date', 'End_Date', 'URL', 'Created By', 'Event Type'])
             csvwriter.writerows(processed_data)
 
     except Exception as e:
@@ -93,3 +104,6 @@ def scrape_hulu_content():
 
     finally:
         driver.quit()
+
+if __name__ == "__main__":
+    scrape_hulu_content()
