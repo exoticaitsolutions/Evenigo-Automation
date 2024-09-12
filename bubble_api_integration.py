@@ -3,7 +3,7 @@ import requests
 import json
 import requests
 from utils import image_to_base64
-from website_urls import BUBBLE_EVENT_URL
+from website_urls import BUBBLE_CALENDAR_URL, BUBBLE_EVENT_URL
 
 
 def upload_events_to_bubble_events(data):

@@ -8,15 +8,6 @@ import re, csv
 from website_urls import PRIME_WEBSITE_URL
 
 
-options = Options()
-options.add_argument("--disable-notifications")
-options.add_argument("--start-maximized")
-driver = Driver(uc=True, headless=False)
-driver.get(PRIME_WEBSITE_URL)
-sleep(5)
-data = []
-img_elements = []
-
 def parse_date(date_str):
     day = re.search(r'\d{1,2}', date_str)
     if day:
@@ -26,6 +17,14 @@ def parse_date(date_str):
     return None
 
 def scrape_prime_content():
+    options = Options()
+    options.add_argument("--disable-notifications")
+    options.add_argument("--start-maximized")
+    driver = Driver(uc=True, headless=False)
+    driver.get(PRIME_WEBSITE_URL)
+    sleep(5)
+    data = []
+    img_elements = []
     try:
         main_heading_xpath = f'//*[@id="c-pageArticleSingle-new-on-amazon-prime-video"]/div[1]/div[1]/div[1]/h1'
         main_heading_element = driver.find_element(By.XPATH, main_heading_xpath)
@@ -35,7 +34,6 @@ def scrape_prime_content():
         img_elements = driver.find_elements(By.XPATH, '//*[@class = "c-cmsImage"]//img')
         for img_ele in img_elements[10:21]:
             img = img_ele.get_attribute('src')
-            print("image link ", img)
         for i in range(1, 4):
             heading_xpath = f'//*[@id="c-pageArticleSingle-new-on-amazon-prime-video"]/div[1]/div[1]/div[2]/div/div/h3[{i}]/strong'
             heading_element = driver.find_element(By.XPATH, heading_xpath)

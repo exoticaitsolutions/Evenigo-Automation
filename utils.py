@@ -1,3 +1,4 @@
+from datetime import datetime
 import base64
 import re
 import time
@@ -38,9 +39,6 @@ def get_file_path(file_name):
     """
     current_directory = os.getcwd()
     return os.path.join(current_directory, file_name)
-
-
-from datetime import datetime
 
 
 def validate_and_format_date(date_str, default_date=None):

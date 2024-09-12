@@ -150,10 +150,6 @@ def scrape_max_hbo_content():
                 end_date = start_date + timedelta(days=7)
                 end_date_str = end_date.strftime("%d-%m-%Y")
                 
-                # Print dates for debugging
-                print("Formatted Date start --- : ", start_date_str)
-                print("End Date --- : ", end_date_str)
-                
                 # Prepare data for appending
                 desc = "\n".join(description.split("\n")[1:])
                 data.append({

@@ -1,3 +1,4 @@
+import os
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from seleniumbase import Driver
@@ -35,7 +36,10 @@ def xbox_website_data_scraping():
                 img_link = img.get_attribute('src')
                 data.append([link, desc, price,img_link])
                 i+=1
-            with open('xbox_games_data.csv', mode='w', newline='', encoding='utf-8') as file:
+            folder_path = 'csv_output'
+            os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
+            csv_file_path = os.path.join(folder_path, 'xbox_games_data.csv')
+            with open(csv_file_path, mode='w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file)
                 writer.writerow(['Link', 'Description', 'Price','Image link'])  # Header row
                 writer.writerows(data)

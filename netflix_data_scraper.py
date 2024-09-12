@@ -89,10 +89,7 @@ def scrape_netflix_content():
 
                         End_date = get_next_date(converted_date)
 
-                        print(f"End Date print: {End_date}")
-
                         description = re.sub(date_pattern, '', combined_text).strip()
-                        print(f"Date: {converted_date}")
                         # print(f"Description: {description}")
                     else:
                         print("No date found in the description.")
