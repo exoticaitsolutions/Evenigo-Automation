@@ -7,8 +7,7 @@ from datetime import datetime, timedelta
 import csv
 import re
 import time
-
-from website_urls import NEW_ON_HULU_WEBSITE_URL
+from urls import NEW_ON_HULU_WEBSITE_URL
 
 
 def convert_date(date_str, year=None):
@@ -46,10 +45,14 @@ def scrape_hulu_content():
     try:
         time.sleep(3)
         firsts = driver.find_elements(By.XPATH, '//h3//strong')
+        heading1 = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/h2[1]/strong').text
+        print("heading1 : ", heading1)
+        description = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/figure/figcaption/span[1]/p').text
         titles1 = driver.find_elements(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/p')
         image_element = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/figure/div/div/picture/img')
         image_src = image_element.get_attribute('src')
         titles = titles1[5:10]
+        data.append([image_src, heading1, description, 'hulu Calendar', 'No', 'Public', ' 0', '', '', NEW_ON_HULU_WEBSITE_URL, '', 'Event'])
         for first, title in zip(firsts, titles):
             match = re.search(r'^(.*?)\s*\(([^)]+)\)$', first.text)
             heading = match.group(1).strip()
@@ -57,7 +60,7 @@ def scrape_hulu_content():
             current_year = datetime.now().year % 100  
             converted_date = convert_date(date, year=current_year)
             End_date = get_next_date(converted_date)
-            data.append([image_src, heading, title.text, 'hulu Calendar', 'No', 'Public', ' 0', converted_date, End_date, NEW_ON_HULU_WEBSITE_URL, '', 'Event'])
+            data.append(['', heading, title.text, 'hulu Calendar', 'No', 'Public', ' 0', converted_date, End_date, NEW_ON_HULU_WEBSITE_URL, '', 'Event'])
         
         seconds1 = driver.find_elements(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/p/strong')
         seconds = seconds1[10:35]
@@ -71,7 +74,7 @@ def scrape_hulu_content():
             current_year = datetime.now().year % 100 
             converted_date = convert_date(date, year=current_year)
             End_date = get_next_date(converted_date)
-            data.append([image_src, '', desc, 'hulu Calendar', 'No', 'Public', '0', converted_date, End_date, NEW_ON_HULU_WEBSITE_URL, '', 'Event'])
+            data.append(['', desc, '', 'hulu Calendar', 'No', 'Public', '0', converted_date, End_date, NEW_ON_HULU_WEBSITE_URL, '', 'Event'])
 
     except Exception as e:
         print("--------- EXCEPTION ----------------------", str(e))
@@ -85,6 +88,7 @@ def scrape_hulu_content():
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(['Image URL','Event Name', 'Event Description', 'Calendar', 'All Day', 'Public/Private', 'Reported Count', 'Start_Date', 'End_Date', 'URL', 'Created By', 'Event Type'])
             csvwriter.writerows(data)
+        print(f"Data has been written to {csv_file_path}")
 
 # Run the scraper
 if __name__ == "__main__":

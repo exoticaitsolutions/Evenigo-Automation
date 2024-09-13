@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from seleniumbase import Driver
 from time import sleep
 import csv, re
-from website_urls import XBOX_GAMES_WEBSITE_URL
+from urls import XBOX_GAMES_WEBSITE_URL
 
 def xbox_website_data_scraping():
         options = Options()
@@ -30,13 +30,12 @@ def xbox_website_data_scraping():
             for card in cards:
                 link = card.get_attribute('href')
                 desc = card.text
-                print("desc : ", desc)
                 match = price_pattern.search(desc)
                 price = match.group(0) if match else 'N/A'
                 img = card.find_element(By.XPATH, '//*[@class = "containerIMG"]//img')
                 img_link = img.get_attribute('src')
                 # data.append([link, desc, price,img_link])
-                data.append([desc, 'Event', '', 'XBOX Calander', 'No', 'Public', '0', '', '', link, img_link, ''])
+                data.append([desc, 'Event', '', 'Xbox Calander', 'No', 'Public', '0', '', '', link, img_link, ''])
                 i+=1
             folder_path = 'csv_output'
             os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist

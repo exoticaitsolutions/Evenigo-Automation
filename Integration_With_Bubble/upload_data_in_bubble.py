@@ -4,7 +4,7 @@ from datetime import datetime
 import re
 from SiteUtilsConfig.utils import clean_description, fetch_existing_events, get_calendar_id, validate_and_format_date
 from Integration_With_Bubble.bubble_api_integration import *
-from website_urls import *
+from urls import *
 
 
 def send_offers_from_csv_to_api(file_path):
@@ -51,6 +51,7 @@ def send_offers_from_csv_to_api(file_path):
                 "Event Description",
                 "Image URL",
             ]
+            
             if not all(field in row for field in required_fields):
                 print(f"Skipping row due to missing fields: {row}")
                 continue

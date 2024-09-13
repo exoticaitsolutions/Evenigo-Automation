@@ -8,9 +8,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from seleniumbase import Driver
-# from website_urls import NETFLIX_WEBSITE_URL
+from urls import NETFLIX_WEBSITE_URL
 
-NETFLIX_WEBSITE_URL = 'https://www.tvguide.com/news/new-on-netflix/'
 
 
 def convert_date(date_str, year=None):
@@ -97,7 +96,7 @@ def scrape_netflix_content():
                         'Event Name': name_part,
                         'Event Type': 'Event',
                         'Event Description': description,
-                        'Calendar': 'sephora Calendar',
+                        'Calendar': 'Netflix Calendar',
                         'All Day': 'No',
                         'Public/private': 'Public',
                         "Reported Count": 0,
@@ -141,7 +140,7 @@ def scrape_netflix_content():
                     'Event Name': events,
                     'Event Type': 'Event',
                     'Event Description': '',
-                    'Calendar': 'sephora Calendar',
+                    'Calendar': 'Netflix Calendar',
                     'All Day': 'No',
                     'Public/private': 'Public',
                     "Reported Count": 0,

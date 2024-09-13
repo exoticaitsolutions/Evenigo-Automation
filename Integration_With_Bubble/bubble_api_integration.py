@@ -4,7 +4,7 @@ import json
 import requests
 from SiteUtilsConfig.config import UPLOAD_DATA_HEADERS
 # from SiteUtilsConfig.utils import image_to_base64
-from website_urls import BUBBLE_CALENDAR_URL, BUBBLE_EVENT_URL
+from urls import BUBBLE_CALENDAR_URL, BUBBLE_EVENT_URL
 
 from datetime import datetime
 import base64
@@ -18,7 +18,7 @@ import pandas as pd
 from datetime import datetime
 import requests
 from Integration_With_Bubble .bubble_api_integration import *
-from website_urls import *
+from urls import *
 
 def image_to_base64(image_path):
     """Convert an image file to a Base64 encoded string with a MIME type prefix.

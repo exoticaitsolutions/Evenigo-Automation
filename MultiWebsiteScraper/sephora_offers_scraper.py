@@ -17,11 +17,11 @@ from selenium.common.exceptions import (
 )
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from webdriver_manager.chrome import ChromeDriverManager
-from website_urls import *
+from urls import *
 from seleniumbase import Driver
 
 from selenium.webdriver.support import expected_conditions as EC
-from website_urls import SEPHORA_WEBSITE_URL
+from urls import SEPHORA_WEBSITE_URL
 
 def scrape_sephora_website_offers(retry_count=0):
     """
@@ -110,7 +110,9 @@ def scrape_sephora_website_offers(retry_count=0):
                 try:
                     mem = all_feeds[0]
                     card_elements_today_offers = mem.find_elements(By.XPATH, '//li[@class="css-1jz9muy eanm77i0"]')
-                    print("cards :", len(card_elements_today_offers))
+                    print()
+                    print("cards up :", len(card_elements_today_offers))
+                    print()
                     if card_elements_today_offers:
                         for j in card_elements_today_offers:
                             link_element = j.find_element(By.TAG_NAME, 'a')
@@ -153,7 +155,9 @@ def scrape_sephora_website_offers(retry_count=0):
                     card_elements = mem.find_elements(
                         By.XPATH, '//li[@class="css-6bi8ut eanm77i0"]'
                     )
-                    print("Cards are", len(card_elements))
+                    print()
+                    print("Cards down", len(card_elements))
+                    print()
                     driver.execute_script(
                         "window.scrollBy(0, -document.body.scrollHeight * 0.5);"
                     )
@@ -211,7 +215,7 @@ def scrape_sephora_website_offers(retry_count=0):
                                 "Start Date": start_date,
                                 "End Date": end_date,
                                 "Paragraph 5": paragraph_5,
-                                "Url": "https://www.sephora.com/beauty/beauty-offers",
+                                "Url": SEPHORA_WEBSITE_URL,
                             }
                         )
 

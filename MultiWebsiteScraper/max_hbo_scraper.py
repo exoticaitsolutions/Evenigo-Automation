@@ -5,7 +5,7 @@ from seleniumbase import Driver
 from time import sleep
 import csv
 import os
-from website_urls import NEW_ON_MAX_HBO_WEBSITE_URL
+from urls import NEW_ON_MAX_HBO_WEBSITE_URL
 
 data = []
 events_name = []
@@ -71,16 +71,30 @@ def scrape_max_hbo_content():
     # Scrape the main event name
     event_name = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-max-hbo"]/div[1]/div[1]/div[2]/div/div/h2[1]/strong')
     event_name_text = event_name.text
-    events_name.append(event_name_text)
+    # events_name.append(event_name_text)
 
     # Scrape the main description
     description = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-max-hbo"]/div[1]/div[1]/div[2]/div/div/p[5]/em')
     description_text = description.text
-    description_data.append(description_text)
+    # description_data.append(description_text)
 
     # Scrape the image URL
     image_element = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-max-hbo"]/div[1]/div[1]/div[2]/div/div/figure/div/div/picture/img')
     image_url = image_element.get_attribute('src')
+    data.append({
+            "Event Name": event_name_text,
+            "Event Type": "Event",
+            "Event Description": description_text,
+            "Calendar": "Max_hbo Calendar",
+            "All Day": "No",
+            "Public/Private": "Public",
+            "Reported Count": 0,
+            "Start Date": '',
+            "End Date": '',
+            "Created By": '',
+            "URL": NEW_ON_MAX_HBO_WEBSITE_URL,
+            "Image URL": image_url,
+        })
 
     # Scrape other event names and descriptions
     event_names = driver.find_elements(By.TAG_NAME, 'h3')
@@ -109,9 +123,9 @@ def scrape_max_hbo_content():
         start_date, end_date = parsed_dates[i] if i < len(parsed_dates) else ('', '')
         data.append({
             "Event Name": events_name[i],
-            "Event Type": "Sale",
+            "Event Type": "Event",
             "Event Description": description_data[i],
-            "Calendar": "sephora Calendar",
+            "Calendar": "Max_hbo Calendar",
             "All Day": "No",
             "Public/Private": "Public",
             "Reported Count": 0,
@@ -119,7 +133,7 @@ def scrape_max_hbo_content():
             "End Date": end_date,
             "Created By": '',
             "URL": NEW_ON_MAX_HBO_WEBSITE_URL,
-            "Image URL": image_url,
+            "Image URL": '',
         })
     
     month_mapping = {
@@ -153,10 +167,10 @@ def scrape_max_hbo_content():
                 # Prepare data for appending
                 desc = "\n".join(description.split("\n")[1:])
                 data.append({
-                    "Event Name": '',
-                    "Event Type": "Sale",
-                    "Event Description": desc,
-                    "Calendar": "sephora Calendar",
+                    "Event Name": desc,
+                    "Event Type": "Event",
+                    "Event Description": '',
+                    "Calendar": "Max_hbo Calendar",
                     "All Day": "No",
                     "Public/Private": "Public",
                     "Reported Count": 0,

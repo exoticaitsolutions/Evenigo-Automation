@@ -7,7 +7,7 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import time
 import logging
-from website_urls import GAMERANT_WEBSITE_URL
+from urls import PLAYSTATION_WEBSITE_URL
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -51,7 +51,7 @@ def scrape_event_page(event_url):
     time.sleep(2)  # Add delay between requests to avoid rate-limiting
     soup = get_soup(event_url)
     if soup is None:
-        return 'Error', 'Error', 'No Image URL Found'
+        return '', '', ''
 
     try:
         # Extract event title
@@ -60,7 +60,7 @@ def scrape_event_page(event_url):
 
         # Extract event image URL
         div_tag = soup.find('div', class_='heading_image')
-        event_image_url = div_tag['data-img-url'] if div_tag and div_tag.has_attr('data-img-url') else 'No image found'
+        event_image_url = div_tag['data-img-url'] if div_tag and div_tag.has_attr('data-img-url') else ' '
 
         # Extract event content (first paragraph after content-block-regular)
         content_block = soup.find(class_='content-block-regular')
@@ -71,7 +71,7 @@ def scrape_event_page(event_url):
     
     except Exception as e:
         logging.error(f"Error scraping event page {event_url}: {e}")
-        return 'Error', 'Error', 'No Image URL Found'
+        return '', '', ''
 
 # Function to extract events from the main page
 def scrape_main_page(soup):
@@ -91,8 +91,20 @@ def scrape_main_page(soup):
                 for li in li_elements:
                     # Extract event date
                     start_date = li.find('strong').get_text(strip=True) if li.find('strong') else 'No date found'
+                    def convert_date_format(date_str):
+                        try:
+                            current_year = datetime.now().year
+                            full_date_str = f"{date_str} {current_year}"
+                            date_obj = datetime.strptime(full_date_str, '%B %d %Y')
+                            formatted_date = date_obj.strftime('%d/%m/%y')
+                            return formatted_date
+                        except ValueError:
+                            return ''
 
-                    if start_date != 'No date found':
+                    # Convert and print the date
+                    converted_date = convert_date_format(start_date)
+
+                    if start_date != '':
                         try:
                             # Try to parse date in the format 'Month Day' (e.g., 'September 3')
                             start_date_obj = datetime.strptime(start_date, '%B %d')
@@ -115,27 +127,27 @@ def scrape_main_page(soup):
                         end_date_str = ''
 
                     # Extract event description
-                    event_description = li.find('em').get_text(strip=True) if li.find('em') else 'No description found'
+                    event_description = li.find('em').get_text(strip=True) if li.find('em') else ''
 
                     # Extract event URL
-                    event_url = li.find('a')['href'] if li.find('a') else 'No URL found'
+                    event_url = li.find('a')['href'] if li.find('a') else ''
 
                     # Scrape additional data from the event page
                     if event_url != 'No URL found':
                         event_title, event_content, event_image_url = scrape_event_page(event_url)
                     else:
-                        event_title, event_content, event_image_url = 'No title found', 'No content found', 'No Image URL Found'
+                        event_title, event_content, event_image_url = '', '', ''
 
                     # Append the data
                     events_data.append({
                         'Event Name': event_description,
-                        "Event Type": "Sale",
+                        "Event Type": "Event",
                         'Event Description': event_content,
-                        "Calendar": "sephora Calendar",
+                        "Calendar": "Playstation Calendar",
                         "All Day": "No",
                         "Public/Private": "Public",
                         "Reported Count": 0,
-                        'Start Date': start_date,
+                        'Start Date': converted_date,
                         "End Date": end_date_str,
                         'Image URL': event_image_url,
                         'Created By': '',
@@ -144,7 +156,7 @@ def scrape_main_page(soup):
     return events_data
 
 # Function to save events data to CSV in the 'csv_output' folder
-def save_to_csv(data, filename='gamerant_website_data.csv'):
+def save_to_csv(data, filename='playstation_website_data.csv'):
     # Define the output folder
     output_folder = 'csv_output'
 
@@ -161,7 +173,7 @@ def save_to_csv(data, filename='gamerant_website_data.csv'):
 
 # Main function to orchestrate the scraping
 def scrape_gamerant_events():
-    soup = get_soup(GAMERANT_WEBSITE_URL)
+    soup = get_soup(PLAYSTATION_WEBSITE_URL)
     if soup:
         events_data = scrape_main_page(soup)
         save_to_csv(events_data)

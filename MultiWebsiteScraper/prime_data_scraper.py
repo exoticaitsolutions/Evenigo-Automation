@@ -5,9 +5,9 @@ from seleniumbase import Driver
 from time import sleep
 from datetime import datetime, timedelta
 import re, csv
-from website_urls import PRIME_WEBSITE_URL
+# from urls import PRIME_WEBSITE_URL
 
-
+PRIME_WEBSITE_URL   = 'https://www.tvguide.com/news/new-on-amazon-prime-video/'
 def parse_date(date_str):
     day = re.search(r'\d{1,2}', date_str)
     if day:
@@ -65,9 +65,9 @@ def scrape_prime_content():
                 end_date = end_date.strftime('%Y-%m-%d') if end_date != "N/A" else "N/A"
                 data.append([
                     heading,
-                    'Sale',
+                    'Event',
                     description,
-                    'sephora Calendar',
+                    'Prime Calendar',
                     'No',
                     'Public',
                     '0',
@@ -100,10 +100,10 @@ def scrape_prime_content():
 
             img = sec_imgs[j].get_attribute('src')
             data.append( [
-                '',
-                'Sale',
                 description,
-                'sephora Calendar',
+                'Event',
+                '',
+                'Prime Calendar',
                 'No',
                 'Public',
                 '0',
@@ -126,6 +126,7 @@ def scrape_prime_content():
         csvwriter.writerow(['Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day','Public/private', "Reported Count", 'Start Date', 'End Date', 'Created By', 'URL', 'Image URL'])
         csvwriter.writerows(data)
     driver.quit()
+    print(f"Data has been written to {csv_file_path}")
 
 if __name__ == "__main__":
     scrape_prime_content()

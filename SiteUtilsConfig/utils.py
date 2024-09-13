@@ -10,7 +10,7 @@ import pandas as pd
 from datetime import datetime
 import requests
 from Integration_With_Bubble .bubble_api_integration import *
-from website_urls import *
+from urls import *
 from SiteUtilsConfig.config import *
 
 
@@ -193,8 +193,6 @@ def save_images_from_csv_to_local_folder(image_url, save_path):
 
     except Exception as e:
         print(f"Failed to download image: {e}")
-
-
 
 
 file_path = get_file_path(file_name)

@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from seleniumbase import Driver
 
-from website_urls import NINTENDO_WEBSITE_URL
+from urls import NINTENDO_WEBSITE_URL
 
 
 def scrape_nintendo_games():
@@ -90,9 +90,9 @@ def scrape_nintendo_games():
 
                     row = [
                         title,              # Event Name
-                        'Sale',             # Event Type
+                        'Event',             # Event Type
                         '',                 # Event Description (not available)
-                        'sephora Calendar', # Calendar (not available)
+                        'Nintendo Calendar', # Calendar (not available)
                         'No',               # All Day
                         'Public',           # Public/private (assuming public)
                         '0',                # Reported Count
