@@ -8,8 +8,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from seleniumbase import Driver
 
+from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import NINTENDO_WEBSITE_URL
-
 
 def scrape_nintendo_games():
     # Set up Chrome options
@@ -25,10 +25,8 @@ def scrape_nintendo_games():
     os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
     csv_file_path = os.path.join(folder_path, 'nintendo_data.csv')
 
-    headers = [
-        'Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day',
-        'Public/private', "Reported Count", 'Start Date', 'End Date', 'URL', 'Image URL', 'Created By'
-    ]
+    headers =['Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar','All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"]
+    
 
     # Check if the CSV file exists
     file_exists = os.path.isfile(csv_file_path)
@@ -73,33 +71,33 @@ def scrape_nintendo_games():
 
                     release_date = extract_date_if_releases(release_date_text)
                     
-                    def get_next_date(release_date_str):
-                        try:
-                            date = datetime.strptime(release_date_str, '%m/%d/%y')
-                            next_date = date + timedelta(days=1)
-                            return next_date.strftime('%m/%d/%y')
-                        except ValueError as e:
-                            print(f"Error parsing date '{release_date_str}': {e}")
-                            return 'Invalid date format'
+                    # def get_next_date(release_date_str):
+                    #     try:
+                    #         date = datetime.strptime(release_date_str, '%m/%d/%y')
+                    #         next_date = date + timedelta(days=1)
+                    #         return next_date.strftime('%m/%d/%y')
+                    #     except ValueError as e:
+                    #         print(f"Error parsing date '{release_date_str}': {e}")
+                    #         return 'Invalid date format'
 
-                    End_date = get_next_date(release_date)
+                    # End_date = get_next_date(release_date)
 
                     # Extract price
                     price_tag = game.find_element(By.CSS_SELECTOR, 'span.W990N.SH2al')
                     price = price_tag.text.strip() if price_tag else 'No price found'
 
                     row = [
+                        img_url,             # Image URL
                         title,              # Event Name
-                        'Event',             # Event Type
+                        'Sale',             # Event Type
                         '',                 # Event Description (not available)
-                        'Nintendo Calendar', # Calendar (not available)
+                        'Nintendo', # Calendar (not available)
                         'No',               # All Day
                         'Public',           # Public/private (assuming public)
                         '0',                # Reported Count
-                        release_date,       # Start Date
-                        End_date,           # End Date
+                        '20-09-2024',       # Start Date
+                        '20-09-2024',           # End Date
                         NINTENDO_WEBSITE_URL,  # Website url
-                        img_url,             # Image URL
                         ''
                     ]
 
@@ -113,6 +111,7 @@ def scrape_nintendo_games():
         driver.quit()
 
     print(f"Data has been written to {csv_file_path}")
+    send_images_to_bubble_images_api(csv_file_path)
 
 
 # Run the scraper

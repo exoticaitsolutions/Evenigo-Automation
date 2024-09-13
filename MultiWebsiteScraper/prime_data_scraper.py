@@ -5,6 +5,8 @@ from seleniumbase import Driver
 from time import sleep
 from datetime import datetime, timedelta
 import re, csv
+
+from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 # from urls import PRIME_WEBSITE_URL
 
 PRIME_WEBSITE_URL   = 'https://www.tvguide.com/news/new-on-amazon-prime-video/'
@@ -64,18 +66,18 @@ def scrape_prime_content():
                 start_date = start_date.strftime('%Y-%m-%d') if start_date != "N/A" else "N/A"
                 end_date = end_date.strftime('%Y-%m-%d') if end_date != "N/A" else "N/A"
                 data.append([
+                    img,
                     heading,
-                    'Event',
+                    'Sale',
                     description,
-                    'Prime Calendar',
+                    'Prime Video',
                     'No',
                     'Public',
                     '0',
                     start_date,
                     end_date,
-                    '',
                     PRIME_WEBSITE_URL,
-                    img
+                    '',
                 ])
                 j += 1
 
@@ -100,18 +102,18 @@ def scrape_prime_content():
 
             img = sec_imgs[j].get_attribute('src')
             data.append( [
-                description,
-                'Event',
                 '',
-                'Prime Calendar',
+                description,
+                'Sale',
+                '',
+                'Prime Video',
                 'No',
                 'Public',
                 '0',
                 start_date,
                 end_date,
-                '',
                 PRIME_WEBSITE_URL,
-                img
+                ''
             ])
             j += 1
 
@@ -123,10 +125,13 @@ def scrape_prime_content():
 
     with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
         csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(['Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day','Public/private', "Reported Count", 'Start Date', 'End Date', 'Created By', 'URL', 'Image URL'])
+        # csvwriter.writerow(['Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day','Public/private', "Reported Count", 'Start Date', 'End Date', 'Created By', 'Url', 'Image URL'])
+        csvwriter.writerow(['Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar','All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"])
+
         csvwriter.writerows(data)
     driver.quit()
     print(f"Data has been written to {csv_file_path}")
+    send_images_to_bubble_images_api(csv_file_path)
 
 if __name__ == "__main__":
     scrape_prime_content()

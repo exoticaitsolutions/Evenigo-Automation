@@ -92,7 +92,6 @@ def clean_description(description):
 def get_calendar_id(name):
     return CALENDAR_NAME_TO_ID.get(name, None)
 
-
 def fetch_existing_events():
     """
     Fetches the existing events from the Bubble.io API.

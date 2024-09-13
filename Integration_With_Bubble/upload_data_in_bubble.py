@@ -34,11 +34,13 @@ def send_offers_from_csv_to_api(file_path):
     }
 
     ids = []
+    calander_ids = []
 
     with open(file_path, mode="r") as file:
         reader = csv.DictReader(file)
 
         for row in reader:
+            print()
             default_start_date = datetime.now()
             required_fields = [
                 "All Day",
@@ -53,10 +55,20 @@ def send_offers_from_csv_to_api(file_path):
             ]
             
             if not all(field in row for field in required_fields):
+                print("yha ruk rha ----------------------------")
+                print()
                 print(f"Skipping row due to missing fields: {row}")
+                print()
                 continue
-            calendar_id = get_calendar_id(row.get("Calendar"))
-            if not calendar_id:
+            # calendar_id = CALENDAR_NAME_TO_ID(row.get("Calendar"))
+            sephora_calendar_id = CALENDAR_NAME_TO_ID.get("sephora Calendar")
+            calander_ids.append(sephora_calendar_id)
+            prime_calendar_id = CALENDAR_NAME_TO_ID.get("Prime Video")
+            calander_ids.append(prime_calendar_id)
+            ninetendo_calendar_id = CALENDAR_NAME_TO_ID.get("Nintendo")
+            calander_ids.append(ninetendo_calendar_id)
+
+            if not sephora_calendar_id:
                 print(f"Skipping row due to invalid Calendar ID: {row}")
                 continue
             event_type = row.get("Event Type")
@@ -80,7 +92,7 @@ def send_offers_from_csv_to_api(file_path):
             data = {
                 "All Day": "yes",
                 "End Date/Time (Event)": end_date,
-                "Calendar": calendar_id,
+                "Calendar": ninetendo_calendar_id,
                 "Event Type": event_type,
                 "Event Name": event_name,
                 "Public/Private": row.get("Public/Private"),

@@ -24,26 +24,27 @@ if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
     else:
         scrape_sephora_website_offers()
 
-if WEBSITES.get("HULU_WEBSITE"):
-    scrape_hulu_content()
-
-if WEBSITES.get("MAX_HBO_WEBSITE"):
-    scrape_max_hbo_content()
-
-if WEBSITES.get("NETFLIX_WEBSITE"):
-    scrape_netflix_content()
-
 if WEBSITES.get("NINTENDO_WEBSITE"):
     scrape_nintendo_games()
 
 if WEBSITES.get("PRIME_WEBSITE"):
     scrape_prime_content()
 
-if WEBSITES.get("XBOX_GAMES_WEBSITE"):
-    xbox_website_data_scraping()
+# if WEBSITES.get("HULU_WEBSITE"):
+#     scrape_hulu_content()
 
-if WEBSITES.get("PLAYSTATION_WEBSITE"):
-    scrape_gamerant_events()
+# if WEBSITES.get("MAX_HBO_WEBSITE"):
+#     scrape_max_hbo_content()
+
+# if WEBSITES.get("NETFLIX_WEBSITE"):
+#     scrape_netflix_content()
+
+
+# if WEBSITES.get("XBOX_GAMES_WEBSITE"):
+#     xbox_website_data_scraping()
+
+# if WEBSITES.get("PLAYSTATION_WEBSITE"):
+#     scrape_gamerant_events()
 
 else:
     print("No scraping performed. SCRAPE_SEPHORA_WEBSITE_OFFERS is set to False.")
