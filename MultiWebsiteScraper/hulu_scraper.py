@@ -57,7 +57,7 @@ def scrape_hulu_content():
             current_year = datetime.now().year % 100  
             converted_date = convert_date(date, year=current_year)
             End_date = get_next_date(converted_date)
-            data.append([image_src, heading, title.text, 'sephora Calendar', 'All Day', 'Public', ' 0', converted_date, End_date, 'URL', '', 'Sale'])
+            data.append([image_src, heading, title.text, 'hulu Calendar', 'No', 'Public', ' 0', converted_date, End_date, NEW_ON_HULU_WEBSITE_URL, '', 'Event'])
         
         seconds1 = driver.find_elements(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/p/strong')
         seconds = seconds1[10:35]
@@ -71,7 +71,7 @@ def scrape_hulu_content():
             current_year = datetime.now().year % 100 
             converted_date = convert_date(date, year=current_year)
             End_date = get_next_date(converted_date)
-            data.append([image_src, '', desc, 'sephora Calendar', 'All Day', 'Public', '0', converted_date, End_date, 'URL', '', 'Sale'])
+            data.append([image_src, '', desc, 'hulu Calendar', 'No', 'Public', '0', converted_date, End_date, NEW_ON_HULU_WEBSITE_URL, '', 'Event'])
 
     except Exception as e:
         print("--------- EXCEPTION ----------------------", str(e))
@@ -85,3 +85,7 @@ def scrape_hulu_content():
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(['Image URL','Event Name', 'Event Description', 'Calendar', 'All Day', 'Public/Private', 'Reported Count', 'Start_Date', 'End_Date', 'URL', 'Created By', 'Event Type'])
             csvwriter.writerows(data)
+
+# Run the scraper
+if __name__ == "__main__":
+    scrape_hulu_content()

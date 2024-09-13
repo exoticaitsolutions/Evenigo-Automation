@@ -1,12 +1,9 @@
 import os
-from bubble_api_integration import upload_images_to_bubble_events_images
-from upload_data_in_bubble import (
-    send_offers_from_csv_to_api,
-    csv_to_json,
-    check_file_downloaded,
-)
+from SiteUtilsConfig.utils import DOWNLOAD_FOLDER, save_images_from_csv_to_local_folder
+from Integration_With_Bubble.bubble_api_integration import upload_images_to_bubble_events_images
+from Integration_With_Bubble.upload_data_in_bubble import send_offers_from_csv_to_api
+from SiteUtilsConfig.utils import csv_to_json, check_file_downloaded
 import urllib.parse
-from utils import *
 
 
 def send_images_to_bubble_images_api(csv_file_path):

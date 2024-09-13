@@ -1,17 +1,18 @@
 import os
-from sephora_offers_scraper import *
-from upload_data_in_bubble import *
-from upload_image_in_bubble import send_images_to_bubble_images_api
-from config import *
-from utils import *
-from config import *
-from playstation_website_scraper import *
-from hulu_scraper import *
-from max_hbo_scraper import *
-from netflix_data_scraper import *
-from nintendo_website_scraper import *
-from prime_data_scraper import *
-from xbox_games_scraper import xbox_website_data_scraping
+from Integration_With_Bubble.upload_data_in_bubble import *
+from Integration_With_Bubble.upload_image_in_bubble import *
+from Integration_With_Bubble.bubble_api_integration import *
+from MultiWebsiteScraper.sephora_offers_scraper import scrape_sephora_website_offers
+from SiteUtilsConfig.config import *
+from SiteUtilsConfig.utils import *
+from  SiteUtilsConfig.config import *
+from MultiWebsiteScraper.playstation_website_scraper import *
+from MultiWebsiteScraper.hulu_scraper import *
+from MultiWebsiteScraper.max_hbo_scraper import *
+from MultiWebsiteScraper.netflix_data_scraper import *
+from MultiWebsiteScraper.nintendo_website_scraper import *
+from MultiWebsiteScraper.prime_data_scraper import *
+from MultiWebsiteScraper.xbox_games_scraper import xbox_website_data_scraping
 
 if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
     if os.path.exists(file_path):

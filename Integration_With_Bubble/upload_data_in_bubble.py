@@ -2,10 +2,9 @@ import os
 import csv
 from datetime import datetime
 import re
-from utils import *
-from bubble_api_integration import *
+from SiteUtilsConfig.utils import clean_description, fetch_existing_events, get_calendar_id, validate_and_format_date
+from Integration_With_Bubble.bubble_api_integration import *
 from website_urls import *
-from config import *
 
 
 def send_offers_from_csv_to_api(file_path):

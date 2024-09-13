@@ -1,9 +1,61 @@
-from config import *
+from SiteUtilsConfig.config import *
 import requests
 import json
 import requests
-from utils import image_to_base64
+from SiteUtilsConfig.config import UPLOAD_DATA_HEADERS
+# from SiteUtilsConfig.utils import image_to_base64
 from website_urls import BUBBLE_CALENDAR_URL, BUBBLE_EVENT_URL
+
+from datetime import datetime
+import base64
+import re
+import time
+from PIL import Image
+from io import BytesIO
+import urllib.parse
+import os
+import pandas as pd
+from datetime import datetime
+import requests
+from Integration_With_Bubble .bubble_api_integration import *
+from website_urls import *
+
+def image_to_base64(image_path):
+    """Convert an image file to a Base64 encoded string with a MIME type prefix.
+
+    Args:
+        image_path (str): The file path of the image to be converted.
+
+    Returns:
+        str: The Base64 encoded image string with a MIME type prefix.
+
+    Raises:
+        ValueError: If the image file type is unsupported.
+    """
+    # Determine the image format
+    ext = os.path.splitext(image_path)[-1].lower()
+    # Open the image file
+    with Image.open(image_path) as img:
+        buffered = BytesIO()
+        img_format = img.format
+
+        # Save the image in its original format to the buffer
+        img.save(buffered, format=img_format)
+        img_byte_array = buffered.getvalue()
+        # Encode the byte array to Base64
+        img_base64 = base64.b64encode(img_byte_array).decode("utf-8")
+
+        # Determine the MIME type based on the file extension
+        mime_type = ""
+        if ext in [".jpeg", ".jpg"]:
+            mime_type = "data:image/jpeg;base64,"
+        elif ext == ".png":
+            mime_type = "data:image/png;base64,"
+        else:
+            raise ValueError("Unsupported file type: " + ext)
+
+        # Return the full Base64 string with the MIME type prefix
+        return mime_type + img_base64
 
 
 def upload_events_to_bubble_events(data):

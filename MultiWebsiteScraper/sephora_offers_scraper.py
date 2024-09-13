@@ -15,7 +15,7 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     WebDriverException,
 )
-from upload_image_in_bubble import send_images_to_bubble_images_api
+from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from webdriver_manager.chrome import ChromeDriverManager
 from website_urls import *
 from seleniumbase import Driver
