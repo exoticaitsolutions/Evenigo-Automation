@@ -5,7 +5,7 @@ from upload_image_in_bubble import send_images_to_bubble_images_api
 from config import *
 from utils import *
 from config import *
-from gamerant_website_scraper import *
+from playstation_website_scraper import *
 from hulu_scraper import *
 from max_hbo_scraper import *
 from netflix_data_scraper import *

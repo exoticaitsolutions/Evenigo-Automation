@@ -27,7 +27,7 @@ def scrape_nintendo_games():
 
     headers = [
         'Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day',
-        'Public/private', "Reported Count", 'Start Date', 'End Date', 'Created By', 'URL', 'Image URL'
+        'Public/private', "Reported Count", 'Start Date', 'End Date', 'URL', 'Image URL', 'Created By'
     ]
 
     # Check if the CSV file exists
@@ -98,8 +98,9 @@ def scrape_nintendo_games():
                         '0',                # Reported Count
                         release_date,       # Start Date
                         End_date,           # End Date
-                        NINTENDO_WEBSITE_URL,  # Created By
-                        img_url             # Image URL
+                        NINTENDO_WEBSITE_URL,  # Website url
+                        img_url,             # Image URL
+                        ''
                     ]
 
                     # Write the data to the CSV file
