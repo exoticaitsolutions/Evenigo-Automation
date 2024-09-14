@@ -1,0 +1,10 @@
+# Ignore Python bytecode
+__pycache__/
+*.pyc
+
+# Ignore virtual environment
+venv/
+
+# Ignore output and downloads
+csv_output/
+downloads/
