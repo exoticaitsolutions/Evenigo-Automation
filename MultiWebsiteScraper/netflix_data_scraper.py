@@ -165,6 +165,7 @@ def scrape_netflix_content():
 
         # Optional: Add a delay
         time.sleep(2)
+    
 
     except Exception as e:
         print("An error occurred:", e)

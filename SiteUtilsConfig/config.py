@@ -30,11 +30,12 @@ WEBSITE = {
 }
 
 WEBSITES = {
-    "PLAYSTATION_WEBSITE": True,
-    "HULU_WEBSITE":True,
-    "MAX_HBO_WEBSITE":True,
+    "PLAYSTATION_WEBSITE": False,
+    "HULU_WEBSITE":False,
+    "MAX_HBO_WEBSITE":False,
     "NETFLIX_WEBSITE": True,
-    "NINTENDO_WEBSITE":True,
-    "PRIME_WEBSITE":True,
-    "XBOX_GAMES_WEBSITE": True
+    "NINTENDO_WEBSITE":False,
+    #Data insertion working in Bubble.
+    "XBOX_GAMES_WEBSITE": True,
+    "PRIME_WEBSITE":False
 }

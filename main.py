@@ -24,28 +24,38 @@ if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
     else:
         scrape_sephora_website_offers()
 
+any_scraping_done = False  # Flag to track if any scraping was performed
+
 if WEBSITES.get("NINTENDO_WEBSITE"):
     scrape_nintendo_games()
+    any_scraping_done = True  # Set the flag to True when scraping is performed
 
 if WEBSITES.get("PRIME_WEBSITE"):
     scrape_prime_content()
+    any_scraping_done = True
 
-# if WEBSITES.get("HULU_WEBSITE"):
-#     scrape_hulu_content()
+if WEBSITES.get("HULU_WEBSITE"):
+    scrape_hulu_content()
+    any_scraping_done = True
 
-# if WEBSITES.get("MAX_HBO_WEBSITE"):
-#     scrape_max_hbo_content()
+if WEBSITES.get("MAX_HBO_WEBSITE"):
+    scrape_max_hbo_content()
+    any_scraping_done = True
 
-# if WEBSITES.get("NETFLIX_WEBSITE"):
-#     scrape_netflix_content()
+if WEBSITES.get("NETFLIX_WEBSITE"):
+    scrape_netflix_content()
+    any_scraping_done = True
 
+if WEBSITES.get("XBOX_GAMES_WEBSITE"):
+    xbox_website_data_scraping()
+    any_scraping_done = True
 
-# if WEBSITES.get("XBOX_GAMES_WEBSITE"):
-#     xbox_website_data_scraping()
+if WEBSITES.get("PLAYSTATION_WEBSITE"):
+    scrape_gamerant_events()
+    any_scraping_done = True
 
-# if WEBSITES.get("PLAYSTATION_WEBSITE"):
-#     scrape_gamerant_events()
+# If no scraping was performed, print the message
+if not any_scraping_done:
+    print("No scraping performed. All the Websites are configured to False.")
 
-else:
-    print("No scraping performed. SCRAPE_SEPHORA_WEBSITE_OFFERS is set to False.")
 
