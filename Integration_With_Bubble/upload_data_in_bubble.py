@@ -7,7 +7,7 @@ from Integration_With_Bubble.bubble_api_integration import *
 from urls import *
 
 
-def send_offers_from_csv_to_api(file_path):
+def send_offers_from_csv_to_api(CalendarName, file_path):
     """
     Reads and processes a CSV file, then sends the data to the API.
 
@@ -34,7 +34,7 @@ def send_offers_from_csv_to_api(file_path):
     }
 
     ids = []
-    calander_ids = []
+    # calander_ids = []
 
     with open(file_path, mode="r") as file:
         reader = csv.DictReader(file)
@@ -55,20 +55,19 @@ def send_offers_from_csv_to_api(file_path):
             ]
             
             if not all(field in row for field in required_fields):
-                print("yha ruk rha ----------------------------")
                 print()
                 print(f"Skipping row due to missing fields: {row}")
                 print()
                 continue
             # calendar_id = CALENDAR_NAME_TO_ID(row.get("Calendar"))
-            sephora_calendar_id = CALENDAR_NAME_TO_ID.get("sephora Calendar")
-            calander_ids.append(sephora_calendar_id)
-            prime_calendar_id = CALENDAR_NAME_TO_ID.get("Prime Video")
-            calander_ids.append(prime_calendar_id)
-            ninetendo_calendar_id = CALENDAR_NAME_TO_ID.get("Nintendo")
-            calander_ids.append(ninetendo_calendar_id)
+            calendar_id = CALENDAR_NAME_TO_ID.get(CalendarName)
+            # calander_ids.append(sephora_calendar_id)
+            # prime_calendar_id = CALENDAR_NAME_TO_ID.get("Prime Video")
+            # calander_ids.append(prime_calendar_id)
+            # ninetendo_calendar_id = CALENDAR_NAME_TO_ID.get("Nintendo")
+            # calander_ids.append(ninetendo_calendar_id)
 
-            if not sephora_calendar_id:
+            if not calendar_id:
                 print(f"Skipping row due to invalid Calendar ID: {row}")
                 continue
             event_type = row.get("Event Type")
@@ -92,7 +91,7 @@ def send_offers_from_csv_to_api(file_path):
             data = {
                 "All Day": "yes",
                 "End Date/Time (Event)": end_date,
-                "Calendar": ninetendo_calendar_id,
+                "Calendar": calendar_id,
                 "Event Type": event_type,
                 "Event Name": event_name,
                 "Public/Private": row.get("Public/Private"),
@@ -109,7 +108,7 @@ def send_offers_from_csv_to_api(file_path):
     print()
     print("Events Uploaded Successfully in Bubble.io")
     print()
-    data = {"Name": "sephora Calendar", "Events": ids}
+    data = {"Name": CalendarName, "Events": ids}
 
-    upload_events_to_bubble_calendar(data)
+    upload_events_to_bubble_calendar(CalendarName, data)
     return ids

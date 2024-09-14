@@ -5,6 +5,7 @@ from seleniumbase import Driver
 from time import sleep
 from datetime import datetime, timedelta
 import re, csv
+from SiteUtilsConfig.utils import CalendarEnum
 
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 # from urls import PRIME_WEBSITE_URL
@@ -131,7 +132,7 @@ def scrape_prime_content():
         csvwriter.writerows(data)
     driver.quit()
     print(f"Data has been written to {csv_file_path}")
-    send_images_to_bubble_images_api(csv_file_path)
+    send_images_to_bubble_images_api(CalendarEnum.PRIME_VIDEO.value, csv_file_path)
 
 if __name__ == "__main__":
     scrape_prime_content()

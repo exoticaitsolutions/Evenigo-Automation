@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from seleniumbase import Driver
+from SiteUtilsConfig.utils import CalendarEnum
 
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import NETFLIX_WEBSITE_URL
@@ -160,7 +161,7 @@ def scrape_netflix_content():
             writer.writerows(extracted_data)
 
         print(f"Data has been written to {csv_file_path}")
-        send_images_to_bubble_images_api(csv_file_path)
+        send_images_to_bubble_images_api(CalendarEnum.NETFLIX.value, csv_file_path)
 
         # Optional: Add a delay
         time.sleep(2)

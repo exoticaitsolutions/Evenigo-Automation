@@ -12,13 +12,20 @@ import requests
 from Integration_With_Bubble .bubble_api_integration import *
 from urls import *
 from SiteUtilsConfig.config import *
-
+from enum import Enum
 
 # Define the download folder path
 DOWNLOAD_FOLDER = os.path.join(os.getcwd(), "downloads")
 # Time in seconds (10 minutes)
 time_threshold = 10 * 60
 file_name = "sephora_beauty_offers.csv"
+
+
+class CalendarEnum(Enum):
+    SEPHORA = 'sephora Calendar'
+    PRIME_VIDEO = 'Prime Video'
+    NINTENDO = 'Nintendo'
+    NETFLIX = 'Netflix'
 
 
 # Check if the folder exists, and if not, create it

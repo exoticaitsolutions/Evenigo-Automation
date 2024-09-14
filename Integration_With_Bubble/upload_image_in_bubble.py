@@ -6,7 +6,7 @@ from SiteUtilsConfig.utils import csv_to_json, check_file_downloaded
 import urllib.parse
 
 
-def send_images_to_bubble_images_api(csv_file_path):
+def send_images_to_bubble_images_api(calendarName, csv_file_path):
     """Read image URLs from a CSV file, download the images, and upload them to Bubble.io.
 
     Args:
@@ -15,7 +15,7 @@ def send_images_to_bubble_images_api(csv_file_path):
     Raises:
         Exception: For errors during processing or image upload.
     """
-    event_ids = send_offers_from_csv_to_api(csv_file_path)
+    event_ids = send_offers_from_csv_to_api(calendarName, csv_file_path)
 
     # Check if the result is a list and proceed if it's not empty
     if isinstance(event_ids, list) and event_ids:

@@ -8,6 +8,7 @@ from requests.packages.urllib3.util.retry import Retry
 import time
 import logging
 from urls import PLAYSTATION_WEBSITE_URL
+from SiteUtilsConfig.utils import CalendarEnum
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

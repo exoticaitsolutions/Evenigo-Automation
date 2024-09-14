@@ -85,7 +85,7 @@ def upload_events_to_bubble_events(data):
         return None  # Return None if the request failed
 
 
-def upload_events_to_bubble_calendar(data):
+def upload_events_to_bubble_calendar(CalendarName, data):
     """
     Sends event IDs to the Bubble.io calendar API.
 
@@ -96,7 +96,7 @@ def upload_events_to_bubble_calendar(data):
         None
     """
     try:
-        url = f"{BUBBLE_CALENDAR_URL}/{CALENDAR_ID.get('CALENDAR_ID')}"
+        url = f"{BUBBLE_CALENDAR_URL}/{CALENDAR_NAME_TO_ID.get(CalendarName)}"
 
         response = requests.patch(
             url, headers=UPLOAD_DATA_HEADERS, data=json.dumps(data)

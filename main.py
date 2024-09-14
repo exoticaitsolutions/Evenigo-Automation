@@ -20,7 +20,7 @@ if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
             # os.remove(file_path)
             scrape_sephora_website_offers()
         else:
-            send_images_to_bubble_images_api(file_path)
+            send_images_to_bubble_images_api(CalendarEnum.SEPHORA.value, file_path)
     else:
         scrape_sephora_website_offers()
 

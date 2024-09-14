@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from seleniumbase import Driver
-
+from SiteUtilsConfig.utils import CalendarEnum
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import NINTENDO_WEBSITE_URL
 
@@ -111,7 +111,7 @@ def scrape_nintendo_games():
         driver.quit()
 
     print(f"Data has been written to {csv_file_path}")
-    send_images_to_bubble_images_api(csv_file_path)
+    send_images_to_bubble_images_api(CalendarEnum.NINTENDO.value, csv_file_path)
 
 
 # Run the scraper

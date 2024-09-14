@@ -19,6 +19,7 @@ from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble
 from webdriver_manager.chrome import ChromeDriverManager
 from urls import *
 from seleniumbase import Driver
+from SiteUtilsConfig.utils import CalendarEnum
 
 from selenium.webdriver.support import expected_conditions as EC
 from urls import SEPHORA_WEBSITE_URL
@@ -301,7 +302,7 @@ def scrape_sephora_website_offers(retry_count=0):
         print(f"Scraping completed. Data saved to 'sephora_beauty_offers.csv'.")
         print(f"Total execution time: {total_time:.2f} seconds")
         driver.quit()
-        send_images_to_bubble_images_api(csv_file)
+        send_images_to_bubble_images_api(CalendarEnum.SEPHORA.value, csv_file)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
