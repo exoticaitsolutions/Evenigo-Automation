@@ -3,9 +3,7 @@ import re
 import time
 import pandas as pd
 from datetime import datetime, timedelta
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+from ..SiteUtilsConfig.config import FILE_NAME, FILE_PATH
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -15,14 +13,13 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     WebDriverException,
 )
-from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
-from webdriver_manager.chrome import ChromeDriverManager
-from urls import *
-from seleniumbase import Driver
-from SiteUtilsConfig.utils import CalendarEnum
+from ..Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
+from ..web_driver import initialize_driver
+from ..urls import *
+from ..SiteUtilsConfig.utils import CalendarEnum
 
 from selenium.webdriver.support import expected_conditions as EC
-from urls import SEPHORA_WEBSITE_URL
+from ..urls import SEPHORA_WEBSITE_URL
 
 def scrape_sephora_website_offers(retry_count=0):
     """
@@ -44,18 +41,13 @@ def scrape_sephora_website_offers(retry_count=0):
     """
     start_time = time.time()
     try:
-        # Set up the Chrome WebDriver
-        chrome_options = Options()
-        chrome_options.add_argument("--disable-notifications")
-        chrome_options.add_argument("--start-maximized")
-        driver = Driver(uc=True, headless=False)
+        driver = initialize_driver()
 
         driver.maximize_window()
 
-        # Navigate to the desired webpage
         driver.get(SEPHORA_WEBSITE_URL)
+        
         time.sleep(7)
-
         data = []
         img_urls = []
         scraped_items = set()
@@ -291,18 +283,16 @@ def scrape_sephora_website_offers(retry_count=0):
                         re.sub(special_characters, "", str(x)) if pd.notna(x) else x
                     )
                 )
-        output_folder = 'csv_output'
-        os.makedirs(output_folder, exist_ok=True)
-        csv_file = os.path.join(output_folder, "sephora_offers.csv")
-        df.to_csv(csv_file, index=False)
+        csv_file_path = os.path.join(FILE_PATH, FILE_NAME.get("SEPHORA_WEBSITE"))
+        df.to_csv(csv_file_path, index=False)
 
-        print(f"CSV file created: {csv_file}")
+        print(f"CSV file created: {csv_file_path}")
         end_time = time.time()
         total_time = end_time - start_time
         print(f"Scraping completed. Data saved to 'sephora_beauty_offers.csv'.")
         print(f"Total execution time: {total_time:.2f} seconds")
         driver.quit()
-        send_images_to_bubble_images_api(CalendarEnum.SEPHORA.value, csv_file)
+        send_images_to_bubble_images_api(CalendarEnum.SEPHORA.value, csv_file_path)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
@@ -311,5 +301,3 @@ def scrape_sephora_website_offers(retry_count=0):
         driver.quit()
 
 
-if __name__ == "__main__":
-    scrape_sephora_website_offers()

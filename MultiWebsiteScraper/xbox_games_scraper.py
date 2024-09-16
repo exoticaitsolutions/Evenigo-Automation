@@ -1,17 +1,13 @@
 import os
-from selenium.webdriver.chrome.options import Options
+from SiteUtilsConfig.config import FILE_NAME, FILE_PATH
 from selenium.webdriver.common.by import By
-from seleniumbase import Driver
 from time import sleep
 import csv, re
 from urls import XBOX_GAMES_WEBSITE_URL
-from SiteUtilsConfig.utils import CalendarEnum
+from web_driver import initialize_driver
 
 def xbox_website_data_scraping():
-        options = Options()
-        options.add_argument("--disable-notifications")
-        options.add_argument("--start-maximized")
-        driver = Driver(uc=True, headless=False)
+        driver = initialize_driver()
         driver.get(XBOX_GAMES_WEBSITE_URL)
         sleep(25)
         cards = 0
@@ -39,8 +35,7 @@ def xbox_website_data_scraping():
                 data.append([desc, 'Event', '', 'Xbox Calander', 'No', 'Public', '0', '', '', link, img_link, ''])
                 i+=1
             folder_path = 'csv_output'
-            os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
-            csv_file_path = os.path.join(folder_path, 'xbox_games_data.csv')
+            csv_file_path = os.path.join(FILE_PATH, FILE_NAME.get("XBOX_GAMES_WEBSITE"))
             with open(csv_file_path, mode='w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file)
                 # writer.writerow(['Link', 'Description', 'Price','Image link'])  # Header row
@@ -54,7 +49,3 @@ def xbox_website_data_scraping():
 
         # Close the WebDriver
         driver.quit()
-
-# Run the scraper
-if __name__ == "__main__":
-    xbox_website_data_scraping()

@@ -4,7 +4,9 @@ __pycache__/
 
 # Ignore virtual environment
 venv/
+.venv/
 
 # Ignore output and downloads
 csv_output/
 downloads/
+pip_install_log.txt

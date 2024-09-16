@@ -4,9 +4,10 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+from requests.packages.urllib3.util.retry import Retry # type: ignore
 import time
 import logging
+from SiteUtilsConfig.config import FILE_NAME, FILE_PATH
 from urls import PLAYSTATION_WEBSITE_URL
 from SiteUtilsConfig.utils import CalendarEnum
 
@@ -157,28 +158,17 @@ def scrape_main_page(soup):
     return events_data
 
 # Function to save events data to CSV in the 'csv_output' folder
-def save_to_csv(data, filename='playstation_website_data.csv'):
-    # Define the output folder
-    output_folder = 'csv_output'
-
-    # Create the folder if it doesn't exist
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-
-    # Save the CSV file inside the 'csv_output' folder
-    file_path = os.path.join(output_folder, filename)
-    
+def save_to_csv(data, csv_file_path):
     df = pd.DataFrame(data)
-    df.to_csv(file_path, index=False)
-    logging.info(f"The scraped data has been saved to '{file_path}'.")
+    df.to_csv(csv_file_path, index=False)
+    logging.info(f"The scraped data has been saved to '{csv_file_path}'.")
 
 # Main function to orchestrate the scraping
 def scrape_gamerant_events():
     soup = get_soup(PLAYSTATION_WEBSITE_URL)
     if soup:
         events_data = scrape_main_page(soup)
-        save_to_csv(events_data)
+        csv_file_path = os.path.join(FILE_PATH, FILE_NAME.get("PLAYSTATION_WEBSITE"))
+        save_to_csv(events_data, csv_file_path)
 
-# Run the scraper
-if __name__ == "__main__":
-    scrape_gamerant_events()
+

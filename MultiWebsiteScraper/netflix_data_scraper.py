@@ -3,15 +3,15 @@ import csv
 import re
 import os
 from datetime import datetime, timedelta
-from selenium.webdriver.chrome.options import Options
+from SiteUtilsConfig.config import FILE_NAME, FILE_PATH
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from seleniumbase import Driver
 from SiteUtilsConfig.utils import CalendarEnum
 
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import NETFLIX_WEBSITE_URL
+from web_driver import initialize_driver
 
 
 def convert_date(date_str, year=None):
@@ -29,11 +29,7 @@ def convert_date(date_str, year=None):
     return formatted_date
 
 def scrape_netflix_content():
-    options = Options()
-    options.add_argument("--disable-notifications")
-    options.add_argument("--start-maximized")
-
-    driver = Driver(uc=True, headless=False)
+    driver = initialize_driver()
     driver.get(NETFLIX_WEBSITE_URL)
 
     extracted_data = []
@@ -144,10 +140,7 @@ def scrape_netflix_content():
             except Exception as e:
                 print(f"An error occurred for XPath '{xpath}': {e}")
 
-        folder_path = 'csv_output'
-        os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
-        csv_file_path = os.path.join(folder_path, 'netflix_data.csv')
-
+        csv_file_path = os.path.join(FILE_PATH, FILE_NAME.get("NETFLIX_WEBSITE"))
         # Define CSV headers
         headers = [
             'Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day',
@@ -173,6 +166,3 @@ def scrape_netflix_content():
     finally:
         driver.quit()
     
-
-if __name__ == "__main__":
-    scrape_netflix_content()

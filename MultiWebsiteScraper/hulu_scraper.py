@@ -1,13 +1,12 @@
 import os
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+from SiteUtilsConfig.config import FILE_NAME, FILE_PATH
 from selenium.webdriver.common.by import By
 from datetime import datetime, timedelta
 import csv
 import re
 import time
 from urls import NEW_ON_HULU_WEBSITE_URL
+from web_driver import initialize_driver
 
 
 def convert_date(date_str, year=None):
@@ -34,13 +33,8 @@ def get_next_date(release_date_str):
         return 'Invalid date format'
 
 def scrape_hulu_content():
-    options = Options()
-    options.add_argument("--disable-notifications")
-    options.add_argument("--start-maximized")
-    driver = webdriver.Chrome(service=Service(), options=options)
+    driver = initialize_driver()
     driver.get(NEW_ON_HULU_WEBSITE_URL)
-
-
     data = []
     try:
         time.sleep(3)
@@ -81,9 +75,7 @@ def scrape_hulu_content():
 
     finally:
         driver.quit()
-        folder_path = 'csv_output'
-        os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
-        csv_file_path = os.path.join(folder_path, 'new_on_hulu.csv')
+        csv_file_path = os.path.join(FILE_PATH, FILE_NAME.get("HULU_WEBSITE"))
         with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(['Image URL','Event Name', 'Event Description', 'Calendar', 'All Day', 'Public/Private', 'Reported Count', 'Start_Date', 'End_Date', 'URL', 'Created By', 'Event Type'])

@@ -1,36 +1,21 @@
-import time
 import csv
 import os
-from datetime import datetime, timedelta
-from selenium.webdriver.chrome.options import Options
+from SiteUtilsConfig.config import FILE_NAME, FILE_PATH
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from seleniumbase import Driver
 from SiteUtilsConfig.utils import CalendarEnum
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import NINTENDO_WEBSITE_URL
+from web_driver import initialize_driver
 
 def scrape_nintendo_games():
-    # Set up Chrome options
-    options = Options()
-    options.add_argument("--disable-notifications")
-    options.add_argument("--start-maximized")
-
-    # Initialize the WebDriver
-    driver = Driver(uc=True, headless=False)
-
+    driver = initialize_driver()
     # Define the folder and CSV file path
-    folder_path = 'csv_output'
-    os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
-    csv_file_path = os.path.join(folder_path, 'nintendo_data.csv')
-
+    csv_file_path = os.path.join(FILE_PATH, FILE_NAME.get("NINTENDO_WEBSITE"))
     headers =['Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar','All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"]
-    
-
     # Check if the CSV file exists
     file_exists = os.path.isfile(csv_file_path)
-
     try:
         driver.get(NINTENDO_WEBSITE_URL)
         
@@ -114,6 +99,3 @@ def scrape_nintendo_games():
     send_images_to_bubble_images_api(CalendarEnum.NINTENDO.value, csv_file_path)
 
 
-# Run the scraper
-if __name__ == "__main__":
-    scrape_nintendo_games()

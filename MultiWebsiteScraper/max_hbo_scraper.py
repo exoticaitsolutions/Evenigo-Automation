@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
-from selenium.webdriver.chrome.options import Options
+from SiteUtilsConfig.config import FILE_NAME, FILE_PATH
 from selenium.webdriver.common.by import By
-from seleniumbase import Driver
 from time import sleep
 import csv
 import os
 from urls import NEW_ON_MAX_HBO_WEBSITE_URL
+from web_driver import initialize_driver
 
 data = []
 events_name = []
@@ -57,10 +57,7 @@ def parse_date(start_date_data):
     return formatted_dates
 
 def scrape_max_hbo_content():
-    options = Options()
-    options.add_argument("--disable-notifications")
-    options.add_argument("--start-maximized")
-    driver = Driver(uc=True, headless=False)
+    driver = initialize_driver()
     driver.get(NEW_ON_MAX_HBO_WEBSITE_URL)
     sleep(5)
 
@@ -189,9 +186,7 @@ def scrape_max_hbo_content():
     driver.quit()
 
     # Define the folder and CSV file path
-    folder_path = 'csv_output'
-    os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
-    csv_file_path = os.path.join(folder_path, 'max_hbo_data.csv')
+    csv_file_path = os.path.join(FILE_PATH, FILE_NAME.get("MAX_HBO_WEBSITE"))
 
     # Write to CSV file
     with open(csv_file_path, mode='w', newline='', encoding='utf-8') as file:
@@ -205,6 +200,3 @@ def scrape_max_hbo_content():
 
     print(f"Data has been written to {csv_file_path}")
 
-# Run the scraper
-if __name__ == "__main__":
-    scrape_max_hbo_content()

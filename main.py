@@ -15,12 +15,13 @@ from MultiWebsiteScraper.prime_data_scraper import *
 from MultiWebsiteScraper.xbox_games_scraper import xbox_website_data_scraping
 
 if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
-    if os.path.exists(file_path):
-        if is_file_older_than(file_path, time_threshold):
+    csv_file_path = os.path.join(FILE_PATH, FILE_NAME.get("SEPHORA_WEBSITE"))
+    if os.path.exists(csv_file_path):
+        if is_file_older_than(csv_file_path, time_threshold):
             # os.remove(file_path)
             scrape_sephora_website_offers()
         else:
-            send_images_to_bubble_images_api(CalendarEnum.SEPHORA.value, file_path)
+            send_images_to_bubble_images_api(CalendarEnum.SEPHORA.value, csv_file_path)
     else:
         scrape_sephora_website_offers()
 

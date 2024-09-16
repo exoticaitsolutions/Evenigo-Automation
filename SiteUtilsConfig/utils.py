@@ -1,9 +1,6 @@
 from datetime import datetime
-import base64
 import re
 import time
-from PIL import Image
-from io import BytesIO
 import urllib.parse
 import os
 import pandas as pd
@@ -12,20 +9,10 @@ import requests
 from Integration_With_Bubble .bubble_api_integration import *
 from urls import *
 from SiteUtilsConfig.config import *
-from enum import Enum
-
-# Define the download folder path
-DOWNLOAD_FOLDER = os.path.join(os.getcwd(), "downloads")
-# Time in seconds (10 minutes)
-time_threshold = 10 * 60
-file_name = "sephora_beauty_offers.csv"
 
 
-class CalendarEnum(Enum):
-    SEPHORA = 'sephora Calendar'
-    PRIME_VIDEO = 'Prime Video'
-    NINTENDO = 'Nintendo'
-    NETFLIX = 'Netflix'
+
+
 
 
 # Check if the folder exists, and if not, create it
@@ -201,7 +188,6 @@ def save_images_from_csv_to_local_folder(image_url, save_path):
         print(f"Failed to download image: {e}")
 
 
-file_path = get_file_path(file_name)
 
 
 def is_file_older_than(file_path, time_threshold):

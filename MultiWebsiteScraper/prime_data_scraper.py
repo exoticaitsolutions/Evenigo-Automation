@@ -1,16 +1,17 @@
 import os
-from selenium.webdriver.chrome.options import Options
+from SiteUtilsConfig.config import FILE_PATH
 from selenium.webdriver.common.by import By
-from seleniumbase import Driver
 from time import sleep
 from datetime import datetime, timedelta
 import re, csv
 from SiteUtilsConfig.utils import CalendarEnum
 
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
+from urls import PRIME_WEBSITE_URL
+from web_driver import initialize_driver
 # from urls import PRIME_WEBSITE_URL
 
-PRIME_WEBSITE_URL   = 'https://www.tvguide.com/news/new-on-amazon-prime-video/'
+
 def parse_date(date_str):
     day = re.search(r'\d{1,2}', date_str)
     if day:
@@ -20,10 +21,7 @@ def parse_date(date_str):
     return None
 
 def scrape_prime_content():
-    options = Options()
-    options.add_argument("--disable-notifications")
-    options.add_argument("--start-maximized")
-    driver = Driver(uc=True, headless=False)
+    driver = initialize_driver()
     driver.get(PRIME_WEBSITE_URL)
     sleep(5)
     data = []
@@ -120,9 +118,7 @@ def scrape_prime_content():
 
     except Exception as e:
         print(f"An error occurred: {e}")
-    folder_path = 'csv_output'
-    os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
-    csv_file_path = os.path.join(folder_path, 'Amazon_prime_site.csv')
+    csv_file_path = os.path.join(FILE_PATH, 'Amazon_prime_site.csv')
 
     with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
         csvwriter = csv.writer(csvfile)
