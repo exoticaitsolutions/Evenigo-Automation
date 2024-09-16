@@ -14,29 +14,29 @@ from MultiWebsiteScraper.nintendo_website_scraper import *
 from MultiWebsiteScraper.prime_data_scraper import *
 from MultiWebsiteScraper.xbox_games_scraper import xbox_website_data_scraping
 
-# if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
-#     if os.path.exists(file_path):
-#         if is_file_older_than(file_path, time_threshold):
-#             # os.remove(file_path)
-#             scrape_sephora_website_offers()
-#         else:
-#             send_images_to_bubble_images_api(CalendarEnum.SEPHORA.value, file_path)
-#     else:
-#         scrape_sephora_website_offers()
+if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
+    if os.path.exists(file_path):
+        if is_file_older_than(file_path, time_threshold):
+            # os.remove(file_path)
+            scrape_sephora_website_offers()
+        else:
+            send_images_to_bubble_images_api(CalendarEnum.SEPHORA.value, file_path)
+    else:
+        scrape_sephora_website_offers()
 
-# any_scraping_done = False  # Flag to track if any scraping was performed
+any_scraping_done = False  # Flag to track if any scraping was performed
 
-# if WEBSITES.get("NINTENDO_WEBSITE"):
-#     scrape_nintendo_games()
-#     any_scraping_done = True  # Set the flag to True when scraping is performed
+if WEBSITES.get("NINTENDO_WEBSITE"):
+    scrape_nintendo_games()
+    any_scraping_done = True  # Set the flag to True when scraping is performed
 
 if WEBSITES.get("PRIME_WEBSITE"):
     scrape_prime_content()
     any_scraping_done = True
 
-# if WEBSITES.get("HULU_WEBSITE"):
-#     scrape_hulu_content()
-#     any_scraping_done = True
+if WEBSITES.get("HULU_WEBSITE"):
+    scrape_hulu_content()
+    any_scraping_done = True
 
 # if WEBSITES.get("MAX_HBO_WEBSITE"):
 #     scrape_max_hbo_content()

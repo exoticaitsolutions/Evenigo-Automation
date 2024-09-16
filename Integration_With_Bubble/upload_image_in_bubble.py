@@ -1,3 +1,4 @@
+import math
 import os
 from SiteUtilsConfig.utils import DOWNLOAD_FOLDER, save_images_from_csv_to_local_folder
 from Integration_With_Bubble.bubble_api_integration import upload_images_to_bubble_events_images
@@ -28,6 +29,11 @@ def send_images_to_bubble_images_api(calendarName, csv_file_path):
             for i, filedata in enumerate(json_data):
                 eventname = filedata.get("Event Name")
                 imageurl = filedata.get("Image URL")
+                print("imageurl : ", imageurl)
+                if not imageurl or (isinstance(imageurl, float) and math.isnan(imageurl)):
+                    print(f"No valid image URL for event '{eventname}', skipping...")
+                    continue
+
 
                 # Get the corresponding event ID from the list
                 event_id = event_ids[i] if i < len(event_ids) else None
