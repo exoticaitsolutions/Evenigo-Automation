@@ -38,19 +38,19 @@ if WEBSITES.get("HULU_WEBSITE"):
     scrape_hulu_content()
     any_scraping_done = True
 
+if WEBSITES.get("XBOX_GAMES_WEBSITE"):
+    if os.path.exists("xbox_games_data.csv"):
+        send_images_to_bubble_images_api(CalendarEnum.Xbox_Calendar.value, file_path)
+    else:
+        xbox_website_data_scraping()
+    any_scraping_done = True
+
 # if WEBSITES.get("MAX_HBO_WEBSITE"):
 #     scrape_max_hbo_content()
 #     any_scraping_done = True
 
 # if WEBSITES.get("NETFLIX_WEBSITE"):
 #     scrape_netflix_content()
-#     any_scraping_done = True
-
-# if WEBSITES.get("XBOX_GAMES_WEBSITE"):
-#     if os.path.exists("xbox_games_data.csv"):
-#         send_images_to_bubble_images_api(CalendarEnum.Xbox_Calendar.value, file_path)
-#     else:
-#         xbox_website_data_scraping()
 #     any_scraping_done = True
 
 # if WEBSITES.get("PLAYSTATION_WEBSITE"):
@@ -60,9 +60,3 @@ if WEBSITES.get("HULU_WEBSITE"):
 # If no scraping was performed, print the message
 if not any_scraping_done:
     print("No scraping performed. All the Websites are configured to False.")
-
-
-# "XBOX_GAMES_WEBSITE"
-# "PRIME_WEBSITE"
-# "PLAYSTATION_WEBSITE"
-# "NINTENDO_WEBSITE"
