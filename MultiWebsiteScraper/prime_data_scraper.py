@@ -6,6 +6,7 @@ from time import sleep
 from datetime import datetime, timedelta
 import re, csv
 from SiteUtilsConfig.utils import CalendarEnum
+from webdriver import driver_confrigration
 
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 # from urls import PRIME_WEBSITE_URL
@@ -20,10 +21,7 @@ def parse_date(date_str):
     return None
 
 def scrape_prime_content():
-    options = Options()
-    options.add_argument("--disable-notifications")
-    options.add_argument("--start-maximized")
-    driver = Driver(uc=True, headless=False)
+    driver = driver_confrigration()
     driver.get(PRIME_WEBSITE_URL)
     sleep(5)
     data = []
@@ -126,7 +124,6 @@ def scrape_prime_content():
 
     with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
         csvwriter = csv.writer(csvfile)
-        # csvwriter.writerow(['Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day','Public/private', "Reported Count", 'Start Date', 'End Date', 'Created By', 'Url', 'Image URL'])
         csvwriter.writerow(['Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar','All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"])
 
         csvwriter.writerows(data)

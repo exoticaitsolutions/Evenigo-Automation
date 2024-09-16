@@ -14,18 +14,22 @@ from urls import *
 from SiteUtilsConfig.config import *
 from enum import Enum
 
+
+class CalendarEnum(Enum):
+    SEPHORA = 'Sephora Calendar'
+    PRIME_VIDEO = 'Prime Video'
+    NINTENDO = 'Nintendo'
+    NETFLIX = 'Netflix'
+    Hulu_Calendar = 'Hulu Calendar'
+    Xbox_Calendar = 'Xbox Calendar'
+    Playstation_Calendar = 'Playstation Calendar'
+
+
 # Define the download folder path
 DOWNLOAD_FOLDER = os.path.join(os.getcwd(), "downloads")
 # Time in seconds (10 minutes)
 time_threshold = 10 * 60
 file_name = "sephora_beauty_offers.csv"
-
-
-class CalendarEnum(Enum):
-    SEPHORA = 'sephora Calendar'
-    PRIME_VIDEO = 'Prime Video'
-    NINTENDO = 'Nintendo'
-    NETFLIX = 'Netflix'
 
 
 # Check if the folder exists, and if not, create it
@@ -188,7 +192,9 @@ def save_images_from_csv_to_local_folder(image_url, save_path):
 
     try:
         response = requests.get(encoded_url, headers={"User-Agent": "Mozilla/5.0"})
+        print("========================================"*8)
         response.raise_for_status()
+        print("save_path : ", save_path)
 
         # Save the image to a file
         with open(save_path, "wb") as file:
@@ -202,7 +208,6 @@ def save_images_from_csv_to_local_folder(image_url, save_path):
 
 
 file_path = get_file_path(file_name)
-
 
 def is_file_older_than(file_path, time_threshold):
     if os.path.exists(file_path):

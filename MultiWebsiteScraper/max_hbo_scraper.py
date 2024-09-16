@@ -6,6 +6,7 @@ from time import sleep
 import csv
 import os
 from urls import NEW_ON_MAX_HBO_WEBSITE_URL
+from webdriver import driver_confrigration
 
 data = []
 events_name = []
@@ -57,10 +58,7 @@ def parse_date(start_date_data):
     return formatted_dates
 
 def scrape_max_hbo_content():
-    options = Options()
-    options.add_argument("--disable-notifications")
-    options.add_argument("--start-maximized")
-    driver = Driver(uc=True, headless=False)
+    driver = driver_confrigration()
     driver.get(NEW_ON_MAX_HBO_WEBSITE_URL)
     sleep(5)
 

@@ -59,13 +59,7 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 print(f"Skipping row due to missing fields: {row}")
                 print()
                 continue
-            # calendar_id = CALENDAR_NAME_TO_ID(row.get("Calendar"))
             calendar_id = CALENDAR_NAME_TO_ID.get(CalendarName)
-            # calander_ids.append(sephora_calendar_id)
-            # prime_calendar_id = CALENDAR_NAME_TO_ID.get("Prime Video")
-            # calander_ids.append(prime_calendar_id)
-            # ninetendo_calendar_id = CALENDAR_NAME_TO_ID.get("Nintendo")
-            # calander_ids.append(ninetendo_calendar_id)
 
             if not calendar_id:
                 print(f"Skipping row due to invalid Calendar ID: {row}")
@@ -80,9 +74,9 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
             )
             end_date = validate_and_format_date(row.get("End Date", ""))
 
-            if start_date is None or end_date is None:
-                print(f"Skipping row due to invalid date format: {row}")
-                continue
+            # if start_date is None or end_date is None:
+            #     print(f"Skipping row due to invalid date format: {row}")
+            #     continue
 
             event_name = row.get("Event Name")
             if event_name in existing_event_names:

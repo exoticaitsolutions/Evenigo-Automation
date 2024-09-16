@@ -36,6 +36,10 @@ def send_images_to_bubble_images_api(calendarName, csv_file_path):
                     continue
 
                 filename = os.path.basename(urllib.parse.urlparse(imageurl).path)
+                print("--------"*8)
+                print("filename : ", filename)
+                if not (filename.endswith(".jpg") or filename.endswith(".png")):
+                    filename += ".jpg"
 
                 if not check_file_downloaded(DOWNLOAD_FOLDER, filename):
                     save_path = os.path.join(DOWNLOAD_FOLDER, filename)

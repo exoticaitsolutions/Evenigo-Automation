@@ -23,6 +23,7 @@ from SiteUtilsConfig.utils import CalendarEnum
 
 from selenium.webdriver.support import expected_conditions as EC
 from urls import SEPHORA_WEBSITE_URL
+from webdriver import driver_confrigration
 
 def scrape_sephora_website_offers(retry_count=0):
     """
@@ -45,14 +46,7 @@ def scrape_sephora_website_offers(retry_count=0):
     start_time = time.time()
     try:
         # Set up the Chrome WebDriver
-        chrome_options = Options()
-        chrome_options.add_argument("--disable-notifications")
-        chrome_options.add_argument("--start-maximized")
-        driver = Driver(uc=True, headless=False)
-
-        driver.maximize_window()
-
-        # Navigate to the desired webpage
+        driver = driver_confrigration()
         driver.get(SEPHORA_WEBSITE_URL)
         time.sleep(7)
 
@@ -207,7 +201,7 @@ def scrape_sephora_website_offers(retry_count=0):
                                 "Event Name": event_name,
                                 "Event Type": "Sale",
                                 "Event Description": event_description,
-                                "Calendar": "sephora Calendar",
+                                "Calendar": "Sephora Calendar",
                                 "All Day": "No",
                                 "Public/Private": "Public",
                                 "Reported Count": 0,

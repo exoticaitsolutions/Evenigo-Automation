@@ -7,6 +7,7 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import time
 import logging
+from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import PLAYSTATION_WEBSITE_URL
 from SiteUtilsConfig.utils import CalendarEnum
 
@@ -141,21 +142,21 @@ def scrape_main_page(soup):
 
                     # Append the data
                     events_data.append({
-                        'Event Name': event_description,
-                        "Event Type": "Event",
-                        'Event Description': event_content,
-                        "Calendar": "Playstation Calendar",
-                        "All Day": "No",
-                        "Public/Private": "Public",
-                        "Reported Count": 0,
-                        'Start Date': converted_date,
-                        "End Date": end_date_str,
-                        'Image URL': event_image_url,
-                        'Created By': '',
-                        'URL': event_url,
+                        "Image URL": event_image_url,
+                                "Event Name": event_description,
+                                "Event Type": "Sale",
+                                "Event Description": event_content,
+                                "Calendar": "Playstation Calendar",
+                                "All Day": "No",
+                                "Public/Private": "Public",
+                                "Reported Count": 0,
+                                "Start Date": converted_date,
+                                "End Date": end_date_str,
+                                "Url": event_url,
+                                "Created By" : ''
                     })
     return events_data
-
+                          
 # Function to save events data to CSV in the 'csv_output' folder
 def save_to_csv(data, filename='playstation_website_data.csv'):
     # Define the output folder
@@ -171,6 +172,7 @@ def save_to_csv(data, filename='playstation_website_data.csv'):
     df = pd.DataFrame(data)
     df.to_csv(file_path, index=False)
     logging.info(f"The scraped data has been saved to '{file_path}'.")
+    send_images_to_bubble_images_api(CalendarEnum.Playstation_Calendar.value, file_path)
 
 # Main function to orchestrate the scraping
 def scrape_gamerant_events():

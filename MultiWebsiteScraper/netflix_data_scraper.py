@@ -12,6 +12,7 @@ from SiteUtilsConfig.utils import CalendarEnum
 
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import NETFLIX_WEBSITE_URL
+from webdriver import driver_confrigration
 
 
 def convert_date(date_str, year=None):
@@ -29,11 +30,7 @@ def convert_date(date_str, year=None):
     return formatted_date
 
 def scrape_netflix_content():
-    options = Options()
-    options.add_argument("--disable-notifications")
-    options.add_argument("--start-maximized")
-
-    driver = Driver(uc=True, headless=False)
+    driver = driver_confrigration()
     driver.get(NETFLIX_WEBSITE_URL)
 
     extracted_data = []

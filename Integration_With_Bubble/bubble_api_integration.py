@@ -5,17 +5,10 @@ import requests
 from SiteUtilsConfig.config import UPLOAD_DATA_HEADERS
 # from SiteUtilsConfig.utils import image_to_base64
 from urls import BUBBLE_CALENDAR_URL, BUBBLE_EVENT_URL
-
-from datetime import datetime
 import base64
-import re
-import time
 from PIL import Image
 from io import BytesIO
-import urllib.parse
 import os
-import pandas as pd
-from datetime import datetime
 import requests
 from Integration_With_Bubble .bubble_api_integration import *
 from urls import *
@@ -139,7 +132,7 @@ def upload_images_to_bubble_events_images(dataarray):
 
         # Prepare the request
         response = requests.post(
-            BUBBLE_EVENT_URL, headers=UPLOAD_IMAGES_HEADERS, data=payload
+            BUBBLE_IMAGE_URL, headers=UPLOAD_IMAGES_HEADERS, data=payload
         )
 
         # Check the response status code

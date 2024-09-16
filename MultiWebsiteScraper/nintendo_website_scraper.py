@@ -10,15 +10,12 @@ from seleniumbase import Driver
 from SiteUtilsConfig.utils import CalendarEnum
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import NINTENDO_WEBSITE_URL
+from webdriver import driver_confrigration
 
 def scrape_nintendo_games():
     # Set up Chrome options
-    options = Options()
-    options.add_argument("--disable-notifications")
-    options.add_argument("--start-maximized")
-
-    # Initialize the WebDriver
-    driver = Driver(uc=True, headless=False)
+    driver = driver_confrigration()
+    driver.get(NINTENDO_WEBSITE_URL)
 
     # Define the folder and CSV file path
     folder_path = 'csv_output'
@@ -71,16 +68,16 @@ def scrape_nintendo_games():
 
                     release_date = extract_date_if_releases(release_date_text)
                     
-                    # def get_next_date(release_date_str):
-                    #     try:
-                    #         date = datetime.strptime(release_date_str, '%m/%d/%y')
-                    #         next_date = date + timedelta(days=1)
-                    #         return next_date.strftime('%m/%d/%y')
-                    #     except ValueError as e:
-                    #         print(f"Error parsing date '{release_date_str}': {e}")
-                    #         return 'Invalid date format'
+                    def get_next_date(release_date_str):
+                        try:
+                            date = datetime.strptime(release_date_str, '%m/%d/%y')
+                            next_date = date + timedelta(days=1)
+                            return next_date.strftime('%m/%d/%y')
+                        except ValueError as e:
+                            print(f"Error parsing date '{release_date_str}': {e}")
+                            return 'Invalid date format'
 
-                    # End_date = get_next_date(release_date)
+                    End_date = get_next_date(release_date)
 
                     # Extract price
                     price_tag = game.find_element(By.CSS_SELECTOR, 'span.W990N.SH2al')
@@ -95,8 +92,8 @@ def scrape_nintendo_games():
                         'No',               # All Day
                         'Public',           # Public/private (assuming public)
                         '0',                # Reported Count
-                        '20-09-2024',       # Start Date
-                        '20-09-2024',           # End Date
+                        release_date,       # Start Date
+                        End_date,           # End Date
                         NINTENDO_WEBSITE_URL,  # Website url
                         ''
                     ]
