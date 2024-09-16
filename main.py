@@ -34,15 +34,15 @@ if WEBSITES.get("PRIME_WEBSITE"):
     scrape_prime_content()
     any_scraping_done = True
 
-if WEBSITES.get("HULU_WEBSITE"):
-    scrape_hulu_content()
-    any_scraping_done = True
-
 if WEBSITES.get("XBOX_GAMES_WEBSITE"):
     if os.path.exists("xbox_games_data.csv"):
         send_images_to_bubble_images_api(CalendarEnum.Xbox_Calendar.value, file_path)
     else:
         xbox_website_data_scraping()
+    any_scraping_done = True
+
+if WEBSITES.get("HULU_WEBSITE"):
+    scrape_hulu_content()
     any_scraping_done = True
 
 # if WEBSITES.get("MAX_HBO_WEBSITE"):
