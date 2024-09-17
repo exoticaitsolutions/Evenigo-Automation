@@ -56,16 +56,6 @@ if WEBSITES.get("XBOX_GAMES_WEBSITE"):
         xbox_website_data_scraping()
     any_scraping_done = True
 
-if WEBSITES.get("HULU_WEBSITE"):
-    if os.path.exists(hulu_file_path):
-        if is_file_older_than(hulu_file_path, time_threshold):
-            scrape_hulu_content()
-        else:
-            send_images_to_bubble_images_api(CalendarEnum.Hulu_Calendar.value, hulu_file_path)
-    else:
-        scrape_hulu_content()
-    any_scraping_done = True
-
 if WEBSITES.get("MAX_HBO_WEBSITE"):
     if os.path.exists(max_hbo_file_path):
         if is_file_older_than(max_hbo_file_path, time_threshold):
@@ -94,6 +84,16 @@ if WEBSITES.get("PLAYSTATION_WEBSITE"):
             send_images_to_bubble_images_api(CalendarEnum.Playstation_Calendar.value, playstation_file_path)
     else:
         scrape_gamerant_events()
+    any_scraping_done = True
+
+if WEBSITES.get("HULU_WEBSITE"):
+    if os.path.exists(hulu_file_path):
+        if is_file_older_than(hulu_file_path, time_threshold):
+            scrape_hulu_content()
+        else:
+            send_images_to_bubble_images_api(CalendarEnum.Hulu_Calendar.value, hulu_file_path)
+    else:
+        scrape_hulu_content()
     any_scraping_done = True
 
 # If no scraping was performed, print the message
