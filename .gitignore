@@ -8,3 +8,4 @@ venv/
 # Ignore output and downloads
 csv_output/
 downloads/
+downloaded_files/
