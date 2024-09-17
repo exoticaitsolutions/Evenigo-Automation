@@ -8,12 +8,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from seleniumbase import Driver
-from SiteUtilsConfig.utils import CalendarEnum
-
+from SiteUtilsConfig.utils import *
+from SiteUtilsConfig.config import *
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import NETFLIX_WEBSITE_URL
 from webdriver import driver_confrigration
-
 
 def convert_date(date_str, year=None):
     month_map = {
@@ -30,6 +29,7 @@ def convert_date(date_str, year=None):
     return formatted_date
 
 def scrape_netflix_content():
+    print("Scraping start for netflix website")
     driver = driver_confrigration()
     driver.get(NETFLIX_WEBSITE_URL)
 
@@ -93,7 +93,7 @@ def scrape_netflix_content():
                          "Start Date": converted_date,
                          "End Date": End_date,
                          "Url": NETFLIX_WEBSITE_URL,
-                         "Created By":''
+                         "Created By":'evenigoofficial+6@gmail.com'
                     })
             except Exception as e:
                 print(f"An error occurred for XPaths '{xpath_heading}' and '{xpath_paragraph}': {e}")
@@ -136,14 +136,13 @@ def scrape_netflix_content():
                     "Start Date": converted_date,
                     "End Date": End_date,
                     "Url": NETFLIX_WEBSITE_URL,
-                    "Created By":''
+                    "Created By":'evenigoofficial+6@gmail.com'
                 })
             except Exception as e:
                 print(f"An error occurred for XPath '{xpath}': {e}")
 
-        folder_path = 'csv_output'
-        os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
-        csv_file_path = os.path.join(folder_path, 'netflix_data.csv')
+        os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
+        csv_file_path = os.path.join(csv_folder_name, netflix_file_name)
 
         # Define CSV headers
         headers = [
@@ -156,8 +155,10 @@ def scrape_netflix_content():
             writer = csv.DictWriter(csvfile, fieldnames=headers)
             writer.writeheader()
             writer.writerows(extracted_data)
-
+        print("Scraping completed for netflix website")
         print(f"Data has been written to {csv_file_path}")
+        print()
+
         send_images_to_bubble_images_api(CalendarEnum.NETFLIX.value, csv_file_path)
 
         # Optional: Add a delay
@@ -169,7 +170,7 @@ def scrape_netflix_content():
 
     finally:
         driver.quit()
-    
 
 if __name__ == "__main__":
     scrape_netflix_content()
+

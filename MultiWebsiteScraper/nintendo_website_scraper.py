@@ -7,20 +7,20 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from seleniumbase import Driver
-from SiteUtilsConfig.utils import CalendarEnum
+from SiteUtilsConfig.utils import *
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import NINTENDO_WEBSITE_URL
+from SiteUtilsConfig.config import *
 from webdriver import driver_confrigration
 
 def scrape_nintendo_games():
+    print("Start scrapping for nintendo website")
     # Set up Chrome options
     driver = driver_confrigration()
     driver.get(NINTENDO_WEBSITE_URL)
 
-    # Define the folder and CSV file path
-    folder_path = 'csv_output'
-    os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
-    csv_file_path = os.path.join(folder_path, 'nintendo_data.csv')
+    os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
+    csv_file_path = os.path.join(csv_folder_name, nintendo_file_name)
 
     headers =['Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar','All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"]
     
@@ -95,7 +95,7 @@ def scrape_nintendo_games():
                         release_date,       # Start Date
                         End_date,           # End Date
                         NINTENDO_WEBSITE_URL,  # Website url
-                        ''
+                        'evenigoofficial+5@gmail.com'
                     ]
 
                     # Write the data to the CSV file
@@ -106,10 +106,10 @@ def scrape_nintendo_games():
 
     finally:
         driver.quit()
-
+    print("Scraping completed for nintendo website")
     print(f"Data has been written to {csv_file_path}")
+    print()
     send_images_to_bubble_images_api(CalendarEnum.NINTENDO.value, csv_file_path)
-
 
 # Run the scraper
 if __name__ == "__main__":

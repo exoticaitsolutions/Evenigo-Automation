@@ -5,11 +5,12 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+from SiteUtilsConfig.config import *
 import time
 import logging
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import PLAYSTATION_WEBSITE_URL
-from SiteUtilsConfig.utils import CalendarEnum
+from SiteUtilsConfig.utils import *
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -50,6 +51,7 @@ def get_soup(url):
 
 # Function to extract data from individual event pages
 def scrape_event_page(event_url):
+    print("Scraping start for playstation website")
     time.sleep(2)  # Add delay between requests to avoid rate-limiting
     soup = get_soup(event_url)
     if soup is None:
@@ -102,40 +104,39 @@ def scrape_main_page(soup):
                             return formatted_date
                         except ValueError:
                             return ''
-
-                    # Convert and print the date
+                    
+                    # Convert and format date
                     converted_date = convert_date_format(start_date)
 
+                    # Try to parse the start date and calculate the end date
                     if start_date != '':
                         try:
-                            # Try to parse date in the format 'Month Day' (e.g., 'September 3')
-                            start_date_obj = datetime.strptime(start_date, '%B %d')
-                            
-                            # Add the current year if the year is missing in the date string
-                            start_date_obj = start_date_obj.replace(year=datetime.now().year)
-                            
-                            # Add 7 days to start_date
+                            start_date_obj = datetime.strptime(start_date, '%B %d').replace(year=datetime.now().year)
                             end_date_obj = start_date_obj + timedelta(days=7)
-                            
-                            # Convert end_date back to string in the desired format
                             end_date_str = end_date_obj.strftime('%d-%m-%Y')
                         except ValueError:
                             print(f"Failed to parse date: {start_date}")
                             start_date_obj = None
                             end_date_str = ''
                     else:
-                        print("No start date found")
                         start_date = ''
                         end_date_str = ''
 
                     # Extract event description
                     event_description = li.find('em').get_text(strip=True) if li.find('em') else ''
 
-                    # Extract event URL
-                    event_url = li.find('a')['href'] if li.find('a') else ''
+                    # Extract event URL safely
+                    event_url_tag = li.find('a')
+                    if event_url_tag and event_url_tag.has_attr('href'):
+                        event_url = event_url_tag['href']
+                        if not event_url.startswith('http'):
+                            # Ensure the URL is absolute
+                            event_url = f"https://gamerant.com{event_url}"
+                    else:
+                        event_url = ''  # Set to empty if no URL found
 
                     # Scrape additional data from the event page
-                    if event_url != 'No URL found':
+                    if event_url:
                         event_title, event_content, event_image_url = scrape_event_page(event_url)
                     else:
                         event_title, event_content, event_image_url = '', '', ''
@@ -143,35 +144,37 @@ def scrape_main_page(soup):
                     # Append the data
                     events_data.append({
                         "Image URL": event_image_url,
-                                "Event Name": event_description,
-                                "Event Type": "Sale",
-                                "Event Description": event_content,
-                                "Calendar": "Playstation Calendar",
-                                "All Day": "No",
-                                "Public/Private": "Public",
-                                "Reported Count": 0,
-                                "Start Date": converted_date,
-                                "End Date": end_date_str,
-                                "Url": event_url,
-                                "Created By" : ''
+                        "Event Name": event_description,
+                        "Event Type": "Sale",
+                        "Event Description": event_content,
+                        "Calendar": "Playstation Calendar",
+                        "All Day": "No",
+                        "Public/Private": "Public",
+                        "Reported Count": 0,
+                        "Start Date": converted_date,
+                        "End Date": end_date_str,
+                        "Url": event_url,
+                        "Created By": 'evenigoofficial+1268@gmail.com'
                     })
+
     return events_data
+
                           
 # Function to save events data to CSV in the 'csv_output' folder
-def save_to_csv(data, filename='playstation_website_data.csv'):
-    # Define the output folder
-    output_folder = 'csv_output'
+def save_to_csv(data, filename=playstation_file_name):
 
     # Create the folder if it doesn't exist
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+    if not os.path.exists(csv_folder_name):
+        os.makedirs(csv_folder_name)
 
     # Save the CSV file inside the 'csv_output' folder
-    file_path = os.path.join(output_folder, filename)
+    file_path = os.path.join(csv_folder_name, filename)
     
     df = pd.DataFrame(data)
     df.to_csv(file_path, index=False)
+    print("Scraping completed for playstation website")
     logging.info(f"The scraped data has been saved to '{file_path}'.")
+    print()
     send_images_to_bubble_images_api(CalendarEnum.Playstation_Calendar.value, file_path)
 
 # Main function to orchestrate the scraping

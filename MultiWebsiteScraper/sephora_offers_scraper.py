@@ -19,8 +19,8 @@ from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble
 from webdriver_manager.chrome import ChromeDriverManager
 from urls import *
 from seleniumbase import Driver
-from SiteUtilsConfig.utils import CalendarEnum
-
+from SiteUtilsConfig.utils import *
+from SiteUtilsConfig.config import *
 from selenium.webdriver.support import expected_conditions as EC
 from urls import SEPHORA_WEBSITE_URL
 from webdriver import driver_confrigration
@@ -43,6 +43,7 @@ def scrape_sephora_website_offers(retry_count=0):
 
     It handles various exceptions including timeouts and stale element references, and retries the scraping process if necessary.
     """
+    print("Start scrapping for sephora website")
     start_time = time.time()
     try:
         # Set up the Chrome WebDriver
@@ -144,9 +145,10 @@ def scrape_sephora_website_offers(retry_count=0):
                                 "End Date": '',
                                 "Paragraph 5": paragraph_5,
                                 "Url": href_link,
-                                "Created By":''
+                                "Created By":'evenigoofficial+1212@gmail.com'
                             }
                         )
+
                     card_elements = mem.find_elements(
                         By.XPATH, '//li[@class="css-6bi8ut eanm77i0"]'
                     )
@@ -211,6 +213,7 @@ def scrape_sephora_website_offers(retry_count=0):
                                 "End Date": end_date,
                                 "Paragraph 5": paragraph_5,
                                 "Url": SEPHORA_WEBSITE_URL,
+                                "Created By":'evenigoofficial+1212@gmail.com'
                             }
                         )
 
@@ -285,15 +288,17 @@ def scrape_sephora_website_offers(retry_count=0):
                         re.sub(special_characters, "", str(x)) if pd.notna(x) else x
                     )
                 )
-        output_folder = 'csv_output'
-        os.makedirs(output_folder, exist_ok=True)
-        csv_file = os.path.join(output_folder, "sephora_offers.csv")
+
+        os.makedirs(csv_folder_name, exist_ok=True)
+        csv_file = os.path.join(csv_folder_name, file_name)
         df.to_csv(csv_file, index=False)
 
         print(f"CSV file created: {csv_file}")
         end_time = time.time()
         total_time = end_time - start_time
-        print(f"Scraping completed. Data saved to 'sephora_beauty_offers.csv'.")
+        print("Scraping completed for sephora website")
+        print(f"Data saved to {file_name}.")
+        print()
         print(f"Total execution time: {total_time:.2f} seconds")
         driver.quit()
         send_images_to_bubble_images_api(CalendarEnum.SEPHORA.value, csv_file)

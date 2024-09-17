@@ -23,33 +23,19 @@ class CalendarEnum(Enum):
     Hulu_Calendar = 'Hulu Calendar'
     Xbox_Calendar = 'Xbox Calendar'
     Playstation_Calendar = 'Playstation Calendar'
+    Maxhbo_Calendar = 'Maxhbo Calendar'
 
 
 # Define the download folder path
 DOWNLOAD_FOLDER = os.path.join(os.getcwd(), "downloads")
 # Time in seconds (10 minutes)
-time_threshold = 10 * 60
-file_name = "sephora_beauty_offers.csv"
+
 
 
 # Check if the folder exists, and if not, create it
 if not os.path.exists(DOWNLOAD_FOLDER):
     os.makedirs(DOWNLOAD_FOLDER)
     print(f"Created directory: {DOWNLOAD_FOLDER}")
-
-
-def get_file_path(file_name):
-    """
-    Constructs the file path for the given file name in the current directory.
-
-    Args:
-        file_name (str): The name of the file.
-
-    Returns:
-        str: The full file path.
-    """
-    current_directory = os.getcwd()
-    return os.path.join(current_directory, file_name)
 
 
 def validate_and_format_date(date_str, default_date=None):
@@ -192,9 +178,7 @@ def save_images_from_csv_to_local_folder(image_url, save_path):
 
     try:
         response = requests.get(encoded_url, headers={"User-Agent": "Mozilla/5.0"})
-        print("========================================"*8)
         response.raise_for_status()
-        print("save_path : ", save_path)
 
         # Save the image to a file
         with open(save_path, "wb") as file:
@@ -206,8 +190,29 @@ def save_images_from_csv_to_local_folder(image_url, save_path):
     except Exception as e:
         print(f"Failed to download image: {e}")
 
+def get_file_path(file_name):
+    """
+    Constructs the file path for the given file name in the current directory.
+
+    Args:
+        file_name (str): The name of the file.
+
+    Returns:
+        str: The full file path.
+    """
+    current_directory = os.getcwd()
+    output_folder = 'csv_output'
+    file_path = os.path.join(current_directory, output_folder, file_name)
+    return file_path
 
 file_path = get_file_path(file_name)
+ninten_file_path = get_file_path(nintendo_file_name)
+prime_file_path = get_file_path(prime_file_name)
+xbox_file_path = get_file_path(xbox_file_name)
+hulu_file_path = get_file_path(hulu_file_name)
+max_hbo_file_path = get_file_path(max_hbo_file_name)
+netflix_file_path = get_file_path(netflix_file_name)
+playstation_file_path = get_file_path(playstation_file_name)
 
 def is_file_older_than(file_path, time_threshold):
     if os.path.exists(file_path):

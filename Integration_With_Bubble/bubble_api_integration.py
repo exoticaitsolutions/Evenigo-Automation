@@ -138,6 +138,8 @@ def upload_images_to_bubble_events_images(dataarray):
         # Check the response status code
         if response.status_code == 201:
             print(f"Image Uploaded Successfully for Event ID {eventid} in Bubble.io")
+            print()
+            print()
         else:
             print(
                 f"Failed to upload image for Event ID {eventid}. Status code: {response.status_code}, Response: {response.text}"

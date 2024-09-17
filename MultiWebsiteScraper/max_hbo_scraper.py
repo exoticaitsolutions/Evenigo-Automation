@@ -5,6 +5,9 @@ from seleniumbase import Driver
 from time import sleep
 import csv
 import os
+from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
+from SiteUtilsConfig.utils import *
+from SiteUtilsConfig.config import *
 from urls import NEW_ON_MAX_HBO_WEBSITE_URL
 from webdriver import driver_confrigration
 
@@ -58,6 +61,7 @@ def parse_date(start_date_data):
     return formatted_dates
 
 def scrape_max_hbo_content():
+    print("Scraping start for max hbo website")
     driver = driver_confrigration()
     driver.get(NEW_ON_MAX_HBO_WEBSITE_URL)
     sleep(5)
@@ -80,19 +84,20 @@ def scrape_max_hbo_content():
     image_element = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-max-hbo"]/div[1]/div[1]/div[2]/div/div/figure/div/div/picture/img')
     image_url = image_element.get_attribute('src')
     data.append({
+            "Image URL": image_url,
             "Event Name": event_name_text,
-            "Event Type": "Event",
+            "Event Type": "Sale",
             "Event Description": description_text,
-            "Calendar": "Max_hbo Calendar",
+            "Calendar": "Maxhbo Calendar",
             "All Day": "No",
-            "Public/Private": "Public",
+           "Public/Private": "Public",
             "Reported Count": 0,
             "Start Date": '',
             "End Date": '',
-            "Created By": '',
             "URL": NEW_ON_MAX_HBO_WEBSITE_URL,
-            "Image URL": image_url,
+            "Created By": 'evenigoofficial+1261@gmail.com',
         })
+
 
     # Scrape other event names and descriptions
     event_names = driver.find_elements(By.TAG_NAME, 'h3')
@@ -120,18 +125,18 @@ def scrape_max_hbo_content():
     for i in range(len(events_name)):
         start_date, end_date = parsed_dates[i] if i < len(parsed_dates) else ('', '')
         data.append({
+            "Image URL": '',
             "Event Name": events_name[i],
-            "Event Type": "Event",
+            "Event Type": "Sale",
             "Event Description": description_data[i],
-            "Calendar": "Max_hbo Calendar",
+            "Calendar": "Maxhbo Calendar",
             "All Day": "No",
             "Public/Private": "Public",
             "Reported Count": 0,
             "Start Date": start_date,
             "End Date": end_date,
-            "Created By": '',
             "URL": NEW_ON_MAX_HBO_WEBSITE_URL,
-            "Image URL": '',
+            "Created By": 'evenigoofficial+1261@gmail.com',
         })
     
     month_mapping = {
@@ -165,18 +170,18 @@ def scrape_max_hbo_content():
                 # Prepare data for appending
                 desc = "\n".join(description.split("\n")[1:])
                 data.append({
+                    "Image URL": '',
                     "Event Name": desc,
-                    "Event Type": "Event",
+                    "Event Type": "Sale",
                     "Event Description": '',
-                    "Calendar": "Max_hbo Calendar",
+                    "Calendar": "Maxhbo Calendar",
                     "All Day": "No",
                     "Public/Private": "Public",
                     "Reported Count": 0,
                     "Start Date": start_date_str,
                     "End Date": end_date_str,
-                    "Created By": '',
                     "URL": NEW_ON_MAX_HBO_WEBSITE_URL,
-                    "Image URL": '',
+                    "Created By": 'evenigoofficial+1261@gmail.com',
                 })
             else:
                 print(f"Invalid month name: {month_name}")
@@ -187,22 +192,26 @@ def scrape_max_hbo_content():
     driver.quit()
 
     # Define the folder and CSV file path
-    folder_path = 'csv_output'
-    os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
-    csv_file_path = os.path.join(folder_path, 'max_hbo_data.csv')
+    os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
+    csv_file_path = os.path.join(csv_folder_name, max_hbo_file_name)
 
     # Write to CSV file
     with open(csv_file_path, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=[
-            "Event Name", "Event Type", "Event Description", "Calendar", "All Day", "Public/Private",
-            "Reported Count", "Start Date", "End Date", "Image URL", "Created By", "URL"
+            "Image URL", "Event Name", "Event Type", "Event Description", "Calendar", "All Day", "Public/Private",
+            "Reported Count", "Start Date", "End Date", "URL", "Created By"
         ])
         writer.writeheader()
         for row in data:
             writer.writerow(row)
-
+    print("Scraping completed for max hbo website")
     print(f"Data has been written to {csv_file_path}")
+    print()
+    send_images_to_bubble_images_api(CalendarEnum.Maxhbo_Calendar.value, csv_file_path)
 
 # Run the scraper
 if __name__ == "__main__":
     scrape_max_hbo_content()
+
+
+

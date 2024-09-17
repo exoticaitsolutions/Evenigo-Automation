@@ -18,9 +18,9 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
         list: A list of IDs of the inserted events.
     """
     if not os.path.isfile(file_path):
-        print(f"Error: The file '{file_path}' does not exist.")
+        print(f"Error: The file '{file_path}' does not exist.") 
         return
-
+   
     existing_events = fetch_existing_events()
 
     # Ensure existing_events is a list of dictionaries
@@ -32,11 +32,16 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
     existing_event_names = {
         event.get("Event Name") for event in existing_events if isinstance(event, dict)
     }
+    # print("existing_event_names---- :  ", existing_event_names)
+    # for event in existing_events:
+    #     if isinstance(event, dict):
+    #         print("Event Name lio---- :  ", event.get("Event Name"))
 
     ids = []
     # calander_ids = []
 
-    with open(file_path, mode="r") as file:
+    # with open(file_path, mode="r") as file:
+    with open(file_path, 'r', newline='', encoding='utf-8') as file:
         reader = csv.DictReader(file)
 
         for row in reader:
@@ -52,6 +57,7 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 "Public/Private",
                 "Event Description",
                 "Image URL",
+                # "Created By"
             ]
             
             if not all(field in row for field in required_fields):
@@ -74,14 +80,12 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
             )
             end_date = validate_and_format_date(row.get("End Date", ""))
 
-            # if start_date is None or end_date is None:
-            #     print(f"Skipping row due to invalid date format: {row}")
-            #     continue
-
             event_name = row.get("Event Name")
+            # print("event_name : ", event_name)
             if event_name in existing_event_names:
                 print(f"Skipping row due to existing event: {event_name}")
                 continue
+            # print("created by :", row.get("Created By"),)
             data = {
                 "All Day": "yes",
                 "End Date/Time (Event)": end_date,
@@ -93,6 +97,7 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 "Short Description": clean_description(row.get("Event Description")),
                 "Start Date/Time (Event)": start_date,
                 "URL": row.get("Url"),
+                # "Created By (Edit)": row.get("Created By"),
             }
 
             event_id = upload_events_to_bubble_events(data)

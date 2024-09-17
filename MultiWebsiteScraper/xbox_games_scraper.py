@@ -6,10 +6,12 @@ import csv
 import re
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import XBOX_GAMES_WEBSITE_URL
-from SiteUtilsConfig.utils import CalendarEnum
+from SiteUtilsConfig.utils import *
 from webdriver import driver_confrigration
+from SiteUtilsConfig.config import *
 
 def xbox_website_data_scraping():
+    print("Scraping start for xbox website")
     driver = driver_confrigration()
     driver.get(XBOX_GAMES_WEBSITE_URL)
     sleep(25)
@@ -45,12 +47,11 @@ def xbox_website_data_scraping():
                 img_link = 'N/A'
 
             # Append data to the list
-            data.append([img_link, desc, 'Sale', '', 'Xbox Calendar', 'No', 'Public', '0', '', '', link, ''])
+            data.append([img_link, desc, 'Sale', '', 'Xbox Calendar', 'No', 'Public', '0', '', '', link, 'evenigoofficial+1267@gmail.com'])
 
         # Write data to CSV
-        folder_path = 'csv_output'
-        os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
-        csv_file_path = os.path.join(folder_path, 'xbox_games_data.csv')
+        os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
+        csv_file_path = os.path.join(csv_folder_name, xbox_file_name)
         with open(csv_file_path, mode='w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(['Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"])  # Header row
@@ -62,6 +63,9 @@ def xbox_website_data_scraping():
 
     # Close the WebDriver
     driver.quit()
+    print("Scraping completed for xbox website")
+    print(f"Data saved to {csv_file_path}.")
+    print()
 
     # Send the data via the Bubble API
     send_images_to_bubble_images_api(CalendarEnum.Xbox_Calendar.value, csv_file_path)

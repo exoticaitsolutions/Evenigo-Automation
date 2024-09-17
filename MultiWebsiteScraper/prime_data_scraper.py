@@ -5,13 +5,12 @@ from seleniumbase import Driver
 from time import sleep
 from datetime import datetime, timedelta
 import re, csv
-from SiteUtilsConfig.utils import CalendarEnum
+from SiteUtilsConfig.utils import *
 from webdriver import driver_confrigration
-
+from SiteUtilsConfig.config import *
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
-# from urls import PRIME_WEBSITE_URL
+from urls import PRIME_WEBSITE_URL
 
-PRIME_WEBSITE_URL   = 'https://www.tvguide.com/news/new-on-amazon-prime-video/'
 def parse_date(date_str):
     day = re.search(r'\d{1,2}', date_str)
     if day:
@@ -21,6 +20,7 @@ def parse_date(date_str):
     return None
 
 def scrape_prime_content():
+    print("Scraping start for prime website")
     driver = driver_confrigration()
     driver.get(PRIME_WEBSITE_URL)
     sleep(5)
@@ -76,7 +76,7 @@ def scrape_prime_content():
                     start_date,
                     end_date,
                     PRIME_WEBSITE_URL,
-                    '',
+                    'evenigoofficial+1269@gmail.com',
                 ])
                 j += 1
 
@@ -112,15 +112,15 @@ def scrape_prime_content():
                 start_date,
                 end_date,
                 PRIME_WEBSITE_URL,
-                ''
+                'evenigoofficial+1269@gmail.com'
             ])
             j += 1
 
     except Exception as e:
         print(f"An error occurred: {e}")
-    folder_path = 'csv_output'
-    os.makedirs(folder_path, exist_ok=True)  # Create folder if it doesn't exist
-    csv_file_path = os.path.join(folder_path, 'Amazon_prime_site.csv')
+
+    os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
+    csv_file_path = os.path.join(csv_folder_name, prime_file_name)
 
     with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
         csvwriter = csv.writer(csvfile)
@@ -128,8 +128,12 @@ def scrape_prime_content():
 
         csvwriter.writerows(data)
     driver.quit()
+    print("Scraping completed for prime website")
     print(f"Data has been written to {csv_file_path}")
+    print()
     send_images_to_bubble_images_api(CalendarEnum.PRIME_VIDEO.value, csv_file_path)
 
 if __name__ == "__main__":
     scrape_prime_content()
+
+ 
