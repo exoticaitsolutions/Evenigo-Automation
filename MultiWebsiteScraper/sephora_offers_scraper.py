@@ -3,9 +3,6 @@ import re
 import time
 import pandas as pd
 from datetime import datetime, timedelta
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -16,9 +13,7 @@ from selenium.common.exceptions import (
     WebDriverException,
 )
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
-from webdriver_manager.chrome import ChromeDriverManager
 from urls import *
-from seleniumbase import Driver
 from SiteUtilsConfig.utils import CalendarEnum
 
 from selenium.webdriver.support import expected_conditions as EC
@@ -45,7 +40,6 @@ def scrape_sephora_website_offers(retry_count=0):
     """
     start_time = time.time()
     try:
-        # Set up the Chrome WebDriver
         driver = driver_confrigration()
         driver.get(SEPHORA_WEBSITE_URL)
         time.sleep(7)
@@ -144,7 +138,7 @@ def scrape_sephora_website_offers(retry_count=0):
                                 "End Date": '',
                                 "Paragraph 5": paragraph_5,
                                 "Url": href_link,
-                                "Created By":''
+                                "Created By":'evenigoofficial+1212@gmail.com'
                             }
                         )
                     card_elements = mem.find_elements(

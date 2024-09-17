@@ -24,26 +24,26 @@ if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
     else:
         scrape_sephora_website_offers()
 
-any_scraping_done = False  # Flag to track if any scraping was performed
+any_scraping_done = False  
 
-if WEBSITES.get("NINTENDO_WEBSITE"):
-    scrape_nintendo_games()
-    any_scraping_done = True  # Set the flag to True when scraping is performed
+# if WEBSITES.get("NINTENDO_WEBSITE"):
+#     scrape_nintendo_games()
+#     any_scraping_done = True  
 
-if WEBSITES.get("PRIME_WEBSITE"):
-    scrape_prime_content()
-    any_scraping_done = True
+# if WEBSITES.get("PRIME_WEBSITE"):
+#     scrape_prime_content()
+#     any_scraping_done = True
 
-if WEBSITES.get("XBOX_GAMES_WEBSITE"):
-    if os.path.exists("xbox_games_data.csv"):
-        send_images_to_bubble_images_api(CalendarEnum.Xbox_Calendar.value, file_path)
-    else:
-        xbox_website_data_scraping()
-    any_scraping_done = True
+# if WEBSITES.get("XBOX_GAMES_WEBSITE"):
+#     if os.path.exists("xbox_games_data.csv"):
+#         send_images_to_bubble_images_api(CalendarEnum.Xbox_Calendar.value, file_path)
+#     else:
+#         xbox_website_data_scraping()
+#     any_scraping_done = True
 
-if WEBSITES.get("HULU_WEBSITE"):
-    scrape_hulu_content()
-    any_scraping_done = True
+# if WEBSITES.get("HULU_WEBSITE"):
+#     scrape_hulu_content()
+#     any_scraping_done = True
 
 # if WEBSITES.get("MAX_HBO_WEBSITE"):
 #     scrape_max_hbo_content()
