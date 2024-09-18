@@ -6,6 +6,19 @@ from SiteUtilsConfig.utils import clean_description, fetch_existing_events, get_
 from Integration_With_Bubble.bubble_api_integration import *
 from urls import *
 
+
+def fetch_user_id_by_email(email):
+    """
+    Fetch the user ID based on the email from Bubble.io API.
+    Replace this function with actual API integration for fetching user ID.
+    """
+    email_to_user_id_map = {
+        "evenigoofficial+1212@gmail.com": "1725406841796x621130586024924800", 
+        "evenigoofficial+6@gmail.com": "1724110723458x455625403407267100",
+    }
+    return email_to_user_id_map.get(email)
+
+
 def send_offers_from_csv_to_api(CalendarName, file_path):
     """
     Reads and processes a CSV file, then sends the data to the API.
@@ -56,7 +69,7 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 "Public/Private",
                 "Event Description",
                 "Image URL",
-                # "Created By"
+                "Created By"
             ]
             
             if not all(field in row for field in required_fields):
@@ -85,6 +98,8 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 print(f"Skipping row due to existing event: {event_name}")
                 continue
             # print("created by :", row.get("Created By"),)
+            created_by_email = row.get("Created By")    
+            user_id = fetch_user_id_by_email(created_by_email)
             data = {
                 "All Day": "yes",
                 "End Date/Time (Event)": end_date,
@@ -96,7 +111,7 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 "Short Description": clean_description(row.get("Event Description")),
                 "Start Date/Time (Event)": start_date,
                 "URL": row.get("Url"),
-                # "Created By": row.get("Created By"),
+                "Created By (Edit)": user_id,
             }
 
             event_id = upload_events_to_bubble_events(data)
