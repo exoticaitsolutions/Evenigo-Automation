@@ -25,17 +25,6 @@ if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
 
 any_scraping_done = False  # Flag to track if any scraping was performed
 
-if WEBSITES.get("NINTENDO_WEBSITE"):
-    if os.path.exists(ninten_file_path):
-        if is_file_older_than(ninten_file_path, time_threshold):
-            scrape_nintendo_games()
-        else:
-            send_images_to_bubble_images_api(CalendarEnum.NINTENDO.value, ninten_file_path)
-    else:
-        scrape_nintendo_games()
-
-    any_scraping_done = True  # Set the flag to True when scraping is performed
-
 if WEBSITES.get("PRIME_WEBSITE"):
     if os.path.exists(prime_file_path):
         if is_file_older_than(prime_file_path, time_threshold):
@@ -95,6 +84,17 @@ if WEBSITES.get("HULU_WEBSITE"):
     else:
         scrape_hulu_content()
     any_scraping_done = True
+
+if WEBSITES.get("NINTENDO_WEBSITE"):
+    if os.path.exists(ninten_file_path):
+        if is_file_older_than(ninten_file_path, time_threshold):
+            scrape_nintendo_games()
+        else:
+            send_images_to_bubble_images_api(CalendarEnum.NINTENDO.value, ninten_file_path)
+    else:
+        scrape_nintendo_games()
+
+    any_scraping_done = True  # Set the flag to True when scraping is performed
 
 # If no scraping was performed, print the message
 if not any_scraping_done:

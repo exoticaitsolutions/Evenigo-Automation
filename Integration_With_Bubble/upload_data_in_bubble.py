@@ -6,7 +6,6 @@ from SiteUtilsConfig.utils import clean_description, fetch_existing_events, get_
 from Integration_With_Bubble.bubble_api_integration import *
 from urls import *
 
-
 def send_offers_from_csv_to_api(CalendarName, file_path):
     """
     Reads and processes a CSV file, then sends the data to the API.
@@ -71,10 +70,10 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 print(f"Skipping row due to invalid Calendar ID: {row}")
                 continue
             event_type = row.get("Event Type")
-            valid_event_types = ["Sale"]
-            if event_type not in valid_event_types:
-                print(f"Skipping row due to invalid Event Type: {event_type}")
-                continue
+            # valid_event_types = ["Sale"]
+            # if event_type not in valid_event_types:
+            #     print(f"Skipping row due to invalid Event Type: {event_type}")
+            #     continue
             start_date = validate_and_format_date(
                 row.get("Start Date", ""), default_date=default_start_date
             )
@@ -97,7 +96,7 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 "Short Description": clean_description(row.get("Event Description")),
                 "Start Date/Time (Event)": start_date,
                 "URL": row.get("Url"),
-                # "Created By (Edit)": row.get("Created By"),
+                # "Created By": row.get("Created By"),
             }
 
             event_id = upload_events_to_bubble_events(data)

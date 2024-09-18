@@ -18,15 +18,24 @@ def convert_date(date_str, year=None):
     month_map = {
         'Jan.': '1', 'Feb.': '2', 'Mar.': '3', 'Apr.': '4', 'May': '5',
         'Jun.': '6', 'Jul.': '7', 'Aug.': '8', 'Sept.': '9', 'Oct.': '10',
-        'Nov.': '11', 'Dec.': '12'}
+        'Nov.': '11', 'Dec.': '12'
+    }
     
+    # Split the input string into month and day
     month_str, day = date_str.split()
-    month = month_map.get(month_str, '0')  
-    if year is None:
-        year = datetime.now().year % 100  
+    month = month_map.get(month_str, '0')
     
-    formatted_date = f"{month}/{day}/{year:02}"
+    # Use the full 4-digit year
+    if year is None:
+        year = datetime.now().year  # Get the full year (e.g., 2024)
+    else:
+        # Ensure the provided year is in four-digit format
+        year = 2000 + int(year) if len(str(year)) == 2 else int(year)
+
+    # Format the date as DD-MM-YYYY
+    formatted_date = f"{int(day):02}-{int(month):02}-{year}"
     return formatted_date
+
 
 def scrape_netflix_content():
     print("Scraping start for netflix website")
@@ -69,9 +78,11 @@ def scrape_netflix_content():
 
                         def get_next_date(release_date_str):
                             try:
-                                date = datetime.strptime(release_date_str, '%m/%d/%y')
+                                # Parse the date string in the correct format (DD-MM-YYYY)
+                                date = datetime.strptime(release_date_str, '%d-%m-%Y')
                                 next_date = date + timedelta(days=1)
-                                return next_date.strftime('%m/%d/%y')
+                                # Return the next date in the same format
+                                return next_date.strftime('%d-%m-%Y')
                             except ValueError as e:
                                 print(f"Error parsing date '{release_date_str}': {e}")
                                 return 'Invalid date format'
@@ -81,10 +92,14 @@ def scrape_netflix_content():
                         description = re.sub(date_pattern, '', combined_text).strip()
                     else:
                         print("No date found in the description.")
+                    print()
+                    print("converted_date 1 : ", converted_date)
+                    print("End Date 1 : ", End_date)
+                    print()
                     extracted_data.append({
                          "Image URL": '',
                          "Event Name": name_part,
-                         "Event Type": "Sale",
+                         "Event Type": "Launch",
                          "Event Description": description,
                          "Calendar": "Netflix",
                          "All Day": "No",
@@ -114,27 +129,36 @@ def scrape_netflix_content():
 
                 def get_next_date(release_date_str):
                     try:
-                        date = datetime.strptime(release_date_str, '%m/%d/%y')
+                        # Parse the date string in the correct format (DD-MM-YYYY)
+                        date = datetime.strptime(release_date_str, '%d-%m-%Y')
                         next_date = date + timedelta(days=1)
-                        return next_date.strftime('%m/%d/%y')
+                        # Return the next date in the same format
+                        return next_date.strftime('%d-%m-%Y')
                     except ValueError as e:
                         print(f"Error parsing date '{release_date_str}': {e}")
                         return 'Invalid date format'
 
                 End_date = get_next_date(converted_date)
                 events = "\n".join(line.strip() for line in lines[1:])
-                
+                print()
+                print("converted_date 2 : ", converted_date)
+                print("End Date 2 : ", End_date)
+                print()
                 extracted_data.append({
                     "Image URL": '',
                     "Event Name": events,
-                    "Event Type": "Sale",
+                    "Event Type": "Launch",
                     "Event Description": '',
                     "Calendar": "Netflix",
                     "All Day": "No",
                     "Public/Private": "Public",
                     "Reported Count": 0,
                     "Start Date": converted_date,
+                    # "Start Date": '25-09-2024',
+                    # "Start Date": '4-9-2024',
                     "End Date": End_date,
+                    # "End Date": '25-09-2024',
+                    "End Date": '4-9-2024',
                     "Url": NETFLIX_WEBSITE_URL,
                     "Created By":'evenigoofficial+6@gmail.com'
                 })

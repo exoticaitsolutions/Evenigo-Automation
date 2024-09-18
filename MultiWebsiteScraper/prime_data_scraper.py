@@ -67,7 +67,7 @@ def scrape_prime_content():
                 data.append([
                     img,
                     heading,
-                    'Sale',
+                    'Launch',
                     description,
                     'Prime Video',
                     'No',
@@ -103,7 +103,7 @@ def scrape_prime_content():
             data.append( [
                 '',
                 description,
-                'Sale',
+                'Launch',
                 '',
                 'Prime Video',
                 'No',

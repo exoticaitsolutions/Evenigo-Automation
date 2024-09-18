@@ -57,7 +57,7 @@ def scrape_hulu_content():
         image_element = driver.find_element(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/figure/div/div/picture/img')
         image_src = image_element.get_attribute('src')
         titles = titles1[5:10]
-        data.append([image_src, heading1, 'Sale', description, 'Hulu Calendar', 'No', 'Public', '0', '', '', NEW_ON_HULU_WEBSITE_URL, 'evenigoofficial+1262@gmail.com'])
+        data.append([image_src, heading1, 'Launch', description, 'Hulu Calendar', 'No', 'Public', '0', '', '', NEW_ON_HULU_WEBSITE_URL, 'evenigoofficial+1262@gmail.com'])
         
         for first, title in zip(firsts, titles):
             match = re.search(r'^(.*?)\s*\(([^)]+)\)$', first.text)
@@ -66,7 +66,7 @@ def scrape_hulu_content():
             current_year = datetime.now().year
             converted_date = convert_date(date, year=current_year)
             end_date = get_next_date(converted_date)
-            data.append(['', heading, 'Sale', title.text, 'Hulu Calendar', 'No', 'Public', '0', converted_date, end_date, NEW_ON_HULU_WEBSITE_URL, 'evenigoofficial+1262@gmail.com'])
+            data.append(['', heading, 'Launch', title.text, 'Hulu Calendar', 'No', 'Public', '0', converted_date, end_date, NEW_ON_HULU_WEBSITE_URL, 'evenigoofficial+1262@gmail.com'])
 
         seconds1 = driver.find_elements(By.XPATH, '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/p/strong')
         seconds = seconds1[10:35]
@@ -80,7 +80,7 @@ def scrape_hulu_content():
             desc = tt[colon_index + 1:].strip()
             converted_date = convert_date(date, year=current_year)
             end_date = get_next_date(converted_date)
-            data.append(['', desc, 'Sale', '', 'Hulu Calendar', 'No', 'Public', '0', converted_date, end_date, NEW_ON_HULU_WEBSITE_URL, 'evenigoofficial+1262@gmail.com'])
+            data.append(['', desc, 'Launch', '', 'Hulu Calendar', 'No', 'Public', '0', converted_date, end_date, NEW_ON_HULU_WEBSITE_URL, 'evenigoofficial+1262@gmail.com'])
 
     except Exception as e:
         print("--------- EXCEPTION ----------------------", str(e))

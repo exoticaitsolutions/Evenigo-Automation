@@ -1,18 +1,14 @@
-import time
 import csv
 import os
 from datetime import datetime, timedelta
-from selenium.webdriver.chrome.options import Options
+import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from seleniumbase import Driver
-from SiteUtilsConfig.utils import *
+from SiteUtilsConfig.utils import CalendarEnum
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
 from urls import NINTENDO_WEBSITE_URL
-from SiteUtilsConfig.config import *
 from webdriver import driver_confrigration
-
 
 def extract_game_details(game_url):
     driver = driver_confrigration()  # Create a new driver instance
@@ -30,35 +26,19 @@ def extract_game_details(game_url):
     driver.quit()  
     return description
 
-def convert_date_format(date_str):
-    try:
-        # Parse the date assuming it's in MM/DD/YY format
-        date_obj = datetime.strptime(date_str, '%m/%d/%y')
-        # Convert and return it in DD/MM/YYYY format
-        return date_obj.strftime('%d/%m/%Y')
-    except ValueError as e:
-        print(f"Error parsing date '{date_str}': {e}")
-        return 'Invalid date format'
-
 def scrape_nintendo_games():
-    print("Start scrapping for nintendo website")
-    # Set up Chrome options
     driver = driver_confrigration()
     driver.get(NINTENDO_WEBSITE_URL)
 
-    os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
-    csv_file_path = os.path.join(csv_folder_name, nintendo_file_name)
+    folder_path = 'csv_output'
+    os.makedirs(folder_path, exist_ok=True) 
+    csv_file_path = os.path.join(folder_path, 'nintendo_data.csv')
 
-    headers =['Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar','All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"]
+    headers = ['Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"]
     
-
-    # Check if the CSV file exists
     file_exists = os.path.isfile(csv_file_path)
 
     try:
-        driver.get(NINTENDO_WEBSITE_URL)
-        
-        # Allow some time for the page to load
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'div.y83ib'))
         )
@@ -85,53 +65,51 @@ def scrape_nintendo_games():
                     # Extract release date
                     release_date_tag = game.find_element(By.CSS_SELECTOR, 'div.k9MOS')
                     release_date_text = release_date_tag.text.strip() if release_date_tag else 'No release date found'
+
+                    # Extract game link
                     game_link = game.find_element(By.XPATH, './/a').get_attribute('href')
+                    
+                    # Fetch game details from the new driver
                     description = extract_game_details(game_link)
 
+                    # Process release date
                     def extract_date_if_releases(date_text):
                         if 'Releases' in date_text:
                             date_str = date_text.split('Releases')[1].strip().strip(',')
+                            return date_str
                         else:
-                            date_str = date_text.strip().strip(',')
-                        return date_str
-                    
+                            return date_text.strip().strip(',')
 
                     release_date = extract_date_if_releases(release_date_text)
-                    formatted_date = convert_date_format(release_date)
 
-                    def get_next_date(formatted_date_str):
+                    def get_next_date(release_date_str):
                         try:
-                            # Parse the date in DD/MM/YYYY format
-                            date = datetime.strptime(formatted_date_str, '%d/%m/%Y')
+                            date = datetime.strptime(release_date_str, '%m/%d/%y')
                             next_date = date + timedelta(days=1)
-                            # Return the next date in the same format
-                            return next_date.strftime('%d/%m/%Y')
+                            return next_date.strftime('%m/%d/%y')
                         except ValueError as e:
-                            print(f"Error parsing date '{formatted_date_str}': {e}")
+                            print(f"Error parsing date '{release_date_str}': {e}")
                             return 'Invalid date format'
 
-                    End_date = get_next_date(formatted_date)
+                    End_date = get_next_date(release_date)
 
                     # Extract price
                     price_tag = game.find_element(By.CSS_SELECTOR, 'span.W990N.SH2al')
                     price = price_tag.text.strip() if price_tag else 'No price found'
-                    print("start date : ", release_date)
-                    print("start formatted_date : ", formatted_date)
-                    print("end date : ", End_date)
-                    print("description description : ", description)
+
                     row = [
-                        img_url,             # Image URL
-                        title,              # Event Name
-                        'Launch',             # Event Type
-                        description,                 # Event Description (not available)
-                        'Nintendo', # Calendar (not available)
-                        'No',               # All Day
-                        'Public',           # Public/private (assuming public)
-                        '0',                # Reported Count
-                        formatted_date,       # Start Date
-                        End_date,           # End Date
-                        game_link,  # Website url
-                        'evenigoofficial+5@gmail.com'
+                        img_url,               # Image URL
+                        title,                 # Event Name
+                        'Sale',                # Event Type
+                        description,           # Event Description
+                        'Nintendo',            # Calendar (not available)
+                        'No',                  # All Day
+                        'Public',              # Public/private (assuming public)
+                        '0',                   # Reported Count
+                        release_date,          # Start Date
+                        End_date,              # End Date
+                        game_link,             # Website URL
+                        ''
                     ]
 
                     # Write the data to the CSV file
@@ -142,11 +120,10 @@ def scrape_nintendo_games():
 
     finally:
         driver.quit()
-    print("Scraping completed for nintendo website")
+
     print(f"Data has been written to {csv_file_path}")
-    print()
     send_images_to_bubble_images_api(CalendarEnum.NINTENDO.value, csv_file_path)
 
 # Run the scraper
-if __name__ == "__main__":
+if _name_ == "__main__":
     scrape_nintendo_games()

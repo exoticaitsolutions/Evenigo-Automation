@@ -25,6 +25,18 @@ from selenium.webdriver.support import expected_conditions as EC
 from urls import SEPHORA_WEBSITE_URL
 from webdriver import driver_confrigration
 
+def convert_end_date_format(date_str):
+    try:
+        # Parse the date assuming it's in MM/DD/YYYY format
+        date_obj = datetime.strptime(date_str, '%m/%d/%Y')
+        # Convert and return the date in DD-MM-YYYY format
+        formatted_date = date_obj.strftime('%d-%m-%Y')
+        return formatted_date
+    except ValueError as e:
+        print(f"Error parsing date '{date_str}': {e}")
+        # If invalid, return a date 7 days from today
+        return (datetime.now() + timedelta(days=7)).strftime('%d-%m-%Y')
+
 def scrape_sephora_website_offers(retry_count=0):
     """
     Scrapes promotional offers from the Sephora website and saves the data to a CSV file.
@@ -129,6 +141,9 @@ def scrape_sephora_website_offers(retry_count=0):
                             print(f"Paragraph 2: {paragraph_2}")
                             print(f"Paragraph 3: {paragraph_3}")
                             print(f"Paragraph 5: {paragraph_5}")
+                            print("=========="*8)
+                            print("start_date 11111111: ", start_date)
+                            print("=========="*8)
                             data.append(
                             {
                                 "Image URL": img_src,
@@ -196,7 +211,13 @@ def scrape_sephora_website_offers(retry_count=0):
 
                         if "Ends" in paragraph_3:
                             paragraph_3 = re.sub(r"Ends.*", "", paragraph_3).strip()
-
+                        formatted_end_date = convert_end_date_format(end_date)
+                        print("-------------"*10)
+                        print("end_date : ", end_date)
+                        print("start_date : ", start_date)
+                        print("formatted_end_date : ", formatted_end_date)
+                        print()
+                        print("-------------"*10)
                         data.append(
                             {
                                 "Image URL": image_url,
@@ -210,7 +231,7 @@ def scrape_sephora_website_offers(retry_count=0):
                                 "Paragraph 2": paragraph_2,
                                 "Paragraph 3": paragraph_3,
                                 "Start Date": start_date,
-                                "End Date": end_date,
+                                "End Date": formatted_end_date,
                                 "Paragraph 5": paragraph_5,
                                 "Url": SEPHORA_WEBSITE_URL,
                                 "Created By":'evenigoofficial+1212@gmail.com'

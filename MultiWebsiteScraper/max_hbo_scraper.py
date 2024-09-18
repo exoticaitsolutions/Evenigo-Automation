@@ -86,7 +86,7 @@ def scrape_max_hbo_content():
     data.append({
             "Image URL": image_url,
             "Event Name": event_name_text,
-            "Event Type": "Sale",
+            "Event Type": "Launch",
             "Event Description": description_text,
             "Calendar": "Maxhbo Calendar",
             "All Day": "No",
@@ -127,7 +127,7 @@ def scrape_max_hbo_content():
         data.append({
             "Image URL": '',
             "Event Name": events_name[i],
-            "Event Type": "Sale",
+            "Event Type": "Launch",
             "Event Description": description_data[i],
             "Calendar": "Maxhbo Calendar",
             "All Day": "No",
@@ -172,7 +172,7 @@ def scrape_max_hbo_content():
                 data.append({
                     "Image URL": '',
                     "Event Name": desc,
-                    "Event Type": "Sale",
+                    "Event Type": "Launch",
                     "Event Description": '',
                     "Calendar": "Maxhbo Calendar",
                     "All Day": "No",

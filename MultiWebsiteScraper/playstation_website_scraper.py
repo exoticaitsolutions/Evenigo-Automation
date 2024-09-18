@@ -14,6 +14,7 @@ from SiteUtilsConfig.utils import *
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
+print("Scraping start for playstation website")
 
 # Create a requests session with retry mechanism
 def requests_retry_session(
@@ -51,7 +52,6 @@ def get_soup(url):
 
 # Function to extract data from individual event pages
 def scrape_event_page(event_url):
-    print("Scraping start for playstation website")
     time.sleep(2)  # Add delay between requests to avoid rate-limiting
     soup = get_soup(event_url)
     if soup is None:
@@ -97,10 +97,14 @@ def scrape_main_page(soup):
                     start_date = li.find('strong').get_text(strip=True) if li.find('strong') else 'No date found'
                     def convert_date_format(date_str):
                         try:
+                            # Get the current year
                             current_year = datetime.now().year
+                            # Append the current year to the input date string
                             full_date_str = f"{date_str} {current_year}"
+                            # Parse the date assuming it's in 'Month Day Year' format (e.g., 'September 3 2024')
                             date_obj = datetime.strptime(full_date_str, '%B %d %Y')
-                            formatted_date = date_obj.strftime('%d/%m/%y')
+                            # Convert and return the date in 'DD-MM-YYYY' format
+                            formatted_date = date_obj.strftime('%d-%m-%Y')
                             return formatted_date
                         except ValueError:
                             return ''
@@ -133,19 +137,20 @@ def scrape_main_page(soup):
                             # Ensure the URL is absolute
                             event_url = f"https://gamerant.com{event_url}"
                     else:
-                        event_url = ''  # Set to empty if no URL found
+                        event_url = PLAYSTATION_WEBSITE_URL  # Set to empty if no URL found
 
                     # Scrape additional data from the event page
                     if event_url:
                         event_title, event_content, event_image_url = scrape_event_page(event_url)
                     else:
                         event_title, event_content, event_image_url = '', '', ''
-
+                    print("start_date : ", converted_date)
+                    print("end_date : ", end_date_str)
                     # Append the data
                     events_data.append({
                         "Image URL": event_image_url,
                         "Event Name": event_description,
-                        "Event Type": "Sale",
+                        "Event Type": "Launch",
                         "Event Description": event_content,
                         "Calendar": "Playstation Calendar",
                         "All Day": "No",

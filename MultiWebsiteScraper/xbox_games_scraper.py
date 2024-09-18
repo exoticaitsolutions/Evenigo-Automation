@@ -47,7 +47,7 @@ def xbox_website_data_scraping():
                 img_link = 'N/A'
 
             # Append data to the list
-            data.append([img_link, desc, 'Sale', '', 'Xbox Calendar', 'No', 'Public', '0', '', '', link, 'evenigoofficial+1267@gmail.com'])
+            data.append([img_link, desc, 'Launch', '', 'Xbox Calendar', 'No', 'Public', '0', '', '', link, 'evenigoofficial+1267@gmail.com'])
 
         # Write data to CSV
         os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
