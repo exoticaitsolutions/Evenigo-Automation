@@ -12,24 +12,25 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     WebDriverException,
 )
-from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
+from Integration_With_Bubble.upload_image_in_bubble import send_csv_data_to_bubble
 from urls import *
 from SiteUtilsConfig.utils import *
 from SiteUtilsConfig.config import *
 from urls import SEPHORA_WEBSITE_URL
 from webdriver import driver_confrigration
 
+
 def convert_end_date_format(date_str):
     try:
         # Parse the date assuming it's in MM/DD/YYYY format
-        date_obj = datetime.strptime(date_str, '%m/%d/%Y')
+        date_obj = datetime.strptime(date_str, "%m/%d/%Y")
         # Convert and return the date in DD-MM-YYYY format
-        formatted_date = date_obj.strftime('%d-%m-%Y')
+        formatted_date = date_obj.strftime("%d-%m-%Y")
         return formatted_date
     except ValueError as e:
-        print(f"Error parsing date '{date_str}': {e}")
         # If invalid, return a date 7 days from today
-        return (datetime.now() + timedelta(days=7)).strftime('%d-%m-%Y')
+        return (datetime.now() + timedelta(days=7)).strftime("%d-%m-%Y")
+
 
 def scrape_sephora_website_offers(retry_count=0):
     """
@@ -111,17 +112,19 @@ def scrape_sephora_website_offers(retry_count=0):
 
                 try:
                     mem = all_feeds[0]
-                    card_elements_today_offers = mem.find_elements(By.XPATH, '//li[@class="css-1jz9muy eanm77i0"]')
+                    card_elements_today_offers = mem.find_elements(
+                        By.XPATH, '//li[@class="css-1jz9muy eanm77i0"]'
+                    )
                     print()
                     print("cards up :", len(card_elements_today_offers))
                     print()
                     if card_elements_today_offers:
                         for j in card_elements_today_offers:
-                            link_element = j.find_element(By.TAG_NAME, 'a')
-                            href_link = link_element.get_attribute('href')
-                            img_element = j.find_element(By.TAG_NAME, 'img')
-                            img_src = img_element.get_attribute('src')
-                            print('image src: ', img_src)
+                            link_element = j.find_element(By.TAG_NAME, "a")
+                            href_link = link_element.get_attribute("href")
+                            img_element = j.find_element(By.TAG_NAME, "img")
+                            img_src = img_element.get_attribute("src")
+                            print("image src: ", img_src)
                             text_lines = j.text.split("\n")
                             event_name = j.text.split("\n")[0]
                             event_description = j.text.split("\n")[1]
@@ -136,25 +139,25 @@ def scrape_sephora_website_offers(retry_count=0):
                             print(f"Paragraph 3: {paragraph_3}")
                             print(f"Paragraph 5: {paragraph_5}")
                             data.append(
-                            {
-                                "Image URL": img_src,
-                                "Event Name": event_name,
-                                "Event Type": "Sale",
-                                "Event Type (text)":"Sale",
-                                "Event Description": event_description,
-                                "Calendar": Sephora_CALENDAR_NAME,
-                                "All Day": "No",
-                                "Public/Private": "Public",
-                                "Reported Count": 0,
-                                "Paragraph 2": paragraph_2,
-                                "Paragraph 3": paragraph_3,
-                                "Start Date": start_date,
-                                "End Date": '',
-                                "Paragraph 5": paragraph_5,
-                                "Url": href_link,
-                                "Created By":'evenigoofficial+1212@gmail.com'
-                            }
-                        )
+                                {
+                                    "Image URL": img_src,
+                                    "Event Name": event_name,
+                                    "Event Type": "Sale",
+                                    "Event Type (text)": "Sale",
+                                    "Event Description": event_description,
+                                    "Calendar": Sephora_CALENDAR_NAME,
+                                    "All Day": "No",
+                                    "Public/Private": "Public",
+                                    "Reported Count": 0,
+                                    "Paragraph 2": paragraph_2,
+                                    "Paragraph 3": paragraph_3,
+                                    "Start Date": start_date,
+                                    "End Date": "",
+                                    "Paragraph 5": paragraph_5,
+                                    "Url": href_link,
+                                    "Created By": "evenigoofficial+1212@gmail.com",
+                                }
+                            )
 
                     card_elements = mem.find_elements(
                         By.XPATH, '//li[@class="css-6bi8ut eanm77i0"]'
@@ -209,7 +212,7 @@ def scrape_sephora_website_offers(retry_count=0):
                                 "Image URL": image_url,
                                 "Event Name": event_name,
                                 "Event Type": "Sale",
-                                "Event Type (text)":"Sale",
+                                "Event Type (text)": "Sale",
                                 "Event Description": event_description,
                                 "Calendar": Sephora_CALENDAR_NAME,
                                 "All Day": "No",
@@ -221,7 +224,7 @@ def scrape_sephora_website_offers(retry_count=0):
                                 "End Date": formatted_end_date,
                                 "Paragraph 5": paragraph_5,
                                 "Url": SEPHORA_WEBSITE_URL,
-                                "Created By":'evenigoofficial+1212@gmail.com'
+                                "Created By": "evenigoofficial+1212@gmail.com",
                             }
                         )
 
@@ -309,7 +312,7 @@ def scrape_sephora_website_offers(retry_count=0):
         print()
         print(f"Total execution time: {total_time:.2f} seconds")
         driver.quit()
-        send_images_to_bubble_images_api(CalendarEnum.SEPHORA.value, csv_file)
+        send_csv_data_to_bubble(CalendarEnum.SEPHORA.value, csv_file)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")

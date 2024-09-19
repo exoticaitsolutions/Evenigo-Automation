@@ -10,21 +10,31 @@ from selenium.webdriver.support import expected_conditions as EC
 from seleniumbase import Driver
 from SiteUtilsConfig.utils import *
 from SiteUtilsConfig.config import *
-from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
+from Integration_With_Bubble.upload_image_in_bubble import send_csv_data_to_bubble
 from urls import NETFLIX_WEBSITE_URL
 from webdriver import driver_confrigration
 
+
 def convert_date(date_str, year=None):
     month_map = {
-        'Jan.': '1', 'Feb.': '2', 'Mar.': '3', 'Apr.': '4', 'May': '5',
-        'Jun.': '6', 'Jul.': '7', 'Aug.': '8', 'Sept.': '9', 'Oct.': '10',
-        'Nov.': '11', 'Dec.': '12'
+        "Jan.": "1",
+        "Feb.": "2",
+        "Mar.": "3",
+        "Apr.": "4",
+        "May": "5",
+        "Jun.": "6",
+        "Jul.": "7",
+        "Aug.": "8",
+        "Sept.": "9",
+        "Oct.": "10",
+        "Nov.": "11",
+        "Dec.": "12",
     }
-    
+
     # Split the input string into month and day
     month_str, day = date_str.split()
-    month = month_map.get(month_str, '0')
-    
+    month = month_map.get(month_str, "0")
+
     # Use the full 4-digit year
     if year is None:
         year = datetime.now().year  # Get the full year (e.g., 2024)
@@ -63,52 +73,56 @@ def scrape_netflix_content():
                 )
                 paragraph_element = driver.find_element(By.XPATH, xpath_paragraph)
                 paragraph_text = paragraph_element.text
-                
+
                 combined_text = f"{heading_text} {paragraph_text}".strip()
 
-                if ' (' in combined_text and ')' in combined_text:
-                    date_pattern = r'\(([^)]+)\)'
+                if " (" in combined_text and ")" in combined_text:
+                    date_pattern = r"\(([^)]+)\)"
                     match = re.search(date_pattern, combined_text)
-                    name_part, start_date_part = combined_text.split(' (', 1)
+                    name_part, start_date_part = combined_text.split(" (", 1)
                     name_part = name_part.strip()
                     if match:
                         date = match.group(1)
-                        current_year = datetime.now().year % 100  
+                        current_year = datetime.now().year % 100
                         converted_date = convert_date(date, year=current_year)
 
                         def get_next_date(release_date_str):
                             try:
                                 # Parse the date string in the correct format (DD-MM-YYYY)
-                                date = datetime.strptime(release_date_str, '%d-%m-%Y')
+                                date = datetime.strptime(release_date_str, "%d-%m-%Y")
                                 next_date = date + timedelta(days=1)
                                 # Return the next date in the same format
-                                return next_date.strftime('%d-%m-%Y')
+                                return next_date.strftime("%d-%m-%Y")
                             except ValueError as e:
                                 print(f"Error parsing date '{release_date_str}': {e}")
-                                return 'Invalid date format'
+                                return "Invalid date format"
 
                         End_date = get_next_date(converted_date)
 
-                        description = re.sub(date_pattern, '', combined_text).strip()
+                        description = re.sub(date_pattern, "", combined_text).strip()
                     else:
                         print("No date found in the description.")
-                    extracted_data.append({
-                         "Image URL": '',
-                         "Event Name": name_part,
-                         "Event Type": "Launch",
-                         "Event Type (text)":"Launch",
-                         "Event Description": description,
-                         "Calendar": Netflix_CALENDAR_NAME,
-                         "All Day": "No",
-                         "Public/Private": "Public",
-                         "Reported Count": 0,
-                         "Start Date": converted_date,
-                         "End Date": End_date,
-                         "Url": NETFLIX_WEBSITE_URL,
-                         "Created By":'evenigoofficial+6@gmail.com'
-                    })
+                    extracted_data.append(
+                        {
+                            "Image URL": "",
+                            "Event Name": name_part,
+                            "Event Type": "Launch",
+                            "Event Type (text)": "Launch",
+                            "Event Description": description,
+                            "Calendar": Netflix_CALENDAR_NAME,
+                            "All Day": "No",
+                            "Public/Private": "Public",
+                            "Reported Count": 0,
+                            "Start Date": converted_date,
+                            "End Date": End_date,
+                            "Url": NETFLIX_WEBSITE_URL,
+                            "Created By": "evenigoofficial+6@gmail.com",
+                        }
+                    )
             except Exception as e:
-                print(f"An error occurred for XPaths '{xpath_heading}' and '{xpath_paragraph}': {e}")
+                print(
+                    f"An error occurred for XPaths '{xpath_heading}' and '{xpath_paragraph}': {e}"
+                )
 
         for number in paragraph2_range:
             xpath = f'//*[@id="c-pageArticleSingle-new-on-netflix"]/div[1]/div[1]/div[2]/div/div/p[{number}]'
@@ -118,42 +132,44 @@ def scrape_netflix_content():
                 )
                 element = driver.find_element(By.XPATH, xpath)
                 text = element.text
-                
-                lines = text.split('\n')
+
+                lines = text.split("\n")
                 date = lines[0].strip()
-                current_year = datetime.now().year % 100  
+                current_year = datetime.now().year % 100
                 converted_date = convert_date(date, year=current_year)
 
                 def get_next_date(release_date_str):
                     try:
                         # Parse the date string in the correct format (DD-MM-YYYY)
-                        date = datetime.strptime(release_date_str, '%d-%m-%Y')
+                        date = datetime.strptime(release_date_str, "%d-%m-%Y")
                         next_date = date + timedelta(days=1)
                         # Return the next date in the same format
-                        return next_date.strftime('%d-%m-%Y')
+                        return next_date.strftime("%d-%m-%Y")
                     except ValueError as e:
                         print(f"Error parsing date '{release_date_str}': {e}")
-                        return 'Invalid date format'
+                        return "Invalid date format"
 
                 End_date = get_next_date(converted_date)
                 events = "\n".join(line.strip() for line in lines[1:])
                 event_names = events.splitlines()
                 for event in event_names:
-                    extracted_data.append({
-                        "Image URL": '',
-                        "Event Name": event,
-                        "Event Type": "Launch",
-                        "Event Type (text)":"Launch",
-                        "Event Description": '',
-                        "Calendar": Netflix_CALENDAR_NAME,
-                        "All Day": "No",
-                        "Public/Private": "Public",
-                        "Reported Count": 0,
-                        "Start Date": converted_date,
-                        "End Date": End_date,
-                        "Url": NETFLIX_WEBSITE_URL,
-                        "Created By":'evenigoofficial+6@gmail.com'
-                    })
+                    extracted_data.append(
+                        {
+                            "Image URL": "",
+                            "Event Name": event,
+                            "Event Type": "Launch",
+                            "Event Type (text)": "Launch",
+                            "Event Description": "",
+                            "Calendar": Netflix_CALENDAR_NAME,
+                            "All Day": "No",
+                            "Public/Private": "Public",
+                            "Reported Count": 0,
+                            "Start Date": converted_date,
+                            "End Date": End_date,
+                            "Url": NETFLIX_WEBSITE_URL,
+                            "Created By": "evenigoofficial+6@gmail.com",
+                        }
+                    )
             except Exception as e:
                 print(f"An error occurred for XPath '{xpath}': {e}")
 
@@ -162,12 +178,23 @@ def scrape_netflix_content():
 
         # Define CSV headers
         headers = [
-            'Image URL', 'Event Name', 'Event Type', 'Event Type (text)', 'Event Description', 'Calendar', 'All Day',
-            'Public/Private', 'Reported Count', 'Start Date', 'End Date', 'Url', 'Created By'
+            "Image URL",
+            "Event Name",
+            "Event Type",
+            "Event Type (text)",
+            "Event Description",
+            "Calendar",
+            "All Day",
+            "Public/Private",
+            "Reported Count",
+            "Start Date",
+            "End Date",
+            "Url",
+            "Created By",
         ]
 
         # Write the data to the CSV file
-        with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
+        with open(csv_file_path, "w", newline="", encoding="utf-8") as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=headers)
             writer.writeheader()
             writer.writerows(extracted_data)
@@ -175,11 +202,10 @@ def scrape_netflix_content():
         print(f"Data has been written to {csv_file_path}")
         print()
 
-        send_images_to_bubble_images_api(CalendarEnum.NETFLIX.value, csv_file_path)
+        send_csv_data_to_bubble(CalendarEnum.NETFLIX.value, csv_file_path)
 
         # Optional: Add a delay
         time.sleep(2)
-    
 
     except Exception as e:
         print("An error occurred:", e)
@@ -187,6 +213,6 @@ def scrape_netflix_content():
     finally:
         driver.quit()
 
+
 if __name__ == "__main__":
     scrape_netflix_content()
-

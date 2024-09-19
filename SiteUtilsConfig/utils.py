@@ -9,27 +9,26 @@ import os
 import pandas as pd
 from datetime import datetime
 import requests
-from Integration_With_Bubble .bubble_api_integration import *
+from Integration_With_Bubble.bubble_api_integration import *
 from urls import *
 from SiteUtilsConfig.config import *
 from enum import Enum
 
 
 class CalendarEnum(Enum):
-    SEPHORA = 'Sephora Calendar'
-    PRIME_VIDEO = 'Prime Video'
-    NINTENDO = 'Nintendo'
-    NETFLIX = 'Netflix'
-    Hulu_Calendar = 'Hulu Calendar'
-    Xbox_Calendar = 'Xbox Calendar'
-    Playstation_Calendar = 'Playstation Calendar'
-    Maxhbo_Calendar = 'Maxhbo Calendar'
+    SEPHORA = "Sephora Calendar"
+    PRIME_VIDEO = "Prime Video"
+    NINTENDO = "Nintendo"
+    NETFLIX = "Netflix"
+    Hulu_Calendar = "Hulu Calendar"
+    Xbox_Calendar = "Xbox Calendar"
+    Playstation_Calendar = "Playstation Calendar"
+    Maxhbo_Calendar = "Maxhbo Calendar"
 
 
 # Define the download folder path
 DOWNLOAD_FOLDER = os.path.join(os.getcwd(), "downloads")
 # Time in seconds (10 minutes)
-
 
 
 # Check if the folder exists, and if not, create it
@@ -82,12 +81,13 @@ def validate_and_format_date(date_str, default_date=None):
 special_characters = r"[¶•§§\^\*†‡‡â€¡â€¡稚熔容痴熔®â€™â€™]"
 
 
-def clean_description(description):
-    return re.sub(special_characters, "", description)
+def clean_data(data):
+    return re.sub(special_characters, "", data)
 
 
 def get_calendar_id(name):
     return CALENDAR_NAME_TO_ID.get(name, None)
+
 
 def fetch_existing_events():
     """
@@ -190,6 +190,7 @@ def save_images_from_csv_to_local_folder(image_url, save_path):
     except Exception as e:
         print(f"Failed to download image: {e}")
 
+
 def get_file_path(file_name):
     """
     Constructs the file path for the given file name in the current directory.
@@ -201,9 +202,10 @@ def get_file_path(file_name):
         str: The full file path.
     """
     current_directory = os.getcwd()
-    output_folder = 'csv_output'
+    output_folder = "csv_output"
     file_path = os.path.join(current_directory, output_folder, file_name)
     return file_path
+
 
 file_path = get_file_path(file_name)
 ninten_file_path = get_file_path(nintendo_file_name)
@@ -213,6 +215,7 @@ hulu_file_path = get_file_path(hulu_file_name)
 max_hbo_file_path = get_file_path(max_hbo_file_name)
 netflix_file_path = get_file_path(netflix_file_name)
 playstation_file_path = get_file_path(playstation_file_name)
+
 
 def is_file_older_than(file_path, time_threshold):
     if os.path.exists(file_path):

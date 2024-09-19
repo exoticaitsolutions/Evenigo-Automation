@@ -5,6 +5,7 @@
 * This project is a multi-website scraper that automates the process of extracting data from various popular websites, such as Netflix, Hulu, Prime, Gamerant, and more. The scraper collects relevant content like game descriptions, streaming service details, and entertainment-related information, and stores the data into CSV files for further processing or analysis.
 
 ### Supported Websites
+* Sephora
 * Netflix
 * Hulu
 * Prime

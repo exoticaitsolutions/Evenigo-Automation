@@ -2,7 +2,11 @@ import os
 import csv
 from datetime import datetime
 import re
-from SiteUtilsConfig.utils import clean_description, fetch_existing_events, get_calendar_id, validate_and_format_date
+from SiteUtilsConfig.utils import (
+    clean_data,
+    fetch_existing_events,
+    validate_and_format_date,
+)
 from Integration_With_Bubble.bubble_api_integration import *
 from urls import *
 
@@ -13,7 +17,7 @@ def fetch_user_id_by_email(email):
     Replace this function with actual API integration for fetching user ID.
     """
     email_to_user_id_map = {
-        "evenigoofficial+1212@gmail.com": "1725406841796x621130586024924800", 
+        "evenigoofficial+1212@gmail.com": "1725406841796x621130586024924800",
         "evenigoofficial+6@gmail.com": "1724110723458x455625403407267100",
     }
     return email_to_user_id_map.get(email)
@@ -30,9 +34,9 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
         list: A list of IDs of the inserted events.
     """
     if not os.path.isfile(file_path):
-        print(f"Error: The file '{file_path}' does not exist.") 
+        print(f"Error: The file '{file_path}' does not exist.")
         return
-   
+
     existing_events = fetch_existing_events()
 
     # Ensure existing_events is a list of dictionaries
@@ -48,7 +52,7 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
     ids = []
 
     # with open(file_path, mode="r") as file:
-    with open(file_path, 'r', newline='', encoding='utf-8') as file:
+    with open(file_path, "r", newline="", encoding="utf-8") as file:
         reader = csv.DictReader(file)
 
         for row in reader:
@@ -65,9 +69,9 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 "Public/Private",
                 "Event Description",
                 "Image URL",
-                "Created By"
+                "Created By",
             ]
-            
+
             if not all(field in row for field in required_fields):
                 print()
                 print(f"Skipping row due to missing fields: {row}")
@@ -90,17 +94,17 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 print(f"Skipping row due to existing event: {event_name}")
                 continue
 
-            created_by_email = row.get("Created By")    
+            created_by_email = row.get("Created By")
             user_id = fetch_user_id_by_email(created_by_email)
             data = {
                 "All Day": "yes",
                 "End Date/Time (Event)": end_date,
                 "Calendar": calendar_id,
                 "Event Type": event_type,
-                "Event Type (text)":event_type_text,
-                "Event Name": event_name,
+                "Event Type (text)": event_type_text,
+                "Event Name": clean_data(event_name),
                 "Public/Private": row.get("Public/Private"),
-                "Short Description": clean_description(row.get("Event Description")),
+                "Short Description": clean_data(row.get("Event Description")),
                 "Start Date/Time (Event)": start_date,
                 "URL": row.get("Url"),
                 "Created By (Edit)": user_id,

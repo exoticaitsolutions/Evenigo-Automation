@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from seleniumbase import Driver
 
+
 def driver_confrigration():
     options = Options()
     options.add_argument("--disable-notifications")

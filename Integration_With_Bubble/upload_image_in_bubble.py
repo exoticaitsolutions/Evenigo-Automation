@@ -1,12 +1,15 @@
 import math
 import os
 from SiteUtilsConfig.utils import DOWNLOAD_FOLDER, save_images_from_csv_to_local_folder
-from Integration_With_Bubble.bubble_api_integration import upload_images_to_bubble_events_images
+from Integration_With_Bubble.bubble_api_integration import (
+    upload_images_to_bubble_events_images,
+)
 from Integration_With_Bubble.upload_data_in_bubble import send_offers_from_csv_to_api
 from SiteUtilsConfig.utils import csv_to_json, check_file_downloaded
 import urllib.parse
 
-def send_images_to_bubble_images_api(calendarName, csv_file_path):
+
+def send_csv_data_to_bubble(calendarName, csv_file_path):
     """Read image URLs from a CSV file, download the images, and upload them to Bubble.io.
 
     Args:
@@ -30,7 +33,9 @@ def send_images_to_bubble_images_api(calendarName, csv_file_path):
                 imageurl = filedata.get("Image URL")
 
                 # Skip if the image URL is missing or NaN
-                if not imageurl or (isinstance(imageurl, float) and math.isnan(imageurl)):
+                if not imageurl or (
+                    isinstance(imageurl, float) and math.isnan(imageurl)
+                ):
                     print(f"No valid image URL for event '{eventname}', skipping...")
                     continue
 
@@ -43,7 +48,9 @@ def send_images_to_bubble_images_api(calendarName, csv_file_path):
                 # Extract the filename from the image URL
                 filename = os.path.basename(urllib.parse.urlparse(imageurl).path)
                 if not filename:  # Skip if filename is empty
-                    print(f"Invalid image filename for event '{eventname}', skipping...")
+                    print(
+                        f"Invalid image filename for event '{eventname}', skipping..."
+                    )
                     continue
 
                 # Ensure the filename ends with a valid image extension
