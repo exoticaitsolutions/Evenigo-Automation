@@ -201,6 +201,7 @@ def scrape_netflix_content():
         print("Scraping completed for netflix website")
         print(f"Data has been written to {csv_file_path}")
         print()
+        driver.quit()
 
         send_csv_data_to_bubble(CalendarEnum.NETFLIX.value, csv_file_path)
 

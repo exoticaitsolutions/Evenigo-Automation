@@ -264,6 +264,7 @@ def scrape_max_hbo_content():
     print("Scraping completed for max hbo website")
     print(f"Data has been written to {csv_file_path}")
     print()
+    driver.quit()
     send_csv_data_to_bubble(CalendarEnum.Maxhbo_Calendar.value, csv_file_path)
 
 
