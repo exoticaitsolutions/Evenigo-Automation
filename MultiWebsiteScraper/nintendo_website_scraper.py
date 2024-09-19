@@ -49,7 +49,7 @@ def scrape_nintendo_games():
     os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
     csv_file_path = os.path.join(csv_folder_name, nintendo_file_name)
 
-    headers =['Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar','All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"]
+    headers =['Image URL', 'Event Name', 'Event Type', 'Event Type (text)', 'Event Description', 'Calendar','All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"]
     
 
     # Check if the CSV file exists
@@ -115,16 +115,13 @@ def scrape_nintendo_games():
                     # Extract price
                     price_tag = game.find_element(By.CSS_SELECTOR, 'span.W990N.SH2al')
                     price = price_tag.text.strip() if price_tag else 'No price found'
-                    print("start date : ", release_date)
-                    print("start formatted_date : ", formatted_date)
-                    print("end date : ", End_date)
-                    print("description description : ", description)
                     row = [
                         img_url,             # Image URL
                         title,              # Event Name
                         'Launch',             # Event Type
+                        'Launch',             # Event Type
                         description,                 # Event Description (not available)
-                        'Nintendo', # Calendar (not available)
+                        Nintendo_CALENDAR_NAME, # Calendar (not available)
                         'No',               # All Day
                         'Public',           # Public/private (assuming public)
                         '0',                # Reported Count

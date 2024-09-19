@@ -92,16 +92,13 @@ def scrape_netflix_content():
                         description = re.sub(date_pattern, '', combined_text).strip()
                     else:
                         print("No date found in the description.")
-                    print()
-                    print("converted_date 1 : ", converted_date)
-                    print("End Date 1 : ", End_date)
-                    print()
                     extracted_data.append({
                          "Image URL": '',
                          "Event Name": name_part,
                          "Event Type": "Launch",
+                         "Event Type (text)":"Launch",
                          "Event Description": description,
-                         "Calendar": "Netflix",
+                         "Calendar": Netflix_CALENDAR_NAME,
                          "All Day": "No",
                          "Public/Private": "Public",
                          "Reported Count": 0,
@@ -140,28 +137,23 @@ def scrape_netflix_content():
 
                 End_date = get_next_date(converted_date)
                 events = "\n".join(line.strip() for line in lines[1:])
-                print()
-                print("converted_date 2 : ", converted_date)
-                print("End Date 2 : ", End_date)
-                print()
-                extracted_data.append({
-                    "Image URL": '',
-                    "Event Name": events,
-                    "Event Type": "Launch",
-                    "Event Description": '',
-                    "Calendar": "Netflix",
-                    "All Day": "No",
-                    "Public/Private": "Public",
-                    "Reported Count": 0,
-                    "Start Date": converted_date,
-                    # "Start Date": '25-09-2024',
-                    # "Start Date": '4-9-2024',
-                    "End Date": End_date,
-                    # "End Date": '25-09-2024',
-                    "End Date": '4-9-2024',
-                    "Url": NETFLIX_WEBSITE_URL,
-                    "Created By":'evenigoofficial+6@gmail.com'
-                })
+                event_names = events.splitlines()
+                for event in event_names:
+                    extracted_data.append({
+                        "Image URL": '',
+                        "Event Name": event,
+                        "Event Type": "Launch",
+                        "Event Type (text)":"Launch",
+                        "Event Description": '',
+                        "Calendar": Netflix_CALENDAR_NAME,
+                        "All Day": "No",
+                        "Public/Private": "Public",
+                        "Reported Count": 0,
+                        "Start Date": converted_date,
+                        "End Date": End_date,
+                        "Url": NETFLIX_WEBSITE_URL,
+                        "Created By":'evenigoofficial+6@gmail.com'
+                    })
             except Exception as e:
                 print(f"An error occurred for XPath '{xpath}': {e}")
 
@@ -170,7 +162,7 @@ def scrape_netflix_content():
 
         # Define CSV headers
         headers = [
-            'Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day',
+            'Image URL', 'Event Name', 'Event Type', 'Event Type (text)', 'Event Description', 'Calendar', 'All Day',
             'Public/Private', 'Reported Count', 'Start Date', 'End Date', 'Url', 'Created By'
         ]
 

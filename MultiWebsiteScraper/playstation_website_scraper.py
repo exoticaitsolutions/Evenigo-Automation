@@ -14,7 +14,6 @@ from SiteUtilsConfig.utils import *
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
-print("Scraping start for playstation website")
 
 # Create a requests session with retry mechanism
 def requests_retry_session(
@@ -144,15 +143,14 @@ def scrape_main_page(soup):
                         event_title, event_content, event_image_url = scrape_event_page(event_url)
                     else:
                         event_title, event_content, event_image_url = '', '', ''
-                    print("start_date : ", converted_date)
-                    print("end_date : ", end_date_str)
                     # Append the data
                     events_data.append({
                         "Image URL": event_image_url,
                         "Event Name": event_description,
                         "Event Type": "Launch",
+                        "Event Type (text)":"Launch",
                         "Event Description": event_content,
-                        "Calendar": "Playstation Calendar",
+                        "Calendar": Playstation_CALENDAR_NAME,
                         "All Day": "No",
                         "Public/Private": "Public",
                         "Reported Count": 0,

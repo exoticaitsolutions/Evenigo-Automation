@@ -87,8 +87,9 @@ def scrape_max_hbo_content():
             "Image URL": image_url,
             "Event Name": event_name_text,
             "Event Type": "Launch",
+            "Event Type (text)": "Launch",
             "Event Description": description_text,
-            "Calendar": "Maxhbo Calendar",
+            "Calendar": Maxhbo_CALENDAR_NAME,
             "All Day": "No",
            "Public/Private": "Public",
             "Reported Count": 0,
@@ -128,8 +129,9 @@ def scrape_max_hbo_content():
             "Image URL": '',
             "Event Name": events_name[i],
             "Event Type": "Launch",
+            "Event Type (text)": "Launch",
             "Event Description": description_data[i],
-            "Calendar": "Maxhbo Calendar",
+            "Calendar": Maxhbo_CALENDAR_NAME,
             "All Day": "No",
             "Public/Private": "Public",
             "Reported Count": 0,
@@ -169,20 +171,23 @@ def scrape_max_hbo_content():
                 
                 # Prepare data for appending
                 desc = "\n".join(description.split("\n")[1:])
-                data.append({
-                    "Image URL": '',
-                    "Event Name": desc,
-                    "Event Type": "Launch",
-                    "Event Description": '',
-                    "Calendar": "Maxhbo Calendar",
-                    "All Day": "No",
-                    "Public/Private": "Public",
-                    "Reported Count": 0,
-                    "Start Date": start_date_str,
-                    "End Date": end_date_str,
-                    "URL": NEW_ON_MAX_HBO_WEBSITE_URL,
-                    "Created By": 'evenigoofficial+1261@gmail.com',
-                })
+                event_names = desc.splitlines()
+                for event in event_names:
+                    data.append({
+                        "Image URL": '',
+                        "Event Name": event,
+                        "Event Type": "Launch",
+                        "Event Type (text)": "Launch",
+                        "Event Description": '',
+                        "Calendar": Maxhbo_CALENDAR_NAME,
+                        "All Day": "No",
+                        "Public/Private": "Public",
+                        "Reported Count": 0,
+                        "Start Date": start_date_str,
+                        "End Date": end_date_str,
+                        "URL": NEW_ON_MAX_HBO_WEBSITE_URL,
+                        "Created By": 'evenigoofficial+1261@gmail.com',
+                    })
             else:
                 print(f"Invalid month name: {month_name}")
         else:
@@ -198,7 +203,7 @@ def scrape_max_hbo_content():
     # Write to CSV file
     with open(csv_file_path, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=[
-            "Image URL", "Event Name", "Event Type", "Event Description", "Calendar", "All Day", "Public/Private",
+            "Image URL", "Event Name", "Event Type", "Event Type (text)", "Event Description", "Calendar", "All Day", "Public/Private",
             "Reported Count", "Start Date", "End Date", "URL", "Created By"
         ])
         writer.writeheader()

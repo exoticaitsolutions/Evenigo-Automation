@@ -49,12 +49,24 @@ WEBSITES = {
 
 
 time_threshold = 10 * 60
+
+#Define Csv Name
 csv_folder_name = 'csv_output'
 file_name = "sephora_beauty_offers.csv"
 nintendo_file_name = "nintendo_data.csv"
 prime_file_name = "Amazon_prime_site.csv"
 xbox_file_name = "xbox_games_data.csv"
-hulu_file_name = "new_on_hulu.csv"
+hulu_file_name = "hulu.csv"
 max_hbo_file_name = "max_hbo_data.csv"
 netflix_file_name = "netflix_data.csv"
 playstation_file_name = "playstation_website_data.csv"
+
+#Define Calander Name
+Sephora_CALENDAR_NAME = "Sephora Calendar"
+Prime_Video_CALENDAR_NAME = "Prime Video"
+Xbox_CALENDAR_NAME = "Xbox Calendar"
+Maxhbo_CALENDAR_NAME = "Maxhbo Calendar"
+Netflix_CALENDAR_NAME = "Netflix"
+Playstation_CALENDAR_NAME = "Playstation Calendar"
+Hulu_CALENDAR_NAME = "Hulu Calendar"
+Nintendo_CALENDAR_NAME = "Nintendo"

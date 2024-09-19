@@ -13,7 +13,6 @@ from MultiWebsiteScraper.nintendo_website_scraper import *
 from MultiWebsiteScraper.prime_data_scraper import *
 from MultiWebsiteScraper.xbox_games_scraper import *
 
-
 if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
     if os.path.exists(file_path):
         if is_file_older_than(file_path, time_threshold):
@@ -66,6 +65,7 @@ if WEBSITES.get("NETFLIX_WEBSITE"):
     any_scraping_done = True
 
 if WEBSITES.get("PLAYSTATION_WEBSITE"):
+    print("Scraping start for playstation website")
     if os.path.exists(playstation_file_path):
         if is_file_older_than(playstation_file_path, time_threshold):
             scrape_gamerant_events()

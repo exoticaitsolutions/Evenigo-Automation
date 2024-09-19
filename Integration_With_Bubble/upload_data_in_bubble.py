@@ -44,13 +44,8 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
     existing_event_names = {
         event.get("Event Name") for event in existing_events if isinstance(event, dict)
     }
-    # print("existing_event_names---- :  ", existing_event_names)
-    # for event in existing_events:
-    #     if isinstance(event, dict):
-    #         print("Event Name lio---- :  ", event.get("Event Name"))
 
     ids = []
-    # calander_ids = []
 
     # with open(file_path, mode="r") as file:
     with open(file_path, 'r', newline='', encoding='utf-8') as file:
@@ -64,6 +59,7 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 "End Date",
                 "Calendar",
                 "Event Type",
+                "Event Type (text)",
                 "Reported Count",
                 "Event Name",
                 "Public/Private",
@@ -83,21 +79,17 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 print(f"Skipping row due to invalid Calendar ID: {row}")
                 continue
             event_type = row.get("Event Type")
-            # valid_event_types = ["Sale"]
-            # if event_type not in valid_event_types:
-            #     print(f"Skipping row due to invalid Event Type: {event_type}")
-            #     continue
+            event_type_text = row.get("Event Type (text)")
             start_date = validate_and_format_date(
                 row.get("Start Date", ""), default_date=default_start_date
             )
             end_date = validate_and_format_date(row.get("End Date", ""))
 
             event_name = row.get("Event Name")
-            # print("event_name : ", event_name)
             if event_name in existing_event_names:
                 print(f"Skipping row due to existing event: {event_name}")
                 continue
-            # print("created by :", row.get("Created By"),)
+
             created_by_email = row.get("Created By")    
             user_id = fetch_user_id_by_email(created_by_email)
             data = {
@@ -105,9 +97,9 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
                 "End Date/Time (Event)": end_date,
                 "Calendar": calendar_id,
                 "Event Type": event_type,
+                "Event Type (text)":event_type_text,
                 "Event Name": event_name,
                 "Public/Private": row.get("Public/Private"),
-                # "Short Description": row.get("Event Description"),
                 "Short Description": clean_description(row.get("Event Description")),
                 "Start Date/Time (Event)": start_date,
                 "URL": row.get("Url"),

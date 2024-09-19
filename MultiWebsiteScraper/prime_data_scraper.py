@@ -68,8 +68,9 @@ def scrape_prime_content():
                     img,
                     heading,
                     'Launch',
+                    'Launch',
                     description,
-                    'Prime Video',
+                    Prime_Video_CALENDAR_NAME,
                     'No',
                     'Public',
                     '0',
@@ -104,8 +105,9 @@ def scrape_prime_content():
                 '',
                 description,
                 'Launch',
+                'Launch',
                 '',
-                'Prime Video',
+                Prime_Video_CALENDAR_NAME,
                 'No',
                 'Public',
                 '0',
@@ -124,7 +126,7 @@ def scrape_prime_content():
 
     with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
         csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(['Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar','All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"])
+        csvwriter.writerow(['Image URL', 'Event Name', 'Event Type','Event Type (text)', 'Event Description', 'Calendar','All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"])
 
         csvwriter.writerows(data)
     driver.quit()

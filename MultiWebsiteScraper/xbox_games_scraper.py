@@ -47,14 +47,14 @@ def xbox_website_data_scraping():
                 img_link = 'N/A'
 
             # Append data to the list
-            data.append([img_link, desc, 'Launch', '', 'Xbox Calendar', 'No', 'Public', '0', '', '', link, 'evenigoofficial+1267@gmail.com'])
+            data.append([img_link, desc, 'Launch', 'Launch', '', Xbox_CALENDAR_NAME, 'No', 'Public', '0', '', '', link, 'evenigoofficial+1267@gmail.com'])
 
         # Write data to CSV
         os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
         csv_file_path = os.path.join(csv_folder_name, xbox_file_name)
         with open(csv_file_path, mode='w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
-            writer.writerow(['Image URL', 'Event Name', 'Event Type', 'Event Description', 'Calendar', 'All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"])  # Header row
+            writer.writerow(['Image URL', 'Event Name', 'Event Type', 'Event Type (text)', 'Event Description', 'Calendar', 'All Day', "Public/Private", 'Reported Count', 'Start Date', 'End Date', 'Url', "Created By"])  # Header row
             writer.writerows(data)
 
         print("Content saved to 'xbox_games_data.csv'.")

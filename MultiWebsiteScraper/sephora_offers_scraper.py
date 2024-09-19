@@ -3,9 +3,6 @@ import re
 import time
 import pandas as pd
 from datetime import datetime, timedelta
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -16,12 +13,9 @@ from selenium.common.exceptions import (
     WebDriverException,
 )
 from Integration_With_Bubble.upload_image_in_bubble import send_images_to_bubble_images_api
-from webdriver_manager.chrome import ChromeDriverManager
 from urls import *
-from seleniumbase import Driver
 from SiteUtilsConfig.utils import *
 from SiteUtilsConfig.config import *
-from selenium.webdriver.support import expected_conditions as EC
 from urls import SEPHORA_WEBSITE_URL
 from webdriver import driver_confrigration
 
@@ -141,16 +135,14 @@ def scrape_sephora_website_offers(retry_count=0):
                             print(f"Paragraph 2: {paragraph_2}")
                             print(f"Paragraph 3: {paragraph_3}")
                             print(f"Paragraph 5: {paragraph_5}")
-                            print("=========="*8)
-                            print("start_date 11111111: ", start_date)
-                            print("=========="*8)
                             data.append(
                             {
                                 "Image URL": img_src,
                                 "Event Name": event_name,
                                 "Event Type": "Sale",
+                                "Event Type (text)":"Sale",
                                 "Event Description": event_description,
-                                "Calendar": "sephora Calendar",
+                                "Calendar": Sephora_CALENDAR_NAME,
                                 "All Day": "No",
                                 "Public/Private": "Public",
                                 "Reported Count": 0,
@@ -212,19 +204,14 @@ def scrape_sephora_website_offers(retry_count=0):
                         if "Ends" in paragraph_3:
                             paragraph_3 = re.sub(r"Ends.*", "", paragraph_3).strip()
                         formatted_end_date = convert_end_date_format(end_date)
-                        print("-------------"*10)
-                        print("end_date : ", end_date)
-                        print("start_date : ", start_date)
-                        print("formatted_end_date : ", formatted_end_date)
-                        print()
-                        print("-------------"*10)
                         data.append(
                             {
                                 "Image URL": image_url,
                                 "Event Name": event_name,
                                 "Event Type": "Sale",
+                                "Event Type (text)":"Sale",
                                 "Event Description": event_description,
-                                "Calendar": "Sephora Calendar",
+                                "Calendar": Sephora_CALENDAR_NAME,
                                 "All Day": "No",
                                 "Public/Private": "Public",
                                 "Reported Count": 0,
