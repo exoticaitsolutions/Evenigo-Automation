@@ -16,19 +16,7 @@ def fetch_user_id_by_email(email):
     Fetch the user ID based on the email from Bubble.io API.
     Replace this function with actual API integration for fetching user ID.
     """
-    email_to_user_id_map = {
-        "evenigoofficial+1212@gmail.com": "1725406841796x621130586024924800",
-        "evenigoofficial+6@gmail.com": "1724110723458x455625403407267100",
-        "evenigoofficial+1262@gmail.com": "1726743611373x673479256175043600",
-        "evenigoofficial+1261@gmail.com": "1726743843938x653850922381342800",
-        "evenigoofficial+1269@gmail.com": "1726743999850x730690471567494700",
-        "evenigoofficial+5@gmail.com": "1726744189299x145863347076665250",
-        "evenigoofficial+1267@gmail.com": "1726744291407x925651873803606800",
-        "evenigoofficial+1268@gmail.com": "1726744360239x623486500784262300",
-    }
-
-    return email_to_user_id_map.get(email)
-
+    return EMAIL_TO_USER_ID_MAP.get(email)
 
 def send_offers_from_csv_to_api(CalendarName, file_path):
     """

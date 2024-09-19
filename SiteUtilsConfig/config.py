@@ -47,6 +47,18 @@ WEBSITES = {
     "PRIME_WEBSITE": True,
 }
 
+EMAIL_TO_USER_ID_MAP = {
+        "evenigoofficial+1212@gmail.com": "1725406841796x621130586024924800",
+        "evenigoofficial+6@gmail.com": "1724110723458x455625403407267100",
+        "evenigoofficial+1262@gmail.com": "1726743611373x673479256175043600",
+        "evenigoofficial+1261@gmail.com": "1726743843938x653850922381342800",
+        "evenigoofficial+1269@gmail.com": "1726743999850x730690471567494700",
+        "evenigoofficial+5@gmail.com": "1726744189299x145863347076665250",
+        "evenigoofficial+1267@gmail.com": "1726744291407x925651873803606800",
+        "evenigoofficial+1268@gmail.com": "1726744360239x623486500784262300",
+    }
+
+
 
 time_threshold = 10 * 60
 
