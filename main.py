@@ -13,91 +13,51 @@ from MultiWebsiteScraper.nintendo_website_scraper import *
 from MultiWebsiteScraper.prime_data_scraper import *
 from MultiWebsiteScraper.xbox_games_scraper import *
 
-if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
-    if os.path.exists(file_path):
-        if is_file_older_than(file_path, time_threshold):
-            scrape_sephora_website_offers()
+def safe_scrape(scrape_function, file_path, calendar_enum):
+    """Safely run a scraper, handle file check and send data to Bubble if file exists and is recent."""
+    try:
+        if os.path.exists(file_path):
+            if is_file_older_than(file_path, time_threshold):
+                scrape_function()
+            else:
+                send_csv_data_to_bubble(calendar_enum, file_path)
         else:
-            send_csv_data_to_bubble(CalendarEnum.SEPHORA.value, file_path)
-    else:
-        scrape_sephora_website_offers()
+            scrape_function()
+    except Exception as e:
+        print(f"Error while scraping {calendar_enum}: {str(e)}")
 
 any_scraping_done = False  # Flag to track if any scraping was performed
 
+if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
+    safe_scrape(scrape_sephora_website_offers, file_path, CalendarEnum.SEPHORA.value)
+    any_scraping_done = True
+
 if WEBSITES.get("PRIME_WEBSITE"):
-    if os.path.exists(prime_file_path):
-        if is_file_older_than(prime_file_path, time_threshold):
-            scrape_prime_content()
-        else:
-            send_csv_data_to_bubble(CalendarEnum.PRIME_VIDEO.value, prime_file_path)
-    else:
-        scrape_prime_content()
+    safe_scrape(scrape_prime_content, prime_file_path, CalendarEnum.PRIME_VIDEO.value)
     any_scraping_done = True
 
 if WEBSITES.get("XBOX_GAMES_WEBSITE"):
-    if os.path.exists(xbox_file_path):
-        if is_file_older_than(xbox_file_path, time_threshold):
-            xbox_website_data_scraping()
-        else:
-            send_csv_data_to_bubble(CalendarEnum.Xbox_Calendar.value, xbox_file_path)
-    else:
-        xbox_website_data_scraping()
+    safe_scrape(xbox_website_data_scraping, xbox_file_path, CalendarEnum.Xbox_Calendar.value)
     any_scraping_done = True
 
 if WEBSITES.get("MAX_HBO_WEBSITE"):
-    if os.path.exists(max_hbo_file_path):
-        if is_file_older_than(max_hbo_file_path, time_threshold):
-            scrape_max_hbo_content()
-        else:
-            send_csv_data_to_bubble(
-                CalendarEnum.Maxhbo_Calendar.value, max_hbo_file_path
-            )
-    else:
-        scrape_max_hbo_content()
+    safe_scrape(scrape_max_hbo_content, max_hbo_file_path, CalendarEnum.Maxhbo_Calendar.value)
     any_scraping_done = True
 
 if WEBSITES.get("NETFLIX_WEBSITE"):
-    if os.path.exists(netflix_file_path):
-        if is_file_older_than(netflix_file_path, time_threshold):
-            scrape_netflix_content()
-        else:
-            send_csv_data_to_bubble(CalendarEnum.NETFLIX.value, netflix_file_path)
-    else:
-        scrape_netflix_content()
+    safe_scrape(scrape_netflix_content, netflix_file_path, CalendarEnum.NETFLIX.value)
     any_scraping_done = True
 
 if WEBSITES.get("PLAYSTATION_WEBSITE"):
-    print("Scraping start for playstation website")
-    if os.path.exists(playstation_file_path):
-        if is_file_older_than(playstation_file_path, time_threshold):
-            scrape_gamerant_events()
-        else:
-            send_csv_data_to_bubble(
-                CalendarEnum.Playstation_Calendar.value, playstation_file_path
-            )
-    else:
-        scrape_gamerant_events()
+    safe_scrape(scrape_gamerant_events, playstation_file_path, CalendarEnum.Playstation_Calendar.value)
     any_scraping_done = True
 
 if WEBSITES.get("HULU_WEBSITE"):
-    if os.path.exists(hulu_file_path):
-        if is_file_older_than(hulu_file_path, time_threshold):
-            scrape_hulu_content()
-        else:
-            send_csv_data_to_bubble(CalendarEnum.Hulu_Calendar.value, hulu_file_path)
-    else:
-        scrape_hulu_content()
+    safe_scrape(scrape_hulu_content, hulu_file_path, CalendarEnum.Hulu_Calendar.value)
     any_scraping_done = True
 
 if WEBSITES.get("NINTENDO_WEBSITE"):
-    if os.path.exists(ninten_file_path):
-        if is_file_older_than(ninten_file_path, time_threshold):
-            scrape_nintendo_games()
-        else:
-            send_csv_data_to_bubble(CalendarEnum.NINTENDO.value, ninten_file_path)
-    else:
-        scrape_nintendo_games()
-
+    safe_scrape(scrape_nintendo_games, ninten_file_path, CalendarEnum.NINTENDO.value)
     any_scraping_done = True
 
 # If no scraping was performed, print the message

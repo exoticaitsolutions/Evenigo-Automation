@@ -26,6 +26,7 @@ def send_csv_data_to_bubble(calendarName, csv_file_path):
 
         event_results = []
         json_data = csv_to_json(csv_file_path)
+        # print("json_data : ", json_data)
 
         if isinstance(json_data, list):
             for i, filedata in enumerate(json_data):

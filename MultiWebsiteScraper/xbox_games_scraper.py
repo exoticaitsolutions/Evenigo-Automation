@@ -95,16 +95,14 @@ def xbox_website_data_scraping():
             writer.writerows(data)
 
         print("Content saved to 'xbox_games_data.csv'.")
+        print("Scraping completed for xbox website")
+        print(f"Data saved to {csv_file_path}.")
+        print()
+        driver.quit()
     else:
         print("Cards weren't found even in exception")
-
-    # Close the WebDriver
-    driver.quit()
-    print("Scraping completed for xbox website")
-    print(f"Data saved to {csv_file_path}.")
-    print()
-    driver.quit()
-
+        driver.quit()
+    
     # Send the data via the Bubble API
     send_csv_data_to_bubble(CalendarEnum.Xbox_Calendar.value, csv_file_path)
 

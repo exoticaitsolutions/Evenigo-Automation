@@ -190,7 +190,6 @@ def scrape_hulu_content():
         print()
         send_csv_data_to_bubble(CalendarEnum.Hulu_Calendar.value, csv_file_path)
 
-
 # Run the scraper
 if __name__ == "__main__":
     scrape_hulu_content()

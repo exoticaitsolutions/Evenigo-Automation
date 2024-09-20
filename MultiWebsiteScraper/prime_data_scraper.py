@@ -11,7 +11,6 @@ from SiteUtilsConfig.config import *
 from Integration_With_Bubble.upload_image_in_bubble import send_csv_data_to_bubble
 from urls import PRIME_WEBSITE_URL
 
-
 def parse_date(date_str):
     day = re.search(r"\d{1,2}", date_str)
     if day:
