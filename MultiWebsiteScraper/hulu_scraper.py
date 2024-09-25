@@ -102,6 +102,12 @@ def scrape_hulu_content():
             match = re.search(r"^(.*?)\s*\(([^)]+)\)$", first.text)
             heading = match.group(1).strip()
             date = match.group(2).strip()
+            print()
+            print("--------------"*8)
+            print("date : ", date)
+            print("--------------"*8)
+            print()
+
             current_year = datetime.now().year
             converted_date = convert_date(date, year=current_year)
             end_date = get_next_date(converted_date)
@@ -133,7 +139,9 @@ def scrape_hulu_content():
         for second, title in zip(seconds, titles):
             sec = second.text
             tt = title.text
-            date = sec.rstrip(":")
+            # date = sec.rstrip(":")
+            # date1 = tt.rstrip(":")
+            date = tt.split(":")[0].strip()
             colon_index = tt.find(":")
             desc = tt[colon_index + 1 :].strip()
             event_names = desc.splitlines()

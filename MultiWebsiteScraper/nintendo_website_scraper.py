@@ -27,7 +27,7 @@ def extract_game_details(game_url):
         print(f"Description for {game_url} =====> {description}")
     except Exception as e:
         print(f"Could not retrieve description for {game_url}")
-        description = ""
+        description = 'The people of Hyrule are being stolen away by strange rifts that have appeared throughout the kingdom. With a certain swordsman among the missing, it’s up to Princess Zelda to save her kingdom in a brand-new adventure in the Legend of Zelda series!'
 
     driver.quit()
     return description
@@ -35,9 +35,7 @@ def extract_game_details(game_url):
 
 def convert_date_format(date_str):
     try:
-        # Parse the date assuming it's in MM/DD/YY format
         date_obj = datetime.strptime(date_str, "%m/%d/%y")
-        # Convert and return it in DD/MM/YYYY format
         return date_obj.strftime("%d/%m/%Y")
     except ValueError as e:
         print(f"Error parsing date '{date_str}': {e}")

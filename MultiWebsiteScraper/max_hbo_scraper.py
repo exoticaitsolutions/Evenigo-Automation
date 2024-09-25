@@ -58,7 +58,7 @@ def parse_date(start_date_data):
             start_date = parsed_date.replace(year=current_year)
 
             # Calculate end date (7 days later)
-            end_date = start_date + timedelta(days=7)
+            end_date = start_date + timedelta(days=1)
 
             # Format the start and end dates as 'dd-mm-yyyy'
             formatted_start_date = start_date.strftime("%d-%m-%Y")
@@ -104,6 +104,7 @@ def scrape_max_hbo_content():
         '//*[@id="c-pageArticleSingle-new-on-max-hbo"]/div[1]/div[1]/div[2]/div/div/figure/div/div/picture/img',
     )
     image_url = image_element.get_attribute("src")
+    end_date = (datetime.now() + timedelta(days=1)).strftime("%d-%m-%Y")
     data.append(
         {
             "Image URL": image_url,
@@ -116,8 +117,8 @@ def scrape_max_hbo_content():
             "Public/Private": "Public",
             "Reported Count": 0,
             "Start Date": "",
-            "End Date": "",
-            "URL": NEW_ON_MAX_HBO_WEBSITE_URL,
+            "End Date": end_date,
+            "Url": NEW_ON_MAX_HBO_WEBSITE_URL,
             "Created By": "evenigoofficial+1261@gmail.com",
         }
     )
@@ -146,7 +147,14 @@ def scrape_max_hbo_content():
 
     # Ensure we have an equal number of event names and descriptions
     for i in range(len(events_name)):
-        start_date, end_date = parsed_dates[i] if i < len(parsed_dates) else ("", "")
+        # start_date, end_date = parsed_dates[i] if i < len(parsed_dates) else ("", "")
+        start_date, end_date = ("", "")
+        if i < len(parsed_dates):
+            start_date, end_date = parsed_dates[i]
+        if not start_date:
+            start_date = ""
+        if not end_date:
+            end_date = (datetime.now() + timedelta(days=1)).strftime("%d-%m-%Y")
         data.append(
             {
                 "Image URL": "",
@@ -160,7 +168,7 @@ def scrape_max_hbo_content():
                 "Reported Count": 0,
                 "Start Date": start_date,
                 "End Date": end_date,
-                "URL": NEW_ON_MAX_HBO_WEBSITE_URL,
+                "Url": NEW_ON_MAX_HBO_WEBSITE_URL,
                 "Created By": "evenigoofficial+1261@gmail.com",
             }
         )
@@ -202,12 +210,14 @@ def scrape_max_hbo_content():
                 start_date = datetime.strptime(start_date_str, "%d-%m-%Y")
 
                 # Compute the end date
-                end_date = start_date + timedelta(days=7)
+                end_date = start_date + timedelta(days=1)
+                # end_date = (datetime.now() + timedelta(days=1)).strftime("%d-%m-%Y")
                 end_date_str = end_date.strftime("%d-%m-%Y")
 
                 # Prepare data for appending
                 desc = "\n".join(description.split("\n")[1:])
                 event_names = desc.splitlines()
+           
                 for event in event_names:
                     data.append(
                         {
@@ -222,7 +232,7 @@ def scrape_max_hbo_content():
                             "Reported Count": 0,
                             "Start Date": start_date_str,
                             "End Date": end_date_str,
-                            "URL": NEW_ON_MAX_HBO_WEBSITE_URL,
+                            "Url": NEW_ON_MAX_HBO_WEBSITE_URL,
                             "Created By": "evenigoofficial+1261@gmail.com",
                         }
                     )
@@ -254,7 +264,7 @@ def scrape_max_hbo_content():
                 "Reported Count",
                 "Start Date",
                 "End Date",
-                "URL",
+                "Url",
                 "Created By",
             ],
         )

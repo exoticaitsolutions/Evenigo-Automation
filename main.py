@@ -38,7 +38,7 @@ if WEBSITES.get("PRIME_WEBSITE"):
 
 if WEBSITES.get("XBOX_GAMES_WEBSITE"):
     safe_scrape(xbox_website_data_scraping, xbox_file_path, CalendarEnum.Xbox_Calendar.value)
-#     any_scraping_done = True
+    any_scraping_done = True
 
 if WEBSITES.get("MAX_HBO_WEBSITE"):
     safe_scrape(scrape_max_hbo_content, max_hbo_file_path, CalendarEnum.Maxhbo_Calendar.value)

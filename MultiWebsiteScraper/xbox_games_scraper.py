@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 from selenium.webdriver.common.by import By
 from seleniumbase import Driver
@@ -10,6 +11,17 @@ from SiteUtilsConfig.utils import *
 from webdriver import driver_confrigration
 from SiteUtilsConfig.config import *
 
+
+def convert_end_date_format(date_str):
+    try:
+        # Parse the date assuming it's in MM/DD/YYYY format
+        date_obj = datetime.strptime(date_str, "%m/%d/%Y")
+        # Convert and return the date in DD-MM-YYYY format
+        formatted_date = date_obj.strftime("%d-%m-%Y")
+        return formatted_date
+    except ValueError as e:
+        # If invalid, return a date 7 days from today
+        return (datetime.now() + timedelta(days=7)).strftime("%d-%m-%Y")
 
 def xbox_website_data_scraping():
     print("Scraping start for xbox website")
@@ -39,9 +51,11 @@ def xbox_website_data_scraping():
         for card in cards:
             # Extract the link and description
             link = card.get_attribute("href")
-            desc = card.text
+            desc = (card.text)
+            desc = (card.text).replace('PRE-ORDER',"")
+            desc = re.sub(r'\$\d+(\.\d{2})?', '', card.text.replace('PRE-ORDER', ''))
             match = price_pattern.search(desc)
-            price = match.group(0) if match else "N/A"
+            price = match.group(0) if match else " "
 
             # Find the image relative to the current card
             try:
@@ -50,21 +64,22 @@ def xbox_website_data_scraping():
             except Exception as img_err:
                 print(f"Image not found for card: {desc}, error: {img_err}")
                 img_link = "N/A"
+            
+            end_date = (datetime.now() + timedelta(days=1)).strftime("%d-%m-%Y")
 
-            # Append data to the list
             data.append(
                 [
                     img_link,
                     desc,
                     "Launch",
                     "Launch",
-                    "",
+                    price,
                     Xbox_CALENDAR_NAME,
                     "No",
                     "Public",
                     "0",
                     "",
-                    "",
+                    end_date,
                     link,
                     "evenigoofficial+1267@gmail.com",
                 ]
