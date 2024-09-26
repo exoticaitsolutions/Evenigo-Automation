@@ -62,14 +62,24 @@ def scrape_hulu_content():
     try:
         time.sleep(3)
         firsts = driver.find_elements(By.XPATH, "//h3//strong")
-        heading1 = driver.find_element(
-            By.XPATH,
-            '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/h2[1]/strong',
-        ).text
-        description = driver.find_element(
-            By.XPATH,
-            '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/figure/figcaption/span[1]/p',
-        ).text
+        # heading1 = driver.find_element(
+        #     By.XPATH,
+        #     '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/h2[1]/strong',
+        # ).text
+        # print()
+        # print("----------------"*8)
+        # print("heading1 : ", heading1)
+        # print()
+        # print("----------------"*8)
+        # description = driver.find_element(
+        #     By.XPATH,
+        #     '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/figure/figcaption/span[1]/p',
+        # ).text
+        # print()
+        # print("----------------"*8)
+        # print("description : ", description)
+        # print()
+        # print("----------------"*8)
         titles1 = driver.find_elements(
             By.XPATH,
             '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/p',
@@ -78,35 +88,30 @@ def scrape_hulu_content():
             By.XPATH,
             '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/figure/div/div/picture/img',
         )
-        image_src = image_element.get_attribute("src")
+        # image_src = image_element.get_attribute("src")
         titles = titles1[5:10]
-        data.append(
-            [
-                image_src,
-                heading1,
-                "Launch",
-                "Launch",
-                description,
-                Hulu_CALENDAR_NAME,
-                "No",
-                "Public",
-                "0",
-                "",
-                "",
-                NEW_ON_HULU_WEBSITE_URL,
-                "evenigoofficial+1262@gmail.com",
-            ]
-        )
+        # data.append(
+        #     [
+        #         image_src,
+        #         heading1,
+        #         "Launch",
+        #         "Launch",
+        #         description,
+        #         Hulu_CALENDAR_NAME,
+        #         "No",
+        #         "Public",
+        #         "0",
+        #         "",
+        #         "",
+        #         NEW_ON_HULU_WEBSITE_URL,
+        #         "evenigoofficial+1262@gmail.com",
+        #     ]
+        # )
 
         for first, title in zip(firsts, titles):
             match = re.search(r"^(.*?)\s*\(([^)]+)\)$", first.text)
             heading = match.group(1).strip()
             date = match.group(2).strip()
-            print()
-            print("--------------"*8)
-            print("date : ", date)
-            print("--------------"*8)
-            print()
 
             current_year = datetime.now().year
             converted_date = convert_date(date, year=current_year)
@@ -139,8 +144,6 @@ def scrape_hulu_content():
         for second, title in zip(seconds, titles):
             sec = second.text
             tt = title.text
-            # date = sec.rstrip(":")
-            # date1 = tt.rstrip(":")
             date = tt.split(":")[0].strip()
             colon_index = tt.find(":")
             desc = tt[colon_index + 1 :].strip()
