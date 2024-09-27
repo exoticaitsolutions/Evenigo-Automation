@@ -105,23 +105,23 @@ def scrape_max_hbo_content():
     )
     image_url = image_element.get_attribute("src")
     end_date = (datetime.now() + timedelta(days=1)).strftime("%d-%m-%Y")
-    data.append(
-        {
-            "Image URL": image_url,
-            "Event Name": event_name_text,
-            "Event Type": "Launch",
-            "Event Type (text)": "Launch",
-            "Event Description": description_text,
-            "Calendar": Maxhbo_CALENDAR_NAME,
-            "All Day": "No",
-            "Public/Private": "Public",
-            "Reported Count": 0,
-            "Start Date": "",
-            "End Date": end_date,
-            "Url": NEW_ON_MAX_HBO_WEBSITE_URL,
-            "Created By": "evenigoofficial+1261@gmail.com",
-        }
-    )
+    # data.append(
+    #     {
+    #         "Image URL": image_url,
+    #         "Event Name": event_name_text,
+    #         "Event Type": "Launch",
+    #         "Event Type (text)": "Launch",
+    #         "Event Description": description_text,
+    #         "Calendar": Maxhbo_CALENDAR_NAME,
+    #         "All Day": "No",
+    #         "Public/Private": "Public",
+    #         "Reported Count": 0,
+    #         "Start Date": "",
+    #         "End Date": end_date,
+    #         "Url": NEW_ON_MAX_HBO_WEBSITE_URL,
+    #         "Created By": "evenigoofficial+1261@gmail.com",
+    #     }
+    # )
 
     # Scrape other event names and descriptions
     event_names = driver.find_elements(By.TAG_NAME, "h3")

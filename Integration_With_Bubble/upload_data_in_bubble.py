@@ -86,13 +86,13 @@ def send_offers_from_csv_to_api(CalendarName, file_path):
 
             if start_date:
                 start_date = datetime.strptime(start_date, '%m/%d/%Y') 
-                start_date1 = start_date.replace(hour=18, minute=30)
+                start_date1 = start_date.replace(hour=19, minute=00)
                 start_date = start_date1.isoformat()
 
 
             if end_date:
                 end_date = datetime.strptime(end_date, '%m/%d/%Y')
-                end_date1 = end_date.replace(hour=18, minute=30)
+                end_date1 = end_date.replace(hour=19, minute=00)
                 end_date = end_date1.isoformat()
 
             event_name = row.get("Event Name")

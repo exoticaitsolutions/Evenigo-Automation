@@ -144,7 +144,7 @@ def scrape_main_page(soup):
                             start_date_obj = datetime.strptime(
                                 start_date, "%B %d"
                             ).replace(year=datetime.now().year)
-                            end_date_obj = start_date_obj + timedelta(days=7)
+                            end_date_obj = start_date_obj + timedelta(days=1)
                             end_date_str = end_date_obj.strftime("%d-%m-%Y")
                         except ValueError:
                             print(f"Failed to parse date: {start_date}")
