@@ -14,13 +14,13 @@ from SiteUtilsConfig.config import *
 
 def convert_end_date_format(date_str):
     try:
-        # Parse the date assuming it's in MM/DD/YYYY format
+       
         date_obj = datetime.strptime(date_str, "%m/%d/%Y")
-        # Convert and return the date in DD-MM-YYYY format
+      
         formatted_date = date_obj.strftime("%d-%m-%Y")
         return formatted_date
     except ValueError as e:
-        # If invalid, return a date 7 days from today
+       
         return (datetime.now() + timedelta(days=7)).strftime("%d-%m-%Y")
 
 def xbox_website_data_scraping():
@@ -40,7 +40,7 @@ def xbox_website_data_scraping():
         sleep(5)
         cards = driver.find_elements(By.XPATH, '//a[@class = "gameDivLink"]')
     except Exception as e:
-        # print(f"Error occurred while fetching the cards: {e}")
+       
         sleep(5)
         cards = driver.find_elements(By.XPATH, '//a[@class = "gameDivLink"]')
 
@@ -49,15 +49,14 @@ def xbox_website_data_scraping():
         price_pattern = re.compile(r"\$\d+\.\d{2}")
 
         for card in cards:
-            # Extract the link and description
+        
             link = card.get_attribute("href")
-            desc = (card.text)
-            desc = (card.text).replace('PRE-ORDER',"")
-            desc = re.sub(r'\$\d+(\.\d{2})?', '', card.text.replace('PRE-ORDER', ''))
+            desc = card.text.strip()  
             match = price_pattern.search(desc)
             price = match.group(0) if match else " "
+            
+            desc = re.sub(price_pattern, '', desc).replace('PRE-ORDER', '',).replace('Full price was', '').replace('New price is','').strip()
 
-            # Find the image relative to the current card
             try:
                 img = card.find_element(By.XPATH, './/*[@class = "containerIMG"]//img')
                 img_link = img.get_attribute("src")
@@ -85,8 +84,8 @@ def xbox_website_data_scraping():
                 ]
             )
 
-        # Write data to CSV
-        os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
+       
+        os.makedirs(csv_folder_name, exist_ok=True) 
         csv_file_path = os.path.join(csv_folder_name, xbox_file_name)
         with open(csv_file_path, mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
@@ -106,7 +105,7 @@ def xbox_website_data_scraping():
                     "Url",
                     "Created By",
                 ]
-            )  # Header row
+            )  
             writer.writerows(data)
 
         print("Content saved to 'xbox_games_data.csv'.")
@@ -118,10 +117,9 @@ def xbox_website_data_scraping():
         print("Cards weren't found even in exception")
         driver.quit()
     
-    # Send the data via the Bubble API
+ 
     send_csv_data_to_bubble(CalendarEnum.Xbox_Calendar.value, csv_file_path)
 
 
-# Run the scraper
 if __name__ == "__main__":
     xbox_website_data_scraping()

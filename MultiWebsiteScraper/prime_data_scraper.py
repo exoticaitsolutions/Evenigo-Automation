@@ -90,12 +90,13 @@ def scrape_prime_content():
 
         sec_imgs = img_elements[4:21]
         j = 1
-        for i in range(11, 27):
+        for i in range(11, 28):
             second_ele = driver.find_element(
                 By.XPATH,
                 f"//*[@id='c-pageArticleSingle-new-on-amazon-prime-video']/div[1]/div[1]/div[2]/div/div/p[{i}]",
             )
             text_content = second_ele.text
+        
             split_text = text_content.split("\n", 1)
 
             start_date_str = split_text[0].strip()
@@ -116,6 +117,7 @@ def scrape_prime_content():
 
             img = sec_imgs[j].get_attribute("src")
             event_names = description.splitlines()
+            
             for event in event_names:
                 data.append(
                     [

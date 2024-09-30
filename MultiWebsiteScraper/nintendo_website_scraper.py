@@ -15,12 +15,12 @@ from webdriver import driver_confrigration
 
 
 def extract_game_details(game_url):
-    driver = driver_confrigration()  # Create a new driver instance
+    driver = driver_confrigration() 
     driver.get(game_url)
-    time.sleep(5)  # Allow time for the page to load
+    time.sleep(5)  
 
     try:
-        # Extract description
+      
         description = driver.find_element(
             By.XPATH, '//*[@id="main"]/section[2]/div/div/div[1]/div/div/div/p'
         ).text
@@ -44,11 +44,11 @@ def convert_date_format(date_str):
 
 def scrape_nintendo_games():
     print("Start scrapping for nintendo website")
-    # Set up Chrome options
+   
     driver = driver_confrigration()
     driver.get(NINTENDO_WEBSITE_URL)
 
-    os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
+    os.makedirs(csv_folder_name, exist_ok=True)  
     csv_file_path = os.path.join(csv_folder_name, nintendo_file_name)
 
     headers = [
@@ -67,7 +67,7 @@ def scrape_nintendo_games():
         "Created By",
     ]
 
-    # Check if the CSV file exists
+  
     file_exists = os.path.isfile(csv_file_path)
 
     try:
@@ -142,22 +142,22 @@ def scrape_nintendo_games():
                     price_tag = game.find_element(By.CSS_SELECTOR, "span.W990N.SH2al")
                     price = price_tag.text.strip() if price_tag else "No price found"
                     row = [
-                        img_url,  # Image URL
-                        title,  # Event Name
-                        "Launch",  # Event Type
-                        "Launch",  # Event Type
-                        description,  # Event Description (not available)
-                        Nintendo_CALENDAR_NAME,  # Calendar (not available)
-                        "No",  # All Day
-                        "Public",  # Public/private (assuming public)
-                        "0",  # Reported Count
-                        formatted_date,  # Start Date
-                        End_date,  # End Date
-                        game_link,  # Website url
+                        img_url, 
+                        title,  
+                        "Launch", 
+                        "Launch",  
+                        description,  
+                        Nintendo_CALENDAR_NAME,  
+                        "No",  
+                        "Public",  
+                        "0",  
+                        formatted_date,  
+                        End_date,
+                        game_link,  
                         "evenigoofficial+5@gmail.com",
                     ]
 
-                    # Write the data to the CSV file
+                  
                     writer.writerow(row)
 
                 except Exception as e:
@@ -171,6 +171,6 @@ def scrape_nintendo_games():
     send_csv_data_to_bubble(CalendarEnum.NINTENDO.value, csv_file_path)
 
 
-# Run the scraper
+
 if __name__ == "__main__":
     scrape_nintendo_games()

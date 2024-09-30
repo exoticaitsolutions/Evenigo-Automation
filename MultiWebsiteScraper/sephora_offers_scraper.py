@@ -22,9 +22,9 @@ from webdriver import driver_confrigration
 
 def convert_end_date_format(date_str):
     try:
-        # Parse the date assuming it's in MM/DD/YYYY format
+        
         date_obj = datetime.strptime(date_str, "%m/%d/%Y")
-        # Convert and return the date in DD-MM-YYYY format
+      
         formatted_date = date_obj.strftime("%d-%m-%Y")
         return formatted_date
     except ValueError as e:
@@ -260,11 +260,11 @@ def scrape_sephora_website_offers(retry_count=0):
                 if pd.notna(row["Start Date"]):
                     start_date = pd.to_datetime(
                         row["Start Date"], errors="coerce"
-                    )  # Convert to datetime, coerce errors to NaT
+                    )  
                 else:
                     start_date = (
                         datetime.now()
-                    )  # Use current date if Start Date is missing
+                    )  
 
                 if pd.isna(start_date):
                     # If start_date is NaT, use the current date

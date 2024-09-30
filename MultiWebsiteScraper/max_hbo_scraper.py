@@ -67,7 +67,7 @@ def parse_date(start_date_data):
             formatted_dates.append((formatted_start_date, formatted_end_date))
         except ValueError:
             print(f"Could not parse date: {clean_start_day}")
-            formatted_dates.append(("", ""))  # Append empty strings if parsing fails
+            formatted_dates.append(("", ""))  
 
     return formatted_dates
 
@@ -78,9 +78,9 @@ def scrape_max_hbo_content():
     driver.get(NEW_ON_MAX_HBO_WEBSITE_URL)
     sleep(5)
 
-    # Scroll down the page
+
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight * 0.6);")
-    sleep(3)  # Adjust the sleep time if necessary for your page to load content
+    sleep(3) 
 
     # Scrape the main event name
     event_name = driver.find_element(
@@ -136,6 +136,7 @@ def scrape_max_hbo_content():
         # Find the next <p> tag after each event name to get the description
         description_element = event.find_element(By.XPATH, "following-sibling::p[1]")
         description_text = description_element.text
+        print("descc", description_text)
 
         # Append event name and description to respective lists
         events_name.append(event_name_text)
