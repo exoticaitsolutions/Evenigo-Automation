@@ -25,7 +25,7 @@ def scrape_prime_content():
     driver = driver_confrigration()
     driver.get(PRIME_WEBSITE_URL)
     sleep(5)
-    data = []
+    data = []  
     img_elements = []
     try:
         main_heading_xpath = f'//*[@id="c-pageArticleSingle-new-on-amazon-prime-video"]/div[1]/div[1]/div[1]/h1'
@@ -39,8 +39,8 @@ def scrape_prime_content():
         for i in range(1, 4):
             heading_xpath = f'//*[@id="c-pageArticleSingle-new-on-amazon-prime-video"]/div[1]/div[1]/div[2]/div/div/h3[{i}]/strong'
             heading_element = driver.find_element(By.XPATH, heading_xpath)
-
             full_text = heading_element.text
+
             if "(" in full_text and ")" in full_text:
                 heading, start_date = full_text.split("(")
                 date_str = start_date.replace(")", "").strip()
@@ -71,7 +71,7 @@ def scrape_prime_content():
                 end_date = end_date.strftime("%Y-%m-%d") if end_date != "N/A" else "N/A"
                 data.append(
                     [
-                        img,
+                        "",
                         heading,
                         "Launch",
                         "Launch",
@@ -90,7 +90,7 @@ def scrape_prime_content():
 
         sec_imgs = img_elements[4:21]
         j = 1
-        for i in range(11, 27):
+        for i in range(11, 28):
             second_ele = driver.find_element(
                 By.XPATH,
                 f"//*[@id='c-pageArticleSingle-new-on-amazon-prime-video']/div[1]/div[1]/div[2]/div/div/p[{i}]",
@@ -98,25 +98,32 @@ def scrape_prime_content():
             text_content = second_ele.text
             split_text = text_content.split("\n", 1)
 
-            start_date_str = split_text[0].strip()
+         
+            start_date_str = split_text[0].strip() if len(split_text) > 0 else "No date"
+
+
             description = (
                 split_text[1].strip()
                 if len(split_text) > 1
                 else "No description available"
             )
+            
+            print("print the  description====>>>", description)
+            event_names = description.splitlines()
 
             start_date = parse_date(start_date_str)
             if start_date:
                 end_date = start_date + timedelta(days=1)
                 start_date = start_date.strftime("%Y-%m-%d")
+                print("print start date ====>",start_date)
                 end_date = end_date.strftime("%Y-%m-%d")
+                print("end date print =====>>",end_date)
             else:
                 start_date = "N/A"
                 end_date = "N/A"
 
-            img = sec_imgs[j].get_attribute("src")
-            event_names = description.splitlines()
             for event in event_names:
+                print("event name print ====>",event)
                 data.append(
                     [
                         "",
@@ -139,7 +146,7 @@ def scrape_prime_content():
     except Exception as e:
         print(f"An error occurred: {e}")
 
-    os.makedirs(csv_folder_name, exist_ok=True)  # Create folder if it doesn't exist
+    os.makedirs(csv_folder_name, exist_ok=True)  
     csv_file_path = os.path.join(csv_folder_name, prime_file_name)
 
     with open(csv_file_path, "w", newline="", encoding="utf-8") as csvfile:

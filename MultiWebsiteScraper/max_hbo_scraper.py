@@ -126,7 +126,7 @@ def scrape_max_hbo_content():
     # Scrape other event names and descriptions
     event_names = driver.find_elements(By.TAG_NAME, "h3")
 
-    for event in event_names[:3]:  # Limit to the first 3 events
+    for event in event_names[:4]:  # Limit to the first 3 events
         full_event_name = event.text
         parts = full_event_name.split("(")
         event_name_text = parts[0].strip()
@@ -188,7 +188,7 @@ def scrape_max_hbo_content():
         "December": "12",
     }
 
-    for i in range(11, 35):
+    for i in range(12, 35):
         description_element = driver.find_element(
             By.XPATH,
             f'//*[@id="c-pageArticleSingle-new-on-max-hbo"]/div[1]/div[1]/div[2]/div/div/p[{i}]',

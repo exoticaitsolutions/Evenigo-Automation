@@ -55,9 +55,9 @@ def scrape_netflix_content():
     extracted_data = []
 
     try:
-        heading_range = range(1, 5)
-        paragraph_range = range(6, 10)
-        paragraph2_range = range(14, 34)
+        heading_range = range(1, 8)
+        paragraph_range = range(5, 17)
+        paragraph2_range = range(15, 40) 
 
         for number1, number3 in zip(heading_range, paragraph_range):
             xpath_heading = f'//*[@id="c-pageArticleSingle-new-on-netflix"]/div[1]/div[1]/div[2]/div/div/h3[{number1}]'

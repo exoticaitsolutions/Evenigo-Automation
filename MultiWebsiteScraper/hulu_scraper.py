@@ -62,24 +62,7 @@ def scrape_hulu_content():
     try:
         time.sleep(3)
         firsts = driver.find_elements(By.XPATH, "//h3//strong")
-        # heading1 = driver.find_element(
-        #     By.XPATH,
-        #     '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/h2[1]/strong',
-        # ).text
-        # print()
-        # print("----------------"*8)
-        # print("heading1 : ", heading1)
-        # print()
-        # print("----------------"*8)
-        # description = driver.find_element(
-        #     By.XPATH,
-        #     '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/figure/figcaption/span[1]/p',
-        # ).text
-        # print()
-        # print("----------------"*8)
-        # print("description : ", description)
-        # print()
-        # print("----------------"*8)
+
         titles1 = driver.find_elements(
             By.XPATH,
             '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/p',
@@ -89,24 +72,8 @@ def scrape_hulu_content():
             '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/figure/div/div/picture/img',
         )
         # image_src = image_element.get_attribute("src")
-        titles = titles1[5:10]
-        # data.append(
-        #     [
-        #         image_src,
-        #         heading1,
-        #         "Launch",
-        #         "Launch",
-        #         description,
-        #         Hulu_CALENDAR_NAME,
-        #         "No",
-        #         "Public",
-        #         "0",
-        #         "",
-        #         "",
-        #         NEW_ON_HULU_WEBSITE_URL,
-        #         "evenigoofficial+1262@gmail.com",
-        #     ]
-        # )
+        titles = titles1[6:9]
+
 
         for first, title in zip(firsts, titles):
             match = re.search(r"^(.*?)\s*\(([^)]+)\)$", first.text)
@@ -139,7 +106,7 @@ def scrape_hulu_content():
             '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/p/strong',
         )
         seconds = seconds1[10:35]
-        titles = titles1[13:38]
+        titles = titles1[12:38]
 
         for second, title in zip(seconds, titles):
             sec = second.text

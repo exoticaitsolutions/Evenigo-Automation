@@ -50,14 +50,18 @@ def xbox_website_data_scraping():
 
         for card in cards:
             # Extract the link and description
+           for card in cards:
+            
+        
             link = card.get_attribute("href")
-            desc = (card.text)
-            desc = (card.text).replace('PRE-ORDER',"")
-            desc = re.sub(r'\$\d+(\.\d{2})?', '', card.text.replace('PRE-ORDER', ''))
+            desc = card.text.strip()  
+           
             match = price_pattern.search(desc)
             price = match.group(0) if match else " "
+            
+            desc = re.sub(price_pattern, '', desc).replace('PRE-ORDER', '',).replace('Full price was', '').replace('New price is','').strip()
 
-            # Find the image relative to the current card
+            
             try:
                 img = card.find_element(By.XPATH, './/*[@class = "containerIMG"]//img')
                 img_link = img.get_attribute("src")

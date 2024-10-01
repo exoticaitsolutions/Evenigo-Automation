@@ -2,9 +2,9 @@ import os
 from Integration_With_Bubble.upload_data_in_bubble import *
 from Integration_With_Bubble.upload_image_in_bubble import *
 from Integration_With_Bubble.bubble_api_integration import *
-from MultiWebsiteScraper.sephora_offers_scraper import *
 from SiteUtilsConfig.utils import *
 from SiteUtilsConfig.config import *
+from MultiWebsiteScraper.sephora_offers_scraper import *
 from MultiWebsiteScraper.playstation_website_scraper import *
 from MultiWebsiteScraper.hulu_scraper import *
 from MultiWebsiteScraper.max_hbo_scraper import *
@@ -26,7 +26,7 @@ def safe_scrape(scrape_function, file_path, calendar_enum):
     except Exception as e:
         print(f"Error while scraping {calendar_enum}: {str(e)}")
 
-any_scraping_done = False  # Flag to track if any scraping was performed
+any_scraping_done = False  # Flag to track if any scraping was perform
 
 if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
     safe_scrape(scrape_sephora_website_offers, file_path, CalendarEnum.SEPHORA.value)
@@ -46,7 +46,8 @@ if WEBSITES.get("MAX_HBO_WEBSITE"):
 
 if WEBSITES.get("NETFLIX_WEBSITE"):
     safe_scrape(scrape_netflix_content, netflix_file_path, CalendarEnum.NETFLIX.value)
-    any_scraping_done = True
+    any_scraping_done = True          
+
 
 if WEBSITES.get("PLAYSTATION_WEBSITE"):
     safe_scrape(scrape_gamerant_events, playstation_file_path, CalendarEnum.Playstation_Calendar.value)
