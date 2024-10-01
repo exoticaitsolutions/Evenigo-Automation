@@ -49,10 +49,7 @@ def xbox_website_data_scraping():
         price_pattern = re.compile(r"\$\d+\.\d{2}")
 
         for card in cards:
-            # Extract the link and description
-           for card in cards:
-            
-        
+           
             link = card.get_attribute("href")
             desc = card.text.strip()  
            
