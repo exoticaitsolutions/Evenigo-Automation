@@ -28,38 +28,38 @@ def safe_scrape(scrape_function, file_path, calendar_enum):
 
 any_scraping_done = False  # Flag to track if any scraping was perform
 
-# if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
-#     safe_scrape(scrape_sephora_website_offers, file_path, CalendarEnum.SEPHORA.value)
-#     any_scraping_done = True
+if WEBSITE.get("SCRAPE_SEPHORA_WEBSITE_OFFERS"):
+    safe_scrape(scrape_sephora_website_offers, file_path, CalendarEnum.SEPHORA.value)
+    any_scraping_done = True
 
 if WEBSITES.get("PRIME_WEBSITE"):
     safe_scrape(scrape_prime_content, prime_file_path, CalendarEnum.PRIME_VIDEO.value)
     any_scraping_done = True
 
-# if WEBSITES.get("XBOX_GAMES_WEBSITE"):
-#     safe_scrape(xbox_website_data_scraping, xbox_file_path, CalendarEnum.Xbox_Calendar.value)
-#     any_scraping_done = True
+if WEBSITES.get("XBOX_GAMES_WEBSITE"):
+    safe_scrape(xbox_website_data_scraping, xbox_file_path, CalendarEnum.Xbox_Calendar.value)
+    any_scraping_done = True
 
-# if WEBSITES.get("MAX_HBO_WEBSITE"):
-#     safe_scrape(scrape_max_hbo_content, max_hbo_file_path, CalendarEnum.Maxhbo_Calendar.value)
-#     any_scraping_done = True
+if WEBSITES.get("MAX_HBO_WEBSITE"):
+    safe_scrape(scrape_max_hbo_content, max_hbo_file_path, CalendarEnum.Maxhbo_Calendar.value)
+    any_scraping_done = True
 
-# if WEBSITES.get("NETFLIX_WEBSITE"):
-#     safe_scrape(scrape_netflix_content, netflix_file_path, CalendarEnum.NETFLIX.value)
-#     any_scraping_done = True          
+if WEBSITES.get("NETFLIX_WEBSITE"):
+    safe_scrape(scrape_netflix_content, netflix_file_path, CalendarEnum.NETFLIX.value)
+    any_scraping_done = True          
 
 
-# if WEBSITES.get("PLAYSTATION_WEBSITE"):
-#     safe_scrape(scrape_gamerant_events, playstation_file_path, CalendarEnum.Playstation_Calendar.value)
-#     any_scraping_done = True
+if WEBSITES.get("PLAYSTATION_WEBSITE"):
+    safe_scrape(scrape_gamerant_events, playstation_file_path, CalendarEnum.Playstation_Calendar.value)
+    any_scraping_done = True
 
-# if WEBSITES.get("HULU_WEBSITE"):
-#     safe_scrape(scrape_hulu_content, hulu_file_path, CalendarEnum.Hulu_Calendar.value)
-#     any_scraping_done = True
+if WEBSITES.get("HULU_WEBSITE"):
+    safe_scrape(scrape_hulu_content, hulu_file_path, CalendarEnum.Hulu_Calendar.value)
+    any_scraping_done = True
 
-# if WEBSITES.get("NINTENDO_WEBSITE"):
-#     safe_scrape(scrape_nintendo_games, ninten_file_path, CalendarEnum.NINTENDO.value)
-#     any_scraping_done = True
+if WEBSITES.get("NINTENDO_WEBSITE"):
+    safe_scrape(scrape_nintendo_games, ninten_file_path, CalendarEnum.NINTENDO.value)
+    any_scraping_done = True
 
 # If no scraping was performed, print the message
 if not any_scraping_done:
