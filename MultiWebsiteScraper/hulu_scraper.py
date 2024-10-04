@@ -105,8 +105,8 @@ def scrape_hulu_content():
             By.XPATH,
             '//*[@id="c-pageArticleSingle-new-on-hulu"]/div[1]/div[1]/div[2]/div/div/p/strong',
         )
-        seconds = seconds1[10:35]
-        titles = titles1[12:38]
+        seconds = seconds1[10:34]
+        titles = titles1[12:34]
 
         for second, title in zip(seconds, titles):
             sec = second.text
